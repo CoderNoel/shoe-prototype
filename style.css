@@ -355,8 +355,8 @@ body {
 .ripple-effect {
     position: absolute;
     width: 5px;
-    height: 5px;
-    bottom: 30%;
+    height: 50px;
+    bottom: 5%;
     border-radius: 50%;
     background: var(--primary-color);
     transform: translate(-50%, -50%);
@@ -523,30 +523,35 @@ body {
 /* Shoe beam selection effect */
 .shoe-beam-effect {
     position: absolute;
-    width: 300px;
-    height: 300px;
+    width: 350px;
+    height: 120px;
     left: 50%;
-    bottom: 0;
+    bottom: 20px;
     transform: translate(-50%, 0);
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(0, 168, 107, 0.4) 0%, rgba(0, 168, 107, 0.1) 40%, transparent 70%);
-    z-index: 40;
+    background: radial-gradient(ellipse at center top, 
+                               rgba(0, 168, 107, 0.5) 0%, 
+                               rgba(0, 168, 107, 0.2) 40%, 
+                               transparent 70%);
+    z-index: 30;
     pointer-events: none;
-    animation: beamPulse 0.8s ease-out forwards;
+    animation: beamPulse 1s ease-out forwards;
+    filter: blur(8px);
+    transform-origin: center top;
 }
 
 @keyframes beamPulse {
     0% {
         opacity: 0;
-        transform: translate(-50%, 0) scale(0.5);
+        transform: translate(-50%, 0) scaleY(0.3);
     }
     40% {
-        opacity: 0.8;
-        transform: translate(-50%, 0) scale(1.2);
+        opacity: 0.9;
+        transform: translate(-50%, 0) scaleY(1);
     }
     100% {
         opacity: 0;
-        transform: translate(-50%, 0) scale(1.4);
+        transform: translate(-50%, 0) scaleY(1.1);
     }
 }
 
