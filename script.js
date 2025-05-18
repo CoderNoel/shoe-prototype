@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Start button click event
     startBtn.addEventListener('click', () => {
         instructions.style.display = 'none';
-        showScreen(0); // Show workout type selection screen
+        showScreen(0); // Show workout type selection
         showVoiceFeedback('Select a workout type');
         
         // Preload assets for smooth UX
@@ -212,65 +212,64 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cursor position tracking for shoe tilt
     let cursorTimeout = null;
     
-    // Track interactive elements for hover effects
-    const interactiveElements = {
-        workoutOptions: document.querySelectorAll('.workout-option'),
-        goalTabs: document.querySelectorAll('.goal-tab'),
-        valueControls: document.querySelectorAll('.value-btn'),
-        sliderHandle: document.querySelector('.slider-handle'),
-        moodOptions: document.querySelectorAll('.mood-option'),
-        syncButton: document.querySelector('.sync-button')
+    // Enhanced Interactive Elements Registry - refreshed on screen changes
+    const refreshInteractiveElements = () => {
+        console.log("Refreshing interactive elements");
+        return {
+            workoutOptions: document.querySelectorAll('.workout-option'),
+            goalTabs: document.querySelectorAll('.goal-tab'),
+            valueControls: document.querySelectorAll('.value-btn'),
+            sliderHandle: document.querySelector('.slider-handle'),
+            moodOptions: document.querySelectorAll('.mood-option'),
+            syncButton: document.querySelector('.sync-button'),
+            startWorkoutButtons: document.querySelectorAll('.start-workout-btn'),
+            startButton: document.querySelector('.start-button')
+        };
     };
+    
+    // Initialize interactive elements
+    let interactiveElements = refreshInteractiveElements();
     
     // Current hovered element
     let currentHoveredElement = null;
     
+    // Debug feedback - show what element is being hovered
+    const showDebugFeedback = (message) => {
+        console.log(message);
+    };
+    
+    // Track interactive elements for hover effects with improved detection
     document.addEventListener('mousemove', (e) => {
-        // Only track cursor when it's in the top portion of the screen
-        const topTrackingThreshold = window.innerHeight * 0.3; // Top 30% of the screen
+        // Only track cursor when tracking is active
+        if (!cursorTrackingActive) return;
         
-        if (e.clientY < topTrackingThreshold && cursorTrackingActive) {
-            // Clear any pending cursor timeouts
-            if (cursorTimeout) {
-                clearTimeout(cursorTimeout);
-            }
-            
-            // Calculate position in a fixed arc
-            const screenWidth = window.innerWidth;
-            const xPosition = e.clientX;
-            
-            // Divide screen into three zones: left, center, right
-            const leftThreshold = screenWidth * 0.33;
-            const rightThreshold = screenWidth * 0.66;
-            
-            // Remove any existing tilt classes
-            shoeImage.classList.remove('tilt-left', 'tilt-right', 'tilt-forward');
-            
-            if (xPosition < leftThreshold) {
-                // Left zone - tilt left
-                shoeImage.classList.add('tilt-left');
-                lastMouseTilt = 'left';
-            } else if (xPosition > rightThreshold) {
-                // Right zone - tilt right
-                shoeImage.classList.add('tilt-right');
-                lastMouseTilt = 'right';
-            } else {
-                // Center zone - no tilt
-                lastMouseTilt = null;
-            }
-            
-            // Auto-reset after a delay when cursor stops moving
-            cursorTimeout = setTimeout(() => {
-                shoeImage.classList.remove('tilt-left', 'tilt-right');
-                lastMouseTilt = null;
-            }, 1500);
-        } else if (lastMouseTilt !== null && !mouseControlActive) {
-            // Reset when leaving tracking area
-            shoeImage.classList.remove('tilt-left', 'tilt-right');
+        // Calculate screen sections with a narrower center region
+        const screenWidth = window.innerWidth;
+        const centerWidth = screenWidth * 0.10; // 10% of screen width for center 
+        const centerLeft = (screenWidth - centerWidth) / 2;
+        const centerRight = centerLeft + centerWidth;
+        
+        // Get cursor position
+        const xPosition = e.clientX;
+        
+        // Remove any existing tilt classes
+        shoeImage.classList.remove('tilt-left', 'tilt-right', 'tilt-forward', 'tilt-left-tap', 'tilt-right-tap');
+        
+        // Determine tilt based on cursor position
+        if (xPosition < centerLeft) {
+            // Left zone - tilt left
+            shoeImage.classList.add('tilt-left');
+            lastMouseTilt = 'left';
+        } else if (xPosition > centerRight) {
+            // Right zone - tilt right
+            shoeImage.classList.add('tilt-right');
+            lastMouseTilt = 'right';
+        } else {
+            // Narrow center zone - no tilt, will be forward when clicked
             lastMouseTilt = null;
         }
         
-        // Check if cursor is over any interactive elements
+        // Check if cursor is over any interactive elements and apply hover effect
         checkElementHover(e);
     });
     
@@ -284,6 +283,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Helper function to check if element is under cursor
         function isElementUnderCursor(element) {
+            if (!element) return false;
+            
             const rect = element.getBoundingClientRect();
             return (
                 e.clientX >= rect.left &&
@@ -294,69 +295,139 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // Check all interactive elements
-        for (const [key, elements] of Object.entries(interactiveElements)) {
-            if (!elements) continue;
-            
-            if (elements instanceof NodeList || Array.isArray(elements)) {
-                for (const element of elements) {
-                    if (isElementUnderCursor(element)) {
-                        element.classList.add('hover-effect');
-                        currentHoveredElement = element;
-                        
-                        // Update shoe tilt to match element position
-                        updateShoeTiltForElement(element);
-                        return;
-                    }
+        // Check goal tabs
+        const goalTabs = document.querySelectorAll('.goal-tab');
+        if (goalTabs && goalTabs.length) {
+            for (const tab of goalTabs) {
+                if (isElementUnderCursor(tab)) {
+                    tab.classList.add('hover-effect');
+                    currentHoveredElement = tab;
+                    // Position-based tilt will be applied by the mousemove handler
+                    return;
                 }
-            } else if (elements && isElementUnderCursor(elements)) {
-                elements.classList.add('hover-effect');
-                currentHoveredElement = elements;
-                
-                // Update shoe tilt for single element
-                updateShoeTiltForElement(elements);
+            }
+        }
+        
+        // Check workout options
+        const workoutOptions = document.querySelectorAll('.workout-option');
+        if (workoutOptions && workoutOptions.length) {
+            for (const option of workoutOptions) {
+                if (isElementUnderCursor(option)) {
+                    option.classList.add('hover-effect');
+                    currentHoveredElement = option;
+                    // Position-based tilt will be applied by the mousemove handler
+                    return;
+                }
+            }
+        }
+        
+        // Check value buttons
+        const valueControls = document.querySelectorAll('.value-btn');
+        if (valueControls && valueControls.length) {
+            for (const btn of valueControls) {
+                if (isElementUnderCursor(btn)) {
+                    btn.classList.add('hover-effect');
+                    currentHoveredElement = btn;
+                    // Position-based tilt will be applied by the mousemove handler
+                    return;
+                }
+            }
+        }
+        
+        // Check mood options
+        const moodOptions = document.querySelectorAll('.mood-option');
+        if (moodOptions && moodOptions.length) {
+            for (const option of moodOptions) {
+                if (isElementUnderCursor(option)) {
+                    option.classList.add('hover-effect');
+                    currentHoveredElement = option;
+                    // Position-based tilt will be applied by the mousemove handler
+                    return;
+                }
+            }
+        }
+        
+        // Check other specific UI elements (buttons, etc.)
+        const otherElements = [
+            document.querySelector('.slider-handle'),
+            document.querySelector('.sync-button'),
+            ...document.querySelectorAll('.start-workout-btn'),
+            document.querySelector('.start-button')
+        ];
+        
+        for (const element of otherElements) {
+            if (element && isElementUnderCursor(element)) {
+                element.classList.add('hover-effect');
+                currentHoveredElement = element;
+                // Position-based tilt will be applied by the mousemove handler
                 return;
             }
         }
     }
     
-    // Update shoe tilt based on element position
-    function updateShoeTiltForElement(element) {
-        // Only update tilt if cursor tracking is active
-        if (!cursorTrackingActive) return;
+    // Track the last screen index to detect changes
+    let lastScreenIndex = currentScreenIndex;
+    
+    // Function to show a specific screen - with interactive elements refresh
+    function showScreen(index) {
+        screens.forEach((screen, i) => {
+            screen.classList.toggle('active', i === index);
+        });
+        currentScreenIndex = index;
         
-        // Get element position relative to viewport center
-        const rect = element.getBoundingClientRect();
-        const elementCenterX = rect.left + rect.width / 2;
-        const viewportCenterX = window.innerWidth / 2;
+        // Refresh interactive elements when screen changes
+        interactiveElements = refreshInteractiveElements();
+        lastScreenIndex = index;
         
-        // Clear existing tilt classes
-        shoeImage.classList.remove('tilt-left', 'tilt-right', 'tilt-forward');
+        // Create a small floor ripple to show the transition
+        createRippleEffect('forward');
         
-        // Determine tilt direction based on element position
-        if (elementCenterX < viewportCenterX - 100) {
-            // Element is on the left side
-            shoeImage.classList.add('tilt-left');
-            lastMouseTilt = 'left';
-        } else if (elementCenterX > viewportCenterX + 100) {
-            // Element is on the right side
-            shoeImage.classList.add('tilt-right');
-            lastMouseTilt = 'right';
-        } else {
-            // Element is in the center area
-            lastMouseTilt = null;
+        // Special screen initialization
+        if (index === 3) { // Workout screen
+            if (!workoutActive) {
+                startWorkout();
+                
+                // Create load sample data button
+                const indicator = document.querySelector('#workout-screen .indicator-text');
+                if (indicator) {
+                    indicator.innerHTML = `
+                        Tilt <span class="forward-indicator">forward ▼</span> to pause workout | 
+                        Press <span class="key" style="font-size: 0.8rem; padding: 0.1rem 0.3rem;">E</span> to end workout |
+                        Press <span class="key" style="font-size: 0.8rem; padding: 0.1rem 0.3rem;">S</span> to load sample data
+                    `;
+                }
+                
+                // Add load sample data key
+                document.addEventListener('keydown', (e) => {
+                    if ((e.key === 's' || e.key === 'S') && workoutActive) {
+                        loadSampleData();
+                    }
+                });
+            }
+        } else if (index === 4) { // Complete screen
+            if (workoutActive) {
+                endWorkout();
+                celebrateCompletion();
+            }
         }
     }
     
-    // Handle clicks on interactive elements
+    // Handle clicks on interactive elements - use the current tilt state
     document.addEventListener('click', (e) => {
         if (currentHoveredElement) {
-            // Create the shoe beam effect first
-            createShoeBeamEffect();
+            // Determine tap direction based on element position/type
+            let tapDirection = 'forward';
             
-            // Store the current tilt direction
-            const currentTilt = lastMouseTilt;
+            if (lastMouseTilt === 'left') {
+                tapDirection = 'left';
+            } else if (lastMouseTilt === 'right') {
+                tapDirection = 'right';
+            }
             
-            // Process element-specific actions with delay to wait for beam effect
+            // Apply the appropriate tap animation
+            handleTilt(tapDirection);
+            
+            // Process element-specific actions with delay to wait for animation
             setTimeout(() => {
                 if (currentHoveredElement.classList.contains('workout-option')) {
                     // Update selected workout option
@@ -401,10 +472,27 @@ document.addEventListener('DOMContentLoaded', () => {
                             showScreen(0); // Back to workout type selection
                         }, 3000);
                     }, 2000);
+                } else if (currentHoveredElement.classList.contains('start-workout-btn')) {
+                    // Handle start workout button clicks
+                    if (currentScreenIndex === 0) {
+                        // From workout type selection, go to goal selection
+                        showScreen(1);
+                        showVoiceFeedback(`Select your ${currentGoalType} goal`);
+                    } else if (currentScreenIndex === 1) {
+                        // From goal selection, go to countdown
+                        showScreen(2);
+                        startCountdown();
+                    }
+                } else if (currentHoveredElement.classList.contains('start-button')) {
+                    // Welcome screen start button
+                    instructions.style.display = 'none';
+                    showScreen(0); // Show workout type selection screen
+                    showVoiceFeedback('Select a workout type');
+                    
+                    // Preload assets for smooth UX
+                    preloadAssets();
                 }
-            }, 300); // Delay UI update to wait for haptic effect
-            
-            // Do NOT reset the shoe tilt state - leave it in current position
+            }, 250); // Delay UI update to match animation timing
         }
     });
     
@@ -626,46 +714,6 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 beam.remove();
             }, 800);
-        }
-    }
-    
-    // Function to show a specific screen
-    function showScreen(index) {
-        screens.forEach((screen, i) => {
-            screen.classList.toggle('active', i === index);
-        });
-        currentScreenIndex = index;
-        
-        // Create a small floor ripple to show the transition
-        createRippleEffect('forward');
-        
-        // Special screen initialization
-        if (index === 3) { // Workout screen
-            if (!workoutActive) {
-                startWorkout();
-                
-                // Create load sample data button
-                const indicator = document.querySelector('#workout-screen .indicator-text');
-                if (indicator) {
-                    indicator.innerHTML = `
-                        Tilt <span class="forward-indicator">forward ▼</span> to pause workout | 
-                        Press <span class="key" style="font-size: 0.8rem; padding: 0.1rem 0.3rem;">E</span> to end workout |
-                        Press <span class="key" style="font-size: 0.8rem; padding: 0.1rem 0.3rem;">S</span> to load sample data
-                    `;
-                }
-                
-                // Add load sample data key
-                document.addEventListener('keydown', (e) => {
-                    if ((e.key === 's' || e.key === 'S') && workoutActive) {
-                        loadSampleData();
-                    }
-                });
-            }
-        } else if (index === 4) { // Complete screen
-            if (workoutActive) {
-                endWorkout();
-                celebrateCompletion();
-            }
         }
     }
     
