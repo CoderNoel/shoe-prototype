@@ -232,8 +232,8 @@ body {
     width: 100%;
     max-width: 900px;
     z-index: 10;
-    margin-bottom: 50px; /* Reduced space for shoe */
-    transform: perspective(1000px) rotateX(10deg) translateZ(100px);
+    margin-bottom: 580px; /* Move projection further in front of shoe */
+    transform: perspective(1000px) rotateX(10deg) translateY(120px) translateZ(100px);
     transform-origin: center bottom;
 }
 
