@@ -26,6 +26,10 @@
                     <li><span class="key">Enter</span> Tilt foot forward</li>
                     <li><span class="key">P</span> Pause your workout</li>
                     <li><span class="key">R</span> Resume workout</li>
+                    <li><span class="key">E</span> End workout</li>
+                    <li><span class="key">S</span> Load sample data</li>
+                    <li><span class="key">M</span> Toggle mouse control</li>
+                    <li><span class="key">V</span> Toggle voice commands</li>
                 </ul>
                 <p>Look down to see your interface projected on the floor.</p>
                 <button id="startBtn" class="start-button">Begin Experience</button>
@@ -159,6 +163,29 @@
                                 </div>
                             </div>
                             
+                            <!-- Advanced 3D Progress Visualization -->
+                            <div class="advanced-visualization">
+                                <div class="visualization-container">
+                                    <div class="viz-title">Your Progress Path</div>
+                                    <div class="path-container">
+                                        <div id="progressPath" class="progress-path"></div>
+                                        <div id="userMarker" class="user-marker"></div>
+                                        <div id="targetMarker" class="target-marker"></div>
+                                        <div id="milestoneMarkers" class="milestone-markers"></div>
+                                    </div>
+                                    <div class="path-metrics">
+                                        <div class="metric">
+                                            <i class="fas fa-trophy"></i>
+                                            <span id="completionPercent">0%</span>
+                                        </div>
+                                        <div class="metric">
+                                            <i class="fas fa-fire-alt"></i>
+                                            <span id="calorieProgress">0/0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <div class="indicator-text">
                                 Tilt <span class="forward-indicator">forward ▼</span> to pause workout
                             </div>
@@ -267,16 +294,48 @@
             <!-- User's Shoe POV -->
             <div class="shoe-view">
                 <img id="shoeImage" src="assets/Shoe.png" alt="Smart shoe" class="shoe-image">
+                <div id="tiltIndicator" class="tilt-indicator">
+                    <div id="tiltArrow" class="tilt-arrow"></div>
+                </div>
             </div>
 
-            <!-- Foot tilt indicator -->
-            <div id="tiltIndicator" class="tilt-indicator">
-                <div id="tiltArrow" class="tilt-arrow"></div>
+            <!-- Voice Command Recognition -->
+            <div id="voiceCommandContainer" class="voice-command-container">
+                <div class="voice-command-indicator">
+                    <div id="voiceWaves" class="voice-waves">
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                    </div>
+                    <div class="voice-mic">
+                        <i class="fas fa-microphone"></i>
+                    </div>
+                </div>
+                <div id="voiceCommandText" class="voice-command-text">
+                    Say a command...
+                </div>
+                <div class="voice-command-help">
+                    <div id="voiceHelpToggle" class="voice-help-toggle">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <div id="voiceCommandHelp" class="voice-commands-list">
+                        <h4>Available Commands:</h4>
+                        <ul>
+                            <li>"Start workout"</li>
+                            <li>"Pause workout"</li>
+                            <li>"Resume workout"</li>
+                            <li>"End workout"</li>
+                            <li>"Show stats"</li>
+                            <li>"How am I doing?"</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-
-            <!-- Voice feedback simulation -->
-            <div id="voiceFeedback" class="voice-feedback" role="status">
-                <p id="voiceText"></p>
+            
+            <!-- Voice Feedback Area -->
+            <div id="voiceFeedback" class="voice-feedback">
+                <i class="fas fa-comment-alt"></i>
+                <p id="voiceText">Welcome to Smart Shoe</p>
             </div>
 
             <!-- On-screen controls for testing -->

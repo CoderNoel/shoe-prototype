@@ -1,5 +1,3 @@
-
-
 # Smart Shoe – Health & Fitness Interface Simulation
 
 ## 👟 Project Overview
@@ -12,7 +10,7 @@ To create a **hands-free workout experience** that:
 - Helps users **track workouts and vitals** in real time
 - Reduces dependency on smartphones during physical activity
 - Uses **natural foot gestures** (tilt left/right/forward) as input
-- Projects feedback into the user’s natural line of sight (floor level)
+- Projects feedback into the user's natural line of sight (floor level)
 - Supports accessibility, safety, and motivational design
 
 ## 🎯 Primary User Flow (Simulated)
@@ -37,32 +35,36 @@ To create a **hands-free workout experience** that:
 
 ### 4. Mid-Workout Alert
 - Trigger: High heart rate or inactivity
-- Choice: “Slow down” or “Ignore”
+- Choice: "Slow down" or "Ignore"
 - Interaction: Tilt to choose
 
 ### 5. Pause State
-- Message: “Paused. Tilt forward to resume or left to end early”
+- Message: "Paused. Tilt forward to resume or left to end early"
 
 ### 6. Workout Complete
 - Trophy animation + stats summary
-- Prompt: “How did you feel?” (Good, Okay, Tired)
-- Share: “Sync with Apple Health” (mocked)
+- Prompt: "How did you feel?" (Good, Okay, Tired)
+- Share: "Sync with Apple Health" (mocked)
 
 ## 🕹️ Controls (Keyboard Simulation)
 
 | Real Foot Tilt | Simulated Key | Description |
 |----------------|---------------|-------------|
-| Tilt Left      | `←` Arrow     | Scroll left, choose “No” |
-| Tilt Right     | `→` Arrow     | Scroll right, choose “Yes” |
+| Tilt Left      | `←` Arrow     | Scroll left, choose "No" |
+| Tilt Right     | `→` Arrow     | Scroll right, choose "Yes" |
 | Tilt Forward   | `Enter`       | Confirm / Select |
 | Pause          | `P` key       | Pause workout |
 | Resume         | `R` key       | Resume workout |
+| End Workout    | `E` key       | End current workout |
+| Sample Data    | `S` key       | Load sample workout data |
+| Mouse Control  | `M` key       | Toggle mouse control for tilting |
+| Voice Commands | `V` key       | Toggle voice command recognition |
 
 ## 🎨 UI/UX Design Guidance
 
 - 👁️‍🗨️ Interface elements should **appear as projections** on the floor (angle/shadow blur to imply projection)
 - 👟 Visual of **shoes in bottom-center** of screen for reference
-- 💬 Subtitles simulate voice feedback (e.g., “Workout starting now”)
+- 💬 Subtitles simulate voice feedback (e.g., "Workout starting now")
 - ⚠️ Pop-ups appear **low and center** like floor projections, not traditional modals
 - 🔄 Foot tilt indicators appear briefly when actions are taken (left/right/forward)
 - 📱 Avoid any touch buttons — this is **not** a smartphone app
@@ -122,6 +124,41 @@ smart-shoe-sim/
 
 ## 📝 Final Notes
 
-This simulation is NOT a full app, but a **proof-of-concept for usability testing**. Its purpose is to let users experience the interaction concept of our Smart Shoe’s Health & Fitness feature without needing the physical device.
+This simulation is NOT a full app, but a **proof-of-concept for usability testing**. Its purpose is to let users experience the interaction concept of our Smart Shoe's Health & Fitness feature without needing the physical device.
 
 Please design interactions that reflect **real-world cognitive flow**, and simulate projected UI elements as realistically as possible.
+
+## 🌟 Enhanced Features
+
+### Haptic Feedback Simulation
+- Visual haptic pulses provide feedback for each foot gesture
+- Subtle vibration simulation (when supported by device)
+- Different feedback patterns for left, right, and forward tilts
+
+### Advanced 3D Visualization
+- Immersive progress path visualization with 3D perspective
+- Animated path with milestone markers
+- Dynamic user position indicator that moves as you progress
+- Visual and auditory feedback at key milestones (50%, 100%)
+
+### Voice Command Recognition
+- Activate with 'V' key to simulate voice input
+- Available commands include:
+  - "Start workout"
+  - "Pause workout"
+  - "Resume workout"
+  - "End workout"
+  - "Show stats"
+  - "How am I doing?"
+- Visual feedback with animated sound waves
+
+### Adaptive UI Elements
+- Interface elements tilt and react to user interaction
+- Projection effects intensify based on workout intensity
+- Holographic elements with depth and perspective that simulates floor projection
+
+### Multiple Interaction Methods
+- Traditional keyboard controls
+- Mouse-based control (activate with 'M' key)
+- Voice commands (activate with 'V' key)
+- Tilt controls for natural foot interaction simulation

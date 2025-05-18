@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tiltArrow = document.getElementById('tiltArrow');
     const voiceFeedback = document.getElementById('voiceFeedback');
     const voiceText = document.getElementById('voiceText');
+    const floorProjection = document.querySelector('.floor-projection');
     
     // On-screen control buttons
     const leftBtn = document.getElementById('leftBtn');
@@ -23,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const goalUnit = document.getElementById('goalUnit');
     const sliderHandle = document.querySelector('.slider-handle');
     const sliderFill = document.querySelector('.slider-fill');
-    const confirmButton = document.querySelector('.confirm-button');
     
     // Workout screen elements
     const heartRateEl = document.getElementById('heartRate');
@@ -48,6 +48,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let calories = 0;
     let steps = 0;
     let distance = 0;
+    let mouseControlActive = false;
+    let lastMouseTilt = null;
+    let mouseControlTimeout = null;
+    let lastMilestoneStep = 0;
+    
+    // Sample data for quicker testing
+    const sampleData = {
+        workoutTime: 300000, // 5 minutes in milliseconds
+        steps: 500,
+        heartRate: 125,
+        calories: 75
+    };
     
     // Goal settings
     const goalSettings = {
@@ -106,6 +118,13 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'R':
                 if (workoutActive && workoutPaused) resumeWorkout();
                 break;
+            case 'e':
+            case 'E':
+                if (workoutActive) {
+                    endWorkout();
+                    showScreen(4); // Show completion screen
+                }
+                break;
         }
     });
     
@@ -114,13 +133,93 @@ document.addEventListener('DOMContentLoaded', () => {
     rightBtn.addEventListener('click', () => handleTilt('right'));
     selectBtn.addEventListener('click', () => handleTilt('forward'));
     
-    // Timer control buttons
-    document.getElementById('pauseBtn')?.addEventListener('click', pauseWorkout);
-    document.getElementById('stopBtn')?.addEventListener('click', () => {
-        if (confirm('Are you sure you want to end this workout?')) {
-            endWorkout();
+    // Mouse control for shoe movement
+    floorProjection.addEventListener('mousemove', (e) => {
+        if (!mouseControlActive) return;
+        
+        const rect = floorProjection.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const width = rect.width;
+        const centerThreshold = width * 0.1; // 10% of width for center area
+        
+        // Clear any pending timeouts
+        if (mouseControlTimeout) {
+            clearTimeout(mouseControlTimeout);
+        }
+        
+        if (x < (width / 2) - centerThreshold) {
+            // Left side of screen
+            if (lastMouseTilt !== 'left') {
+                shoeImage.classList.remove('tilt-right', 'tilt-forward');
+                shoeImage.classList.add('tilt-left');
+                lastMouseTilt = 'left';
+                
+                // Auto-reset after a delay
+                mouseControlTimeout = setTimeout(() => {
+                    shoeImage.classList.remove('tilt-left');
+                    lastMouseTilt = null;
+                }, 1000);
+            }
+        } else if (x > (width / 2) + centerThreshold) {
+            // Right side of screen
+            if (lastMouseTilt !== 'right') {
+                shoeImage.classList.remove('tilt-left', 'tilt-forward');
+                shoeImage.classList.add('tilt-right');
+                lastMouseTilt = 'right';
+                
+                // Auto-reset after a delay
+                mouseControlTimeout = setTimeout(() => {
+                    shoeImage.classList.remove('tilt-right');
+                    lastMouseTilt = null;
+                }, 1000);
+            }
+        } else {
+            // Center area
+            if (lastMouseTilt !== null) {
+                shoeImage.classList.remove('tilt-left', 'tilt-right', 'tilt-forward');
+                lastMouseTilt = null;
+            }
         }
     });
+    
+    // Mouse click to perform selected tilt action
+    floorProjection.addEventListener('click', () => {
+        if (!mouseControlActive) return;
+        
+        if (lastMouseTilt === 'left') {
+            handleTilt('left');
+        } else if (lastMouseTilt === 'right') {
+            handleTilt('right');
+        } else {
+            handleTilt('forward');
+        }
+    });
+    
+    // Toggle mouse control
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'm' || e.key === 'M') {
+            mouseControlActive = !mouseControlActive;
+            showVoiceFeedback(mouseControlActive ? 'Mouse control activated' : 'Mouse control deactivated');
+        }
+    });
+    
+    // Load sample data button - added to the workout screen
+    const loadSampleData = () => {
+        if (!workoutActive) return;
+        
+        // Set workout elapsed time to sample value
+        workoutElapsedTime = sampleData.workoutTime;
+        
+        // Update stats with sample data
+        steps = sampleData.steps;
+        heartRate = sampleData.heartRate;
+        calories = sampleData.calories;
+        distance = (steps * 0.0007).toFixed(2);
+        
+        // Update UI
+        updateWorkoutStats();
+        showVoiceFeedback('Sample data loaded');
+    };
     
     // Handle foot tilt (left, right, forward)
     function handleTilt(direction) {
@@ -146,6 +245,9 @@ document.addEventListener('DOMContentLoaded', () => {
             } else { // forward
                 tiltArrow.style.transform = 'rotate(0)';
             }
+            
+            // Simulate haptic feedback
+            simulateHapticFeedback(direction);
             
             // Process action based on current screen
             processScreenAction(direction);
@@ -181,6 +283,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     }
     
+    // Simulate haptic feedback for different tilt actions
+    function simulateHapticFeedback(direction) {
+        // Check if vibration API is supported
+        if (navigator.vibrate) {
+            switch (direction) {
+                case 'left':
+                    // Short pulse for left tilt
+                    navigator.vibrate(30);
+                    break;
+                case 'right':
+                    // Short pulse for right tilt
+                    navigator.vibrate(30);
+                    break;
+                case 'forward':
+                    // Double pulse for selection/confirmation
+                    navigator.vibrate([40, 30, 40]);
+                    break;
+                default:
+                    // Default short vibration
+                    navigator.vibrate(20);
+            }
+        }
+        
+        // Visual haptic feedback (for devices without vibration support)
+        const hapticEffect = document.createElement('div');
+        hapticEffect.className = `haptic-effect ${direction}-haptic`;
+        document.querySelector('.floor-projection').appendChild(hapticEffect);
+        
+        // Remove after animation
+        setTimeout(() => {
+            hapticEffect.remove();
+        }, 300);
+    }
+    
     // Function to show a specific screen
     function showScreen(index) {
         screens.forEach((screen, i) => {
@@ -195,6 +331,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (index === 3) { // Workout screen
             if (!workoutActive) {
                 startWorkout();
+                
+                // Create load sample data button
+                const indicator = document.querySelector('#workout-screen .indicator-text');
+                if (indicator) {
+                    indicator.innerHTML = `
+                        Tilt <span class="forward-indicator">forward ▼</span> to pause workout | 
+                        Press <span class="key" style="font-size: 0.8rem; padding: 0.1rem 0.3rem;">E</span> to end workout |
+                        Press <span class="key" style="font-size: 0.8rem; padding: 0.1rem 0.3rem;">S</span> to load sample data
+                    `;
+                }
+                
+                // Add load sample data key
+                document.addEventListener('keydown', (e) => {
+                    if ((e.key === 's' || e.key === 'S') && workoutActive) {
+                        loadSampleData();
+                    }
+                });
             }
         } else if (index === 4) { // Complete screen
             if (workoutActive) {
@@ -465,6 +618,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 showHealthAlert('High heart rate detected. Consider slowing down.');
             }
         }, 10000 + Math.random() * 10000);
+        
+        // Remind about ending workout after 30 seconds
+        setTimeout(() => {
+            if (workoutActive && !workoutPaused) {
+                showVoiceFeedback('Press E to end your workout at any time');
+            }
+        }, 30000);
     }
     
     // Pause workout
@@ -509,8 +669,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Hide pause overlay if visible
         document.getElementById('pauseOverlay').classList.remove('active');
         
-        // Update final stats
-        document.querySelector('#finalCalories').textContent = calories;
+        // Update final stats with values from workout or sample data
+        const statHeartRate = document.querySelector('.stat-circle.heart .stat-value');
+        const statSteps = document.querySelector('.stat-circle.steps .stat-value');
+        const finalCalories = document.getElementById('finalCalories');
+        
+        if (statHeartRate) statHeartRate.textContent = `${heartRate} bpm`;
+        if (statSteps) statSteps.textContent = steps;
+        if (finalCalories) finalCalories.textContent = calories;
         
         showVoiceFeedback('Workout completed');
     }
@@ -591,65 +757,137 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Update workout stats with simulated values
+    // Update workout stats - steps, heart rate, distance, etc.
     function updateWorkoutStats() {
-        if (!workoutActive) return;
+        // Calculate distance based on steps (very rough estimation)
+        distance = (steps * 0.0007).toFixed(2);
         
-        // Calculate elapsed time
-        let currentElapsedTime = workoutElapsedTime;
-        if (!workoutPaused) {
-            currentElapsedTime += (new Date() - workoutStartTime);
-        }
-        
-        const elapsedMinutes = Math.floor(currentElapsedTime / 60000);
-        
-        // Update time display
-        timeElapsedEl.textContent = `${elapsedMinutes} min`;
-        
-        // Get goal and calculate remaining time
-        const goalType = currentGoalType;
-        const settings = goalSettings[goalType];
-        const goalValue = calculateValueFromSlider(sliderValue, settings);
-        
-        if (goalType === 'duration') {
-            const remainingMinutes = Math.max(0, goalValue - elapsedMinutes);
-            timeRemainingEl.textContent = `${remainingMinutes} min`;
-            
-            // End workout if time is up
-            if (remainingMinutes <= 0 && workoutActive) {
-                showScreen(4); // Show completion screen
-            }
-        }
-        
-        // Update steps (simulate steady pace with small random variations)
-        const baseStepRate = 100; // steps per minute
-        const randomVariation = Math.floor(Math.random() * 10) - 5; // -5 to +5
-        const newSteps = Math.floor(elapsedMinutes * baseStepRate) + randomVariation;
-        steps = newSteps;
+        // Update DOM elements with current stats
+        heartRateEl.textContent = `${heartRate} bpm`;
+        caloriesEl.textContent = `${calories} kcal`;
         stepCountEl.textContent = `${steps} steps`;
-        
-        // Update distance (based on steps)
-        distance = (steps * 0.0007).toFixed(2); // Approximate conversion
         distanceEl.textContent = `${distance} km`;
         
-        // Update heart rate (start at 80, increase steadily, then plateau with small variations)
-        const baseHeartRate = 80 + Math.min(60, elapsedMinutes * 5);
-        const heartRateVariation = Math.floor(Math.random() * 6) - 3; // -3 to +3
-        heartRate = baseHeartRate + heartRateVariation;
-        heartRateEl.textContent = `${heartRate} bpm`;
+        // Set body temperature based on heart rate (simple simulation)
+        const temp = 36.5 + (heartRate - 80) * 0.01;
+        tempEl.textContent = `${temp.toFixed(1)}°C`;
         
-        // Update calories (based on heartrate and time)
-        // Simple formula: higher heart rate burns more calories
-        calories = Math.floor((heartRate - 70) * 0.1 * elapsedMinutes);
-        caloriesEl.textContent = `${calories} kcal`;
+        // Calculate pace (km/h) - simple calculation for simulation
+        const paceElement = document.getElementById('pace');
+        const hoursElapsed = workoutElapsedTime / 3600000; // Convert ms to hours
+        const pace = hoursElapsed > 0 ? (distance / hoursElapsed).toFixed(1) : '0.0';
+        paceElement.textContent = `${pace} km/h`;
         
-        // End workout if calorie goal reached
-        if (goalType === 'calories' && calories >= goalValue && workoutActive) {
-            showScreen(4); // Show completion screen
-        }
+        // Update workout time displays
+        const minutesElapsed = Math.floor(workoutElapsedTime / 60000);
+        timeElapsedEl.textContent = `${minutesElapsed} min`;
         
         // Update progress visualization
-        updateProgressVisualization(steps, 5000); // Assuming 5000 steps target
+        const targetSteps = 5000; // Example target
+        updateProgressVisualization(steps, targetSteps);
+
+        // Update advanced 3D progress visualization
+        updateAdvancedVisualization(steps, targetSteps);
+        
+        // If heart rate goes above 140, show health alert
+        if (heartRate > 140 && !document.getElementById('healthAlert').classList.contains('active')) {
+            showHealthAlert('High heart rate detected! Consider slowing down');
+        }
+        
+        // Celebration at milestones (every 1000 steps)
+        if (steps > 0 && steps % 1000 === 0 && steps !== lastMilestoneStep) {
+            celebrateMilestone(steps);
+            lastMilestoneStep = steps;
+        }
+    }
+    
+    // Update advanced 3D progress visualization
+    function updateAdvancedVisualization(currentSteps, targetSteps) {
+        // Calculate progress percentage
+        const progressPercent = Math.min((currentSteps / targetSteps) * 100, 100);
+        
+        // Update user marker position
+        const userMarker = document.getElementById('userMarker');
+        const pathWidth = 90; // Path is 90% of container width (see CSS)
+        userMarker.style.left = `${5 + (pathWidth * progressPercent / 100)}%`;
+        
+        // Update completion percentage text
+        const completionPercent = document.getElementById('completionPercent');
+        completionPercent.textContent = `${Math.round(progressPercent)}%`;
+        
+        // Update calorie progress
+        const calorieProgress = document.getElementById('calorieProgress');
+        const calorieTarget = 300; // Example target
+        calorieProgress.textContent = `${calories}/${calorieTarget}`;
+        
+        // Clear existing milestones
+        const milestoneContainer = document.getElementById('milestoneMarkers');
+        milestoneContainer.innerHTML = '';
+        
+        // Add milestone markers (every 20% of target)
+        for (let i = 1; i < 5; i++) {
+            const milestone = document.createElement('div');
+            milestone.className = 'milestone';
+            const milestonePosition = 5 + (pathWidth * (i * 20) / 100);
+            milestone.style.left = `${milestonePosition}%`;
+            
+            // If we've passed this milestone, add a class to style it differently
+            if (progressPercent >= i * 20) {
+                milestone.classList.add('reached');
+            }
+            
+            milestoneContainer.appendChild(milestone);
+        }
+        
+        // Animation effects based on progress
+        const visualizationContainer = document.querySelector('.visualization-container');
+        
+        // More advanced 3D effect as you progress
+        const progressRotation = 15 - (progressPercent / 100) * 5; // Gradually reduce the rotation from 15 to 10 degrees
+        visualizationContainer.style.transform = `rotateX(${progressRotation}deg)`;
+        
+        // Increase glow effect as you approach target
+        const glowIntensity = Math.min(5 + (progressPercent / 100) * 15, 20);
+        userMarker.style.boxShadow = `0 0 ${glowIntensity}px var(--primary-color)`;
+        
+        // Add shake effect when reaching exact 50% mark
+        if (Math.abs(progressPercent - 50) < 1 && !userMarker.classList.contains('milestone-pulse')) {
+            userMarker.classList.add('milestone-pulse');
+            setTimeout(() => {
+                userMarker.classList.remove('milestone-pulse');
+            }, 1000);
+            
+            // Voice feedback at 50%
+            showVoiceFeedback("Halfway there! Keep going!");
+        }
+        
+        // Celebrate when reaching 100%
+        if (progressPercent >= 100 && !userMarker.classList.contains('celebration')) {
+            userMarker.classList.add('celebration');
+            
+            // Add celebration effect to path
+            const progressPath = document.getElementById('progressPath');
+            progressPath.classList.add('path-complete');
+            
+            // Voice feedback at 100%
+            showVoiceFeedback("Target reached! Excellent work!");
+        }
+    }
+    
+    // Celebration effect for reaching milestones
+    function celebrateMilestone(steps) {
+        // Create a celebration ripple
+        const ripple = document.createElement('div');
+        ripple.className = 'ripple-effect';
+        ripple.style.left = `${30 + Math.random() * 40}%`;
+        ripple.style.backgroundColor = getRandomColor();
+        document.querySelector('.floor-projection').appendChild(ripple);
+        
+        // Celebrate with visual effects
+        celebrateCompletion();
+        
+        // Show voice feedback
+        showVoiceFeedback(`Milestone reached: ${steps} steps`);
     }
     
     // Update progress visualization
@@ -688,12 +926,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Show voice feedback
     function showVoiceFeedback(message) {
-        voiceText.textContent = message;
-        voiceFeedback.classList.add('active');
+        const voiceEl = document.getElementById('voiceFeedback');
+        const voiceTextEl = document.getElementById('voiceText');
         
-        // Remove active class after 3 seconds
+        voiceTextEl.textContent = message;
+        voiceEl.classList.add('active');
+        
         setTimeout(() => {
-            voiceFeedback.classList.remove('active');
+            voiceEl.classList.remove('active');
         }, 3000);
     }
     
@@ -718,5 +958,156 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             alertEl.classList.remove('active');
         }, 5000);
+    }
+    
+    // Add instructions for mouse and keyboard controls
+    showVoiceFeedback('Welcome! Use arrow keys to navigate or press M to activate mouse control');
+
+    // Voice command recognition simulation
+    const voiceCommandContainer = document.getElementById('voiceCommandContainer');
+    const voiceWaves = document.getElementById('voiceWaves');
+    const voiceCommandText = document.getElementById('voiceCommandText');
+    const voiceHelpToggle = document.getElementById('voiceHelpToggle');
+    
+    // Toggle voice recognition with V key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'v' || e.key === 'V') {
+            toggleVoiceRecognition();
+        }
+    });
+    
+    // Simulate voice command recognition
+    function toggleVoiceRecognition() {
+        const isActive = voiceCommandContainer.classList.toggle('voice-active');
+        
+        if (isActive) {
+            voiceCommandText.textContent = "Listening...";
+            showVoiceFeedback("Voice recognition activated");
+            
+            // Simulate processing after a short delay
+            setTimeout(() => {
+                simulateVoiceCommand();
+            }, 2000);
+        } else {
+            voiceCommandText.textContent = "Say a command...";
+            showVoiceFeedback("Voice recognition deactivated");
+        }
+    }
+    
+    // Simulate voice command processing
+    function simulateVoiceCommand() {
+        // Only process if still active
+        if (!voiceCommandContainer.classList.contains('voice-active')) {
+            return;
+        }
+        
+        // Simulate thinking
+        voiceCommandText.textContent = "Processing...";
+        
+        // Random commands to simulate
+        const commands = [
+            "start workout",
+            "pause workout",
+            "resume workout",
+            "end workout",
+            "show stats",
+            "how am I doing"
+        ];
+        
+        // Pick a random command
+        const randomIndex = Math.floor(Math.random() * commands.length);
+        const command = commands[randomIndex];
+        
+        // Show recognized command
+        setTimeout(() => {
+            voiceCommandText.textContent = `"${command}"`;
+            
+            // Process the command
+            processVoiceCommand(command);
+            
+            // Reset after processing
+            setTimeout(() => {
+                voiceCommandContainer.classList.remove('voice-active');
+                voiceCommandText.textContent = "Say a command...";
+            }, 2000);
+        }, 1000);
+    }
+    
+    // Process voice commands
+    function processVoiceCommand(command) {
+        switch (command.toLowerCase()) {
+            case "start workout":
+                if (currentScreenIndex < 3) {
+                    showVoiceFeedback("Starting workout...");
+                    startCountdown();
+                } else {
+                    showVoiceFeedback("Workout already in progress");
+                }
+                break;
+                
+            case "pause workout":
+                if (workoutActive && !workoutPaused) {
+                    showVoiceFeedback("Pausing workout");
+                    pauseWorkout();
+                } else {
+                    showVoiceFeedback("No active workout to pause");
+                }
+                break;
+                
+            case "resume workout":
+                if (workoutActive && workoutPaused) {
+                    showVoiceFeedback("Resuming workout");
+                    resumeWorkout();
+                } else {
+                    showVoiceFeedback("No paused workout to resume");
+                }
+                break;
+                
+            case "end workout":
+                if (workoutActive) {
+                    showVoiceFeedback("Ending workout");
+                    endWorkout();
+                    showScreen(4); // Show completion screen
+                } else {
+                    showVoiceFeedback("No active workout to end");
+                }
+                break;
+                
+            case "show stats":
+                if (workoutActive) {
+                    const statsSummary = `Current stats: ${steps} steps, ${distance} km, ${heartRate} bpm, ${calories} calories burned`;
+                    showVoiceFeedback(statsSummary);
+                } else {
+                    showVoiceFeedback("No active workout stats to show");
+                }
+                break;
+                
+            case "how am I doing":
+                if (workoutActive) {
+                    const progress = (steps / 5000) * 100; // Assuming 5000 steps target
+                    let feedback;
+                    
+                    if (progress < 25) {
+                        feedback = "Just getting started. Keep going!";
+                    } else if (progress < 50) {
+                        feedback = "You're making good progress!";
+                    } else if (progress < 75) {
+                        feedback = "Great work! More than halfway there.";
+                    } else if (progress < 100) {
+                        feedback = "Almost there! Strong finish!";
+                    } else {
+                        feedback = "Amazing! You've reached your target!";
+                    }
+                    
+                    showVoiceFeedback(feedback);
+                } else {
+                    showVoiceFeedback("No active workout to evaluate");
+                }
+                break;
+                
+            default:
+                showVoiceFeedback("Command not recognized");
+                break;
+        }
     }
 });
