@@ -380,6 +380,28 @@ body {
     }
 }
 
+/* Custom animation for ripple coming from beneath the shoe */
+@keyframes rippleFromShoe {
+    0% {
+        width: 15px;
+        height: 15px;
+        opacity: 0.9;
+        box-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
+    }
+    40% {
+        opacity: 0.8;
+        width: 120px;
+        height: 60px;
+        box-shadow: 0 0 30px var(--primary-color), 0 0 60px var(--primary-color);
+    }
+    100% {
+        width: 350px;
+        height: 120px; /* Flatter elliptical shape */
+        opacity: 0;
+        box-shadow: 0 0 40px var(--primary-color), 0 0 80px var(--primary-color);
+    }
+}
+
 /* Haptic feedback visual effects */
 .haptic-effect {
     position: fixed;
@@ -549,7 +571,7 @@ body {
     width: 350px;
     height: 120px;
     left: 50%;
-    bottom: 20px;
+    bottom: 150px; /* Higher position to appear at shoe tip */
     transform: translate(-50%, 0);
     border-radius: 50%;
     background: radial-gradient(ellipse at center top, 

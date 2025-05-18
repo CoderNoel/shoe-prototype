@@ -189,8 +189,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // Mouse click to perform selected tilt action
-    floorProjection.addEventListener('click', () => {
+    floorProjection.addEventListener('click', (e) => {
         if (!mouseControlActive) return;
+        
+        // Check if the click originated from value buttons
+        const clickedValueButton = e.target.closest('.value-btn');
+        if (clickedValueButton) {
+            return; // Don't process tilt actions for value button clicks
+        }
         
         if (lastMouseTilt === 'left') {
             handleTilt('left');
@@ -370,6 +376,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Function to show a specific screen - with interactive elements refresh
     function showScreen(index) {
+        console.log("Showing screen:", index);
+        
         screens.forEach((screen, i) => {
             screen.classList.toggle('active', i === index);
         });
@@ -412,88 +420,171 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Handle clicks on interactive elements - use the current tilt state
+    // Handle clicks on interactive elements - simplified for reliability
     document.addEventListener('click', (e) => {
-        if (currentHoveredElement) {
-            // Determine tap direction based on element position/type
-            let tapDirection = 'forward';
-            
-            if (lastMouseTilt === 'left') {
-                tapDirection = 'left';
-            } else if (lastMouseTilt === 'right') {
-                tapDirection = 'right';
+        console.log("Click detected on:", e.target);
+        
+        // Find the clicked element or its closest interactive parent
+        let target = e.target;
+        let isInteractive = false;
+        
+        // Check if this is an interactive element or a child of one
+        // Define element types for clarity
+        const WORKOUT_OPTION = 'workout-option';
+        const GOAL_TAB = 'goal-tab';
+        const VALUE_BTN = 'value-btn';
+        const SLIDER_HANDLE = 'slider-handle';
+        const MOOD_OPTION = 'mood-option';
+        const SYNC_BUTTON = 'sync-button';
+        const START_WORKOUT_BTN = 'start-workout-btn';
+        const START_BUTTON = 'start-button';
+        
+        // Debugging - log current screen
+        console.log("Current screen index:", currentScreenIndex);
+        
+        // Find the exact interactive element that was clicked
+        const workoutOption = target.closest('.' + WORKOUT_OPTION);
+        const goalTab = target.closest('.' + GOAL_TAB);
+        const valueBtn = target.closest('.' + VALUE_BTN);
+        const sliderHandle = target.closest('.' + SLIDER_HANDLE);
+        const moodOption = target.closest('.' + MOOD_OPTION);
+        const syncButton = target.closest('.' + SYNC_BUTTON);
+        const startWorkoutBtn = target.closest('.' + START_WORKOUT_BTN);
+        const startButton = target.closest('.' + START_BUTTON);
+        
+        // Determine which element was clicked (if any)
+        if (workoutOption) {
+            console.log("Workout option clicked");
+            // Update selected workout option - ONLY SELECT, DON'T START
+            selectedWorkoutOption = Array.from(document.querySelectorAll('.' + WORKOUT_OPTION)).indexOf(workoutOption);
+            updateSelectedWorkoutOption();
+            showVoiceFeedback(getWorkoutTypeName(selectedWorkoutOption));
+            // Prevent any other actions
+            e.stopPropagation();
+            return;
+        } 
+        
+        else if (goalTab) {
+            console.log("Goal tab clicked");
+            // Update selected goal tab - ONLY SELECT, DON'T PROCEED
+            selectedGoalTab = Array.from(document.querySelectorAll('.' + GOAL_TAB)).indexOf(goalTab);
+            updateSelectedGoalTab();
+            // Prevent any other actions
+            e.stopPropagation();
+            return;
+        } 
+        
+        else if (valueBtn) {
+            console.log("Value button clicked");
+            // Handle value increase/decrease
+            if (valueBtn.classList.contains('decrease')) {
+                decreaseSliderValue();
+            } else if (valueBtn.classList.contains('increase')) {
+                increaseSliderValue();
             }
             
-            // Apply the appropriate tap animation
-            handleTilt(tapDirection);
+            // Create beam effect
+            createShoeBeamEffect();
             
-            // Process element-specific actions with delay to wait for animation
+            // Reset lastMouseTilt to prevent unintended navigation
+            lastMouseTilt = null;
+            
+            // Prevent any other actions
+            e.stopPropagation();
+            e.preventDefault();
+            return;
+        } 
+        
+        else if (sliderHandle) {
+            console.log("Slider handle clicked");
+            // Focus slider handle
+            sliderHandle.focus();
+            showVoiceFeedback('Adjust goal value with left and right tilts');
+            // Prevent any other actions
+            e.stopPropagation();
+            return;
+        } 
+        
+        else if (moodOption) {
+            console.log("Mood option clicked");
+            // Update selected mood
+            const moodOptions = document.querySelectorAll('.' + MOOD_OPTION);
+            moodOptions.forEach(option => option.classList.remove('selected'));
+            moodOption.classList.add('selected');
+            showVoiceFeedback(`Mood: ${moodOption.getAttribute('data-mood')}`);
+            // Prevent any other actions
+            e.stopPropagation();
+            return;
+        } 
+        
+        else if (syncButton) {
+            console.log("Sync button clicked");
+            // Sync with Apple Health (simulated)
+            syncButton.style.backgroundColor = '#4fd1ff';
+            syncButton.style.color = '#0a0e1a';
+            syncButton.style.boxShadow = '0 0 18px 4px #4fd1ff88';
+            
+            showVoiceFeedback('Syncing with Apple Health...');
+            
             setTimeout(() => {
-                if (currentHoveredElement.classList.contains('workout-option')) {
-                    // Update selected workout option
-                    selectedWorkoutOption = Array.from(workoutOptions).indexOf(currentHoveredElement);
-                    updateSelectedWorkoutOption();
-                    showVoiceFeedback(getWorkoutTypeName(selectedWorkoutOption));
-                } else if (currentHoveredElement.classList.contains('goal-tab')) {
-                    // Update selected goal tab
-                    selectedGoalTab = Array.from(goalTabs).indexOf(currentHoveredElement);
-                    updateSelectedGoalTab();
-                } else if (currentHoveredElement.classList.contains('value-btn')) {
-                    // Handle value increase/decrease
-                    if (currentHoveredElement.classList.contains('decrease')) {
-                        decreaseSliderValue();
-                    } else if (currentHoveredElement.classList.contains('increase')) {
-                        increaseSliderValue();
-                    }
-                } else if (currentHoveredElement.classList.contains('slider-handle')) {
-                    // Focus slider handle
-                    sliderHandle.focus();
-                    showVoiceFeedback('Adjust goal value with left and right tilts');
-                } else if (currentHoveredElement.classList.contains('mood-option')) {
-                    // Update selected mood
-                    const moodOptions = document.querySelectorAll('.mood-option');
-                    moodOptions.forEach(option => option.classList.remove('selected'));
-                    currentHoveredElement.classList.add('selected');
-                    showVoiceFeedback(`Mood: ${currentHoveredElement.getAttribute('data-mood')}`);
-                } else if (currentHoveredElement.classList.contains('sync-button')) {
-                    // Sync with Apple Health (simulated)
-                    currentHoveredElement.style.backgroundColor = '#4fd1ff';
-                    currentHoveredElement.style.color = '#0a0e1a';
-                    currentHoveredElement.style.boxShadow = '0 0 18px 4px #4fd1ff88';
-                    
-                    showVoiceFeedback('Syncing with Apple Health...');
-                    
-                    setTimeout(() => {
-                        showVoiceFeedback('Workout data synchronized successfully');
-                        
-                        // Reset to start
-                        setTimeout(() => {
-                            resetWorkout();
-                            showScreen(0); // Back to workout type selection
-                        }, 3000);
-                    }, 2000);
-                } else if (currentHoveredElement.classList.contains('start-workout-btn')) {
-                    // Handle start workout button clicks
-                    if (currentScreenIndex === 0) {
-                        // From workout type selection, go to goal selection
-                        showScreen(1);
-                        showVoiceFeedback(`Select your ${currentGoalType} goal`);
-                    } else if (currentScreenIndex === 1) {
-                        // From goal selection, go to countdown
-                        showScreen(2);
-                        startCountdown();
-                    }
-                } else if (currentHoveredElement.classList.contains('start-button')) {
-                    // Welcome screen start button
-                    instructions.style.display = 'none';
-                    showScreen(0); // Show workout type selection screen
-                    showVoiceFeedback('Select a workout type');
-                    
-                    // Preload assets for smooth UX
-                    preloadAssets();
+                showVoiceFeedback('Workout data synchronized successfully');
+                
+                // Reset to start
+                setTimeout(() => {
+                    resetWorkout();
+                    showScreen(0); // Back to workout type selection
+                }, 2000);
+            }, 1000);
+            // Prevent any other actions
+            e.stopPropagation();
+            return;
+        } 
+        
+        else if (startWorkoutBtn) {
+            console.log("Start workout button clicked");
+            // This is the ONLY element that should trigger workout start or screen changes
+            handleTilt('forward'); // Apply animation
+            
+            // Small delay to allow animation to be visible
+            setTimeout(() => {
+                if (currentScreenIndex === 0) {
+                    // From workout type selection, go to goal selection
+                    console.log("Moving to goal selection screen");
+                    showScreen(1);
+                    showVoiceFeedback(`Select your ${currentGoalType} goal`);
+                } else if (currentScreenIndex === 1) {
+                    // From goal selection, go to countdown
+                    console.log("Moving to countdown screen");
+                    showScreen(2);
+                    startCountdown();
                 }
-            }, 250); // Delay UI update to match animation timing
+            }, 100);
+            // Prevent any other actions
+            e.stopPropagation();
+            return;
+        } 
+        
+        else if (startButton) {
+            console.log("Start button clicked (welcome screen)");
+            // Welcome screen start button
+            handleTilt('forward'); // Apply animation
+            
+            // Small delay to allow animation to be visible
+            setTimeout(() => {
+                document.getElementById('instructions').style.display = 'none';
+                showScreen(0); // Show workout type selection screen
+                showVoiceFeedback('Select a workout type');
+                
+                // Preload assets for smooth UX
+                preloadAssets();
+            }, 100);
+            // Prevent any other actions
+            e.stopPropagation();
+            return;
         }
+        
+        // If we got here, no interactive element was clicked
+        console.log("No interactive element clicked");
     });
     
     // Add value button event listeners
@@ -509,9 +600,30 @@ document.addEventListener('DOMContentLoaded', () => {
             lastMouseTilt = 'right';
         });
         
-        increaseValueBtn.addEventListener('click', () => {
+        increaseValueBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent event bubbling to the floorProjection click handler
+            e.preventDefault(); // Prevent default behavior
+            
+            // First remove animation classes to ensure new animation plays
+            shoeImage.classList.remove('tilt-right-tap', 'tilt-left-tap');
+            
+            // Force a reflow to ensure the browser recognizes the removal
+            void shoeImage.offsetWidth;
+            
+            // Apply right tap animation
+            shoeImage.classList.add('tilt-right-tap');
+            
+            // Value change and effects
             increaseSliderValue();
             createShoeBeamEffect();
+            
+            // Create ripple effect directly under the shoe
+            createRippleEffect('right', true);
+            
+            // Reset lastMouseTilt to prevent unintended navigation
+            setTimeout(() => {
+                lastMouseTilt = null;
+            }, 10);
         });
     }
     
@@ -524,9 +636,30 @@ document.addEventListener('DOMContentLoaded', () => {
             lastMouseTilt = 'left';
         });
         
-        decreaseValueBtn.addEventListener('click', () => {
+        decreaseValueBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent event bubbling to the floorProjection click handler
+            e.preventDefault(); // Prevent default behavior
+            
+            // First remove animation classes to ensure new animation plays
+            shoeImage.classList.remove('tilt-right-tap', 'tilt-left-tap');
+            
+            // Force a reflow to ensure the browser recognizes the removal
+            void shoeImage.offsetWidth;
+            
+            // Apply left tap animation
+            shoeImage.classList.add('tilt-left-tap');
+            
+            // Value change and effects
             decreaseSliderValue();
             createShoeBeamEffect();
+            
+            // Create ripple effect directly under the shoe
+            createRippleEffect('left', true);
+            
+            // Reset lastMouseTilt to prevent unintended navigation
+            setTimeout(() => {
+                lastMouseTilt = null;
+            }, 10);
         });
     }
     
@@ -573,8 +706,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Force browser to recognize the removal before adding
         setTimeout(() => {
-            // Create ripple effect on floor (projection simulation)
-            createRippleEffect(direction);
+            // Create ripple effect on floor (projection simulation) - position under shoe
+            createRippleEffect(direction, true);
             
             // Show tilt indicator
             tiltIndicator.style.opacity = '1';
@@ -643,17 +776,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Create ripple effect to simulate projection interaction
-    function createRippleEffect(direction) {
+    function createRippleEffect(direction, underShoe = false) {
         const ripple = document.createElement('div');
         ripple.className = 'ripple-effect';
         
-        // Position based on direction
-        if (direction === 'left') {
-            ripple.style.left = '30%';
-        } else if (direction === 'right') {
-            ripple.style.left = '70%';
-        } else { // forward
-            ripple.style.left = '50%';
+        if (underShoe) {
+            // Position based on shoe tilt direction - at the tip where it would contact the floor
+            if (direction === 'left') {
+                // Appear from left side tip of shoe 
+                ripple.style.left = '45%';
+                ripple.style.bottom = '150px'; // Higher position, at the tip of the shoe
+            } else if (direction === 'right') {
+                // Appear from right side tip of shoe
+                ripple.style.left = '60%';
+                ripple.style.bottom = '150px'; // Higher position, at the tip of the shoe
+            } else { // forward
+                // Appear from center front tip of shoe
+                ripple.style.left = '50%';
+                ripple.style.bottom = '180px'; // Higher position, at the tip of the shoe when pointing forward
+            }
+            
+            // Make ripple appear to come from the shoe impact
+            ripple.style.transform = 'translate(-50%, 0) scale(0.3)';
+            ripple.style.animation = 'rippleFromShoe 1s ease-out forwards';
+        } else {
+            // Regular positioning based on direction
+            if (direction === 'left') {
+                ripple.style.left = '30%';
+            } else if (direction === 'right') {
+                ripple.style.left = '70%';
+            } else { // forward
+                ripple.style.left = '50%';
+            }
         }
         
         // Add to DOM
@@ -699,11 +853,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
     }
     
-    // Create a beam effect around the shoe to indicate selection
+    // Create a beam effect at the shoe tip to indicate selection
     function createShoeBeamEffect() {
-        // Create a circular beam effect around the shoe
+        // Create a beam effect matching current shoe orientation
         const beam = document.createElement('div');
         beam.className = 'shoe-beam-effect';
+        
+        // Check current shoe tilt to adjust beam position
+        if (shoeImage.classList.contains('tilt-left') || shoeImage.classList.contains('tilt-left-tap')) {
+            // Left tilt - shift beam left and adjust height to match tip
+            beam.style.transform = 'translate(-60%, 0)';
+            beam.style.left = '45%';
+            beam.style.bottom = '145px'; // Align with left-tilted shoe tip
+        } else if (shoeImage.classList.contains('tilt-right') || shoeImage.classList.contains('tilt-right-tap')) {
+            // Right tilt - shift beam right and adjust height to match tip
+            beam.style.transform = 'translate(-40%, 0)';
+            beam.style.left = '55%';
+            beam.style.bottom = '145px'; // Align with right-tilted shoe tip
+        } else if (shoeImage.classList.contains('tilt-forward')) {
+            // Forward tilt - slightly higher position
+            beam.style.bottom = '180px'; // Align with forward-pointing shoe tip
+        }
+        // Default center position set in CSS
         
         // Add to DOM at the shoe view level
         const shoeView = document.querySelector('.shoe-view');
