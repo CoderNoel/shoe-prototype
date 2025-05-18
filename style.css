@@ -1403,7 +1403,7 @@ body {
 /* Voice Feedback Styling */
 .voice-feedback {
     position: fixed;
-    bottom: 20px;
+    bottom: 100px;
     left: 50%;
     transform: translateX(-50%) translateY(100px);
     background: rgba(0, 20, 40, 0.6);
