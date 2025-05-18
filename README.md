@@ -160,6 +160,13 @@ Please design interactions that reflect **real-world cognitive flow**, and simul
 - Provides intuitive control without requiring keyboard
 - Can be toggled with 'T' key
 
+### Improved UI Navigation
+- Interactive elements show hover states that match foot gestures
+- Shoe automatically tilts based on UI element position
+- Clear visual increase/decrease buttons for value adjustments
+- Animated hints indicate how to interact with each control
+- Automatic cursor-to-foot position mapping for intuitive feedback
+
 ### Multiple Interaction Methods
 - Traditional keyboard controls
 - Mouse-based control (activate with 'M' key)

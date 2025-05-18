@@ -207,6 +207,19 @@ document.addEventListener('DOMContentLoaded', () => {
     let cursorTrackingActive = true;  // Enable by default
     let cursorTimeout = null;
     
+    // Track interactive elements for hover effects
+    const interactiveElements = {
+        workoutOptions: document.querySelectorAll('.workout-option'),
+        goalTabs: document.querySelectorAll('.goal-tab'),
+        valueControls: document.querySelectorAll('.value-btn'),
+        sliderHandle: document.querySelector('.slider-handle'),
+        moodOptions: document.querySelectorAll('.mood-option'),
+        syncButton: document.querySelector('.sync-button')
+    };
+    
+    // Current hovered element
+    let currentHoveredElement = null;
+    
     document.addEventListener('mousemove', (e) => {
         // Only track cursor when it's in the top portion of the screen
         const topTrackingThreshold = window.innerHeight * 0.3; // Top 30% of the screen
@@ -251,7 +264,146 @@ document.addEventListener('DOMContentLoaded', () => {
             shoeImage.classList.remove('tilt-left', 'tilt-right');
             lastMouseTilt = null;
         }
+        
+        // Check if cursor is over any interactive elements
+        checkElementHover(e);
     });
+    
+    // Check if mouse is over any interactive elements and apply hover effect
+    function checkElementHover(e) {
+        // Remove previous hover effects
+        if (currentHoveredElement) {
+            currentHoveredElement.classList.remove('hover-effect');
+            currentHoveredElement = null;
+        }
+        
+        // Helper function to check if element is under cursor
+        function isElementUnderCursor(element) {
+            const rect = element.getBoundingClientRect();
+            return (
+                e.clientX >= rect.left &&
+                e.clientX <= rect.right &&
+                e.clientY >= rect.top &&
+                e.clientY <= rect.bottom
+            );
+        }
+        
+        // Check all interactive elements
+        for (const [key, elements] of Object.entries(interactiveElements)) {
+            if (!elements) continue;
+            
+            if (elements instanceof NodeList || Array.isArray(elements)) {
+                for (const element of elements) {
+                    if (isElementUnderCursor(element)) {
+                        element.classList.add('hover-effect');
+                        currentHoveredElement = element;
+                        
+                        // If we're in workout screen, update shoe tilt to match element position
+                        updateShoeTiltForElement(element);
+                        return;
+                    }
+                }
+            } else if (elements && isElementUnderCursor(elements)) {
+                elements.classList.add('hover-effect');
+                currentHoveredElement = elements;
+                
+                // Update shoe tilt for single element
+                updateShoeTiltForElement(elements);
+                return;
+            }
+        }
+    }
+    
+    // Update shoe tilt based on element position
+    function updateShoeTiltForElement(element) {
+        // Only update tilt if cursor tracking is active
+        if (!cursorTrackingActive) return;
+        
+        // Get element position relative to viewport center
+        const rect = element.getBoundingClientRect();
+        const elementCenterX = rect.left + rect.width / 2;
+        const viewportCenterX = window.innerWidth / 2;
+        
+        // Clear existing tilt classes
+        shoeImage.classList.remove('tilt-left', 'tilt-right', 'tilt-forward');
+        
+        // Determine tilt direction based on element position
+        if (elementCenterX < viewportCenterX - 100) {
+            // Element is on the left side
+            shoeImage.classList.add('tilt-left');
+            lastMouseTilt = 'left';
+        } else if (elementCenterX > viewportCenterX + 100) {
+            // Element is on the right side
+            shoeImage.classList.add('tilt-right');
+            lastMouseTilt = 'right';
+        } else {
+            // Element is in the center area
+            lastMouseTilt = null;
+        }
+    }
+    
+    // Handle clicks on interactive elements
+    document.addEventListener('click', (e) => {
+        if (currentHoveredElement) {
+            // Process click based on element type
+            if (currentHoveredElement.classList.contains('workout-option')) {
+                // Update selected workout option
+                selectedWorkoutOption = Array.from(workoutOptions).indexOf(currentHoveredElement);
+                updateSelectedWorkoutOption();
+                showVoiceFeedback(getWorkoutTypeName(selectedWorkoutOption));
+            } else if (currentHoveredElement.classList.contains('goal-tab')) {
+                // Update selected goal tab
+                selectedGoalTab = Array.from(goalTabs).indexOf(currentHoveredElement);
+                updateSelectedGoalTab();
+            } else if (currentHoveredElement.classList.contains('value-btn')) {
+                // Handle value increase/decrease
+                if (currentHoveredElement.classList.contains('decrease')) {
+                    decreaseSliderValue();
+                } else if (currentHoveredElement.classList.contains('increase')) {
+                    increaseSliderValue();
+                }
+            } else if (currentHoveredElement.classList.contains('slider-handle')) {
+                // Focus slider handle
+                sliderHandle.focus();
+                showVoiceFeedback('Adjust goal value with left and right tilts');
+            } else if (currentHoveredElement.classList.contains('mood-option')) {
+                // Update selected mood
+                const moodOptions = document.querySelectorAll('.mood-option');
+                moodOptions.forEach(option => option.classList.remove('selected'));
+                currentHoveredElement.classList.add('selected');
+                showVoiceFeedback(`Mood: ${currentHoveredElement.getAttribute('data-mood')}`);
+            } else if (currentHoveredElement.classList.contains('sync-button')) {
+                // Sync with Apple Health (simulated)
+                currentHoveredElement.style.backgroundColor = '#4fd1ff';
+                currentHoveredElement.style.color = '#0a0e1a';
+                currentHoveredElement.style.boxShadow = '0 0 18px 4px #4fd1ff88';
+                
+                showVoiceFeedback('Syncing with Apple Health...');
+                
+                setTimeout(() => {
+                    showVoiceFeedback('Workout data synchronized successfully');
+                    
+                    // Reset to start
+                    setTimeout(() => {
+                        resetWorkout();
+                        showScreen(0); // Back to workout type selection
+                    }, 3000);
+                }, 2000);
+            }
+        }
+    });
+    
+    // Add value button event listeners
+    const increaseValueBtn = document.getElementById('increaseValue');
+    const decreaseValueBtn = document.getElementById('decreaseValue');
+    
+    if (increaseValueBtn) {
+        increaseValueBtn.addEventListener('click', increaseSliderValue);
+    }
+    
+    if (decreaseValueBtn) {
+        decreaseValueBtn.addEventListener('click', decreaseSliderValue);
+    }
     
     // Toggle cursor tracking with 'T' key
     document.addEventListener('keydown', (e) => {
