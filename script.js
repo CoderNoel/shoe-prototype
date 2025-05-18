@@ -476,14 +476,15 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Handle foot tilt (left, right, forward)
     function handleTilt(direction) {
+        // Store current tilt state before removing classes
+        const currentlyTiltedLeft = shoeImage.classList.contains('tilt-left');
+        const currentlyTiltedRight = shoeImage.classList.contains('tilt-right');
+        
         // Remove previous classes to ensure new animation plays
-        shoeImage.classList.remove('tilt-left', 'tilt-right', 'tilt-forward');
+        shoeImage.classList.remove('tilt-left', 'tilt-right', 'tilt-forward', 'tilt-left-tap', 'tilt-right-tap');
         
         // Force browser to recognize the removal before adding
         setTimeout(() => {
-            // Animate shoe
-            shoeImage.classList.add(`tilt-${direction}`);
-            
             // Create ripple effect on floor (projection simulation)
             createRippleEffect(direction);
             
@@ -502,25 +503,54 @@ document.addEventListener('DOMContentLoaded', () => {
             // Simulate haptic feedback
             simulateHapticFeedback(direction);
             
-            // Create beam effect for selection
+            // Create beam effect for all directional tilts 
+            createShoeBeamEffect();
+            
+            // Apply the appropriate animation class based on direction
             if (direction === 'forward') {
-                createShoeBeamEffect();
+                shoeImage.classList.add('tilt-forward');
                 
-                // Delay the screen action to match the visual effect
+                // Delay the screen action to match the visual effect for tap animation
                 setTimeout(() => {
                     processScreenAction(direction);
-                }, 300);
-            } else {
-                // Process immediately for non-selection actions
-                processScreenAction(direction);
+                }, 250);
+                
+                // For arrow key navigation, reset the tilt after a delay
+                setTimeout(() => {
+                    shoeImage.classList.remove('tilt-forward');
+                    tiltIndicator.style.opacity = '0';
+                }, 700);
+            } else if (direction === 'left') {
+                // Apply the tap animation
+                shoeImage.classList.add('tilt-left-tap');
+                
+                // Process the action during animation
+                setTimeout(() => {
+                    processScreenAction(direction);
+                }, 250);
+                
+                // Let the animation complete naturally (no need to switch to static)
+                // Reset after the full animation + a small delay
+                setTimeout(() => {
+                    shoeImage.classList.remove('tilt-left-tap');
+                    tiltIndicator.style.opacity = '0';
+                }, 700);
+            } else if (direction === 'right') {
+                // Apply the tap animation
+                shoeImage.classList.add('tilt-right-tap');
+                
+                // Process the action during animation
+                setTimeout(() => {
+                    processScreenAction(direction);
+                }, 250);
+                
+                // Let the animation complete naturally (no need to switch to static)
+                // Reset after the full animation + a small delay
+                setTimeout(() => {
+                    shoeImage.classList.remove('tilt-right-tap');
+                    tiltIndicator.style.opacity = '0';
+                }, 700);
             }
-            
-            // For arrow key navigation, we still want to reset the tilt after a delay
-            // Since this is emulating physical foot movement that can't stay tilted
-            setTimeout(() => {
-                shoeImage.classList.remove(`tilt-${direction}`);
-                tiltIndicator.style.opacity = '0';
-            }, 500);
         }, 10); // Very short timeout to ensure class removal is processed
     }
     
