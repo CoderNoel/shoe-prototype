@@ -275,9 +275,9 @@ body {
 /* Shoe view styles */
 .shoe-view {
     position: absolute;
-    bottom: -50px; /* Move shoe down a bit */
+    bottom: 5px; /* Place shoe at bottom of screen but visible */
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(20%);
     width: 100%;
     display: flex;
     justify-content: center;
@@ -286,7 +286,7 @@ body {
 }
 
 .shoe-image {
-    width: 320px;
+    width: 280px;
     height: auto;
     transform-origin: bottom center;
     transition: transform 0.3s ease-out;
@@ -347,6 +347,7 @@ body {
     padding: 0.5rem 1.5rem;
     border-radius: 30px;
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
     font-size: 1rem;
@@ -417,23 +418,26 @@ body {
 .circular-menu {
     background-color: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px); /* Safari support */
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 2rem;
+    padding: 1.5rem;
     width: 90%;
-    max-width: 600px;
+    max-width: 450px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 168, 107, 0.2);
     transform: perspective(1000px) rotateX(10deg);
     transform-origin: center bottom;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin: 0 auto;
+    margin-bottom: 200px; /* Center horizontally */
 }
 
 .menu-title {
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     color: white;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     text-align: center;
     text-shadow: 0 0 10px rgba(0, 168, 107, 0.5);
 }
@@ -457,8 +461,8 @@ body {
 .workout-options {
     display: flex;
     justify-content: center;
-    gap: 30px;
-    margin: 2rem 0;
+    gap: 20px;
+    margin: 1.2rem 0;
 }
 
 .workout-option {
@@ -471,21 +475,21 @@ body {
 }
 
 .option-circle {
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.1);
     border: 2px solid rgba(255, 255, 255, 0.3);
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 0.6rem;
     transition: all 0.3s ease;
 }
 
 .workout-icon {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     filter: invert(1);
     opacity: 0.8;
 }
@@ -502,8 +506,8 @@ body {
 }
 
 .indicator-text {
-    margin-top: 2rem;
-    font-size: 0.9rem;
+    margin-top: 1.2rem;
+    font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.7);
     text-align: center;
 }
@@ -568,6 +572,7 @@ body {
     border-radius: 10px;
     padding: 0.7rem;
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     margin-top: 0.5rem;
 }
 
@@ -592,16 +597,17 @@ body {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
 }
 
 .stat-card {
     flex: 1;
     background-color: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px); /* Safari support */
     border-radius: 10px;
-    padding: 1rem;
+    padding: 0.7rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -615,8 +621,8 @@ body {
 
 .stat-card h4 {
     color: white;
-    margin-bottom: 0.7rem;
-    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
     text-align: center;
 }
 
@@ -627,10 +633,10 @@ body {
 .stat-card li {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin: 0.5rem 0;
+    gap: 0.4rem;
+    margin: 0.4rem 0;
     color: rgba(255, 255, 255, 0.8);
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 .stat-card li i {
@@ -642,7 +648,7 @@ body {
 /* Progress visualization */
 .progress-visualization {
     width: 100%;
-    margin: 1rem 0 1.5rem;
+    margin: 0.8rem 0 1.2rem;
 }
 
 .progress-track {
@@ -730,6 +736,7 @@ body {
     transform: translateX(-50%);
     background-color: rgba(233, 93, 106, 0.2);
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(233, 93, 106, 0.4);
     padding: 0.8rem 1.5rem;
     border-radius: 30px;
@@ -772,6 +779,7 @@ body {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -818,19 +826,19 @@ body {
 }
 
 .trophy {
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
     background: radial-gradient(circle, #ffd700 0%, #ffb700 100%);
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 1rem 0;
+    margin: 0.8rem 0;
     box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
 }
 
 .trophy i {
-    font-size: 3rem;
+    font-size: 2.4rem;
     color: white;
 }
 
@@ -857,24 +865,24 @@ body {
 }
 
 .trophy-container h3 {
-    font-size: 2rem;
+    font-size: 1.6rem;
     color: #ffd700;
     margin-top: 1rem;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.2rem;
     text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
 .completion-message {
     color: white;
-    font-size: 1.2rem;
+    font-size: 1rem;
 }
 
 /* Completion stats */
 .completion-stats {
     display: flex;
     justify-content: center;
-    gap: 2rem;
-    margin-bottom: 2rem;
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
 }
 
 .completion-stat {
@@ -884,21 +892,22 @@ body {
 }
 
 .stat-circle {
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px); /* Safari support */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.5rem;
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .stat-circle i, .stat-circle .stat-icon {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     color: white;
     margin-bottom: 0.3rem;
 }
@@ -958,7 +967,7 @@ body {
 .mood-options {
     display: flex;
     justify-content: center;
-    gap: 2rem;
+    gap: 1.2rem;
 }
 
 .mood-option {
@@ -970,20 +979,20 @@ body {
 }
 
 .mood-circle {
-    width: 60px;
-    height: 60px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.1);
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.3rem;
     transition: all 0.3s ease;
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .mood-circle i {
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     color: rgba(255, 255, 255, 0.7);
 }
 
@@ -1144,186 +1153,6 @@ body {
 .countdown-container p {
     font-size: 1.5rem;
     color: rgba(255, 255, 255, 0.8);
-}
-
-/* Support for Safari backdrop-filter */
-.voice-feedback, 
-.circular-menu, 
-.timer-display,
-.stat-card,
-.health-alert,
-.pause-overlay,
-.stat-circle {
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-}
-
-/* Advanced 3D Visualization Styles */
-.advanced-visualization {
-    margin-top: 20px;
-    width: 100%;
-    perspective: 800px;
-}
-
-.visualization-container {
-    background: rgba(0, 20, 40, 0.3);
-    border-radius: 15px;
-    padding: 15px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-    transform-style: preserve-3d;
-    transform: rotateX(15deg);
-    transition: transform 0.3s ease;
-}
-
-.visualization-container:hover {
-    transform: rotateX(5deg) scale(1.02);
-}
-
-.viz-title {
-    font-size: 1rem;
-    margin-bottom: 10px;
-    color: var(--primary-color);
-    text-align: center;
-    text-shadow: 0 0 15px rgba(0, 168, 107, 0.5);
-}
-
-.path-container {
-    position: relative;
-    height: 100px;
-    margin: 15px 0;
-    overflow: hidden;
-}
-
-.progress-path {
-    position: absolute;
-    height: 4px;
-    background: linear-gradient(90deg, 
-        var(--primary-color), 
-        var(--tertiary-color), 
-        var(--secondary-color));
-    top: 50%;
-    left: 5%;
-    width: 90%;
-    transform: translateY(-50%);
-    border-radius: 2px;
-    box-shadow: 0 0 10px rgba(0, 168, 107, 0.5);
-}
-
-.progress-path::before {
-    content: '';
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    background: linear-gradient(90deg, 
-        rgba(0, 168, 107, 0.5), 
-        rgba(0, 168, 107, 0.2), 
-        rgba(0, 168, 107, 0));
-    animation: pathFlow 3s infinite linear;
-}
-
-@keyframes pathFlow {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-}
-
-.user-marker {
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--primary-color);
-    top: 50%;
-    left: 5%;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 15px var(--primary-color);
-    z-index: 2;
-    transition: left 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.user-marker::after {
-    content: '👟';
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 14px;
-}
-
-.target-marker {
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--secondary-color);
-    top: 50%;
-    right: 5%;
-    transform: translate(50%, -50%);
-    box-shadow: 0 0 10px var(--secondary-color);
-    z-index: 2;
-}
-
-.target-marker::after {
-    content: '🏁';
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 14px;
-}
-
-.milestone-markers {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.milestone {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--tertiary-color);
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 1;
-}
-
-.milestone::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background: inherit;
-    opacity: 0.5;
-    animation: milestonePulse 2s infinite;
-}
-
-@keyframes milestonePulse {
-    0% { transform: scale(1); opacity: 0.5; }
-    50% { transform: scale(2.5); opacity: 0; }
-    100% { transform: scale(1); opacity: 0.5; }
-}
-
-.path-metrics {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 10px;
-}
-
-.metric {
-    display: flex;
-    align-items: center;
-    font-size: 0.9rem;
-}
-
-.metric i {
-    margin-right: 5px;
-    color: var(--primary-color);
 }
 
 /* Voice Command Recognition */
@@ -1512,4 +1341,172 @@ body {
     15% { opacity: 1; transform: translateX(-50%) translateY(0); }
     85% { opacity: 1; transform: translateX(-50%) translateY(0); }
     100% { opacity: 0; transform: translateX(-50%) translateY(-30px); }
+}
+
+/* Advanced 3D Visualization Styles */
+.advanced-visualization {
+    margin-top: 12px;
+    width: 100%;
+    perspective: 800px;
+}
+
+.visualization-container {
+    background: rgba(0, 20, 40, 0.3);
+    border-radius: 15px;
+    padding: 10px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    transform-style: preserve-3d;
+    transform: rotateX(15deg);
+    transition: transform 0.3s ease;
+}
+
+.visualization-container:hover {
+    transform: rotateX(5deg) scale(1.02);
+}
+
+.viz-title {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+    text-align: center;
+    text-shadow: 0 0 15px rgba(0, 168, 107, 0.5);
+}
+
+.path-container {
+    position: relative;
+    height: 80px;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.progress-path {
+    position: absolute;
+    height: 4px;
+    background: linear-gradient(90deg, 
+        var(--primary-color), 
+        var(--tertiary-color), 
+        var(--secondary-color));
+    top: 50%;
+    left: 5%;
+    width: 90%;
+    transform: translateY(-50%);
+    border-radius: 2px;
+    box-shadow: 0 0 10px rgba(0, 168, 107, 0.5);
+}
+
+.progress-path::before {
+    content: '';
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, 
+        rgba(0, 168, 107, 0.5), 
+        rgba(0, 168, 107, 0.2), 
+        rgba(0, 168, 107, 0));
+    animation: pathFlow 3s infinite linear;
+}
+
+@keyframes pathFlow {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.user-marker {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    top: 50%;
+    left: 5%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 15px var(--primary-color);
+    z-index: 2;
+    transition: left 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.user-marker::after {
+    content: '👟';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+}
+
+.target-marker {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--secondary-color);
+    top: 50%;
+    right: 5%;
+    transform: translate(50%, -50%);
+    box-shadow: 0 0 10px var(--secondary-color);
+    z-index: 2;
+}
+
+.target-marker::after {
+    content: '🏁';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+}
+
+.milestone-markers {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.milestone {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--tertiary-color);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.milestone::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: inherit;
+    opacity: 0.5;
+    animation: milestonePulse 2s infinite;
+}
+
+@keyframes milestonePulse {
+    0% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(2.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 0.5; }
+}
+
+.path-metrics {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+
+.metric {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.metric i {
+    margin-right: 5px;
+    color: var(--primary-color);
 }
