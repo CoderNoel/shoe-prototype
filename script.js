@@ -18,6 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Workout type selection elements
     const workoutOptions = document.querySelectorAll('.workout-option');
     
+    // Start workout buttons
+    const startWorkoutBtns = document.querySelectorAll('.start-workout-btn');
+    
     // Goal selection elements
     const goalTabs = document.querySelectorAll('.goal-tab');
     const goalValue = document.getElementById('goalValue');
@@ -300,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         element.classList.add('hover-effect');
                         currentHoveredElement = element;
                         
-                        // If we're in workout screen, update shoe tilt to match element position
+                        // Update shoe tilt to match element position
                         updateShoeTiltForElement(element);
                         return;
                     }
@@ -410,11 +413,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const decreaseValueBtn = document.getElementById('decreaseValue');
     
     if (increaseValueBtn) {
-        increaseValueBtn.addEventListener('click', increaseSliderValue);
+        increaseValueBtn.addEventListener('mouseover', () => {
+            // Clear existing tilt classes
+            shoeImage.classList.remove('tilt-left', 'tilt-forward');
+            // Apply right tilt
+            shoeImage.classList.add('tilt-right');
+            lastMouseTilt = 'right';
+        });
+        
+        increaseValueBtn.addEventListener('click', () => {
+            increaseSliderValue();
+            createShoeBeamEffect();
+        });
     }
     
     if (decreaseValueBtn) {
-        decreaseValueBtn.addEventListener('click', decreaseSliderValue);
+        decreaseValueBtn.addEventListener('mouseover', () => {
+            // Clear existing tilt classes
+            shoeImage.classList.remove('tilt-right', 'tilt-forward');
+            // Apply left tilt
+            shoeImage.classList.add('tilt-left');
+            lastMouseTilt = 'left';
+        });
+        
+        decreaseValueBtn.addEventListener('click', () => {
+            decreaseSliderValue();
+            createShoeBeamEffect();
+        });
     }
     
     // Toggle cursor tracking with 'T' key
@@ -1436,4 +1461,31 @@ document.addEventListener('DOMContentLoaded', () => {
             finalParagraph.innerHTML = '<strong>PRIMARY CONTROL:</strong> Move your cursor to the top of screen to tilt the shoe left/right and click to select. <strong>The shoe will automatically tilt</strong> when hovering over interactive elements.';
         }
     }
+
+    // Add event handlers for workout options
+    workoutOptions.forEach((option, index) => {
+        option.addEventListener('click', () => {
+            // Update selected workout option
+            selectedWorkoutOption = index;
+            updateSelectedWorkoutOption();
+            showVoiceFeedback(getWorkoutTypeName(selectedWorkoutOption));
+        });
+    });
+    
+    // Add event handlers for start workout buttons
+    startWorkoutBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (currentScreenIndex === 0) {
+                // From workout type selection, go to goal selection
+                showScreen(1);
+                showVoiceFeedback(`Select your ${currentGoalType} goal`);
+            } else if (currentScreenIndex === 1) {
+                // From goal selection, go to countdown
+                showScreen(2);
+                startCountdown();
+            }
+            // Create a beam effect for selection
+            createShoeBeamEffect();
+        });
+    });
 });

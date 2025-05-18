@@ -49,79 +49,248 @@ body {
     align-items: center;
     z-index: 1000;
     color: white;
+    overflow: auto;
+    padding: 20px;
 }
 
 .instructions-content {
     background-color: rgba(40, 40, 40, 0.95);
-    padding: 2rem;
-    border-radius: 10px;
-    max-width: 500px;
+    padding: 3rem;
+    border-radius: 20px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    margin: auto;
+    border: 1px solid rgba(0, 168, 107, 0.2);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 168, 107, 0.2);
+}
+
+/* Add custom scrollbar for better usability */
+.instructions-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.instructions-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+.instructions-content::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 10px;
+}
+
+.instructions-content::-webkit-scrollbar-thumb:hover {
+    background: #008c59;
+}
+
+/* Improve layout on smaller screens */
+@media (max-width: 768px) {
+    .instructions-content {
+        padding: 2rem;
+        max-height: 80vh;
+        gap: 1.5rem;
+    }
 }
 
 .instructions-content h2 {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     color: var(--primary-color);
+    font-size: 2.2rem;
+    text-shadow: 0 0 10px rgba(0, 168, 107, 0.3);
 }
 
 .instructions-content h3 {
-    margin: 1rem 0;
-}
-
-.instructions-content ul {
-    list-style-type: none;
-    margin: 1rem 0;
-    text-align: left;
-    padding-left: 2rem;
-}
-
-.instructions-content li {
     margin: 0.5rem 0;
-    display: flex;
-    align-items: center;
+    font-size: 1.4rem;
+    color: white;
 }
 
-.instructions-content li strong {
+.instructions-intro {
+    max-width: 600px;
+    margin-bottom: 0;
+}
+
+.instructions-intro p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.instruction-demo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 1.5rem;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 300px;
+    border: 1px solid rgba(0, 168, 107, 0.1);
+}
+
+.demo-shoe {
+    width: 120px;
+    height: auto;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
+}
+
+.demo-projection {
+    width: 160px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+    border-radius: 50%;
+    box-shadow: 0 0 15px 5px var(--primary-color);
+    opacity: 0.7;
+    animation: demoGlow 2s infinite alternate;
+}
+
+.instructions-list-container {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 1.5rem 2rem;
+    border-radius: 15px;
+    border: 1px solid rgba(0, 168, 107, 0.1);
+}
+
+.instructions-list-container h3 {
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+    font-size: 1.4rem;
+}
+
+.instructions-list-container h4 {
+    margin-bottom: 0.8rem;
+    color: white;
+    font-size: 1.1rem;
+    opacity: 0.9;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.5rem;
+}
+
+.primary-controls {
+    margin-bottom: 1.5rem;
+}
+
+.primary-controls li {
+    margin-bottom: 0.7rem;
+    padding: 0.5rem 0;
+}
+
+.primary-controls li strong {
     color: var(--primary-color);
 }
 
-.instructions-content .secondary-controls {
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.8);
+.secondary-controls-container, 
+.backup-controls-container {
+    margin-bottom: 1rem;
 }
 
-.instructions-content li em {
-    color: rgba(255, 255, 255, 0.7);
+.control-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 1.5rem;
+}
+
+@media (max-width: 600px) {
+    .control-columns {
+        grid-template-columns: 1fr;
+        grid-gap: 1rem;
+    }
+}
+
+.compact-controls {
+    list-style-type: none;
+    padding: 0;
+}
+
+.compact-controls li {
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+    padding: 0.4rem 0;
 }
 
 .key {
     background-color: #333;
     color: white;
-    padding: 0.25rem 0.5rem;
+    padding: 0.25rem 0.4rem;
     border-radius: 4px;
-    margin-right: 10px;
+    margin-right: 12px;
     display: inline-block;
-    min-width: 50px;
+    min-width: 30px;
     text-align: center;
     font-family: monospace;
+    font-size: 0.85rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.final-instructions {
+    text-align: center;
+    margin-top: 1rem;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    width: 100%;
+    border: 1px solid rgba(0, 168, 107, 0.1);
+}
+
+.final-instructions p {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .start-button {
     background-color: var(--primary-color);
     color: white;
     border: none;
-    padding: 0.75rem 1.5rem;
+    padding: 0.9rem 2.5rem;
     border-radius: 50px;
-    font-size: 1rem;
+    font-size: 1.3rem;
     cursor: pointer;
-    margin-top: 1rem;
+    margin-top: 0;
     transition: all 0.3s ease;
+    width: auto;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 168, 107, 0.4);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
 }
 
 .start-button:hover {
     background-color: #008c59;
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 168, 107, 0.5);
+}
+
+.start-button:after {
+    content: "→";
+    font-size: 1.3rem;
+    margin-left: 0.5rem;
+}
+
+/* Welcome screen title specific styling */
+.welcome-title {
+    font-size: 2.5rem;
+    background: linear-gradient(90deg, #fff, var(--primary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 5px 15px rgba(0, 168, 107, 0.5);
+    margin-bottom: 0.5rem;
 }
 
 /* Floor Projection Simulation */
@@ -667,21 +836,14 @@ body {
 }
 
 /* Start screen instruction demo */
-.instruction-demo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 1.5rem 0;
-}
-
 .demo-shoe {
-    width: 120px;
+    width: 100px;
     height: auto;
     margin-bottom: 0.5rem;
 }
 
 .demo-projection {
-    width: 200px;
+    width: 160px;
     height: 4px;
     background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
     border-radius: 50%;
@@ -1260,8 +1422,8 @@ body {
 }
 
 .value-btn {
-    width: 40px;
-    height: 40px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -1271,6 +1433,7 @@ body {
     align-items: center;
     cursor: pointer;
     transition: all 0.2s ease;
+    position: relative;
 }
 
 .value-btn:hover, .value-btn.hover-effect {
@@ -1281,11 +1444,11 @@ body {
 }
 
 .value-btn.decrease {
-    margin-right: auto;
+    margin-right: 4rem;
 }
 
 .value-btn.increase {
-    margin-left: auto;
+    margin-left: 4rem;
 }
 
 .goal-slider {
@@ -1721,21 +1884,172 @@ body {
 
 /* Instruction indicator animation */
 .interaction-hint {
-    position: absolute;
-    right: -40px;
-    top: 50%;
-    transform: translateY(-50%);
+    display: none;
+}
+
+.instructions-content li {
+    margin: 0.5rem 0;
+    display: flex;
+    align-items: center;
+}
+
+.instructions-content li strong {
     color: var(--primary-color);
-    font-size: 1.2rem;
-    animation: pulseHint 1.5s infinite ease-in-out;
 }
 
-.interaction-hint.left-hint {
-    left: -40px;
-    right: auto;
+.instructions-content .secondary-controls {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
 }
 
-@keyframes pulseHint {
-    0%, 100% { opacity: 0.5; transform: translateY(-50%) scale(1); }
-    50% { opacity: 1; transform: translateY(-50%) scale(1.1); }
+.instructions-content li em {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.key {
+    background-color: #333;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    margin-right: 10px;
+    display: inline-block;
+    min-width: 50px;
+    text-align: center;
+    font-family: monospace;
+}
+
+/* Add styling for action buttons */
+.action-buttons {
+    margin: 1.5rem 0;
+    display: flex;
+    justify-content: center;
+}
+
+.action-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 0 15px rgba(0, 168, 107, 0.4);
+}
+
+.action-button:hover {
+    background-color: #008c59;
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(0, 168, 107, 0.6);
+}
+
+.action-button i {
+    font-size: 0.9rem;
+}
+
+/* Update welcome screen styling for better layout */
+.welcome-title {
+    font-size: 2rem;
+    color: var(--primary-color);
+    grid-column: 1 / span 2;
+    margin-bottom: 1rem;
+}
+
+.instructions-intro {
+    grid-column: 1 / span 2;
+    margin-bottom: 0.5rem;
+}
+
+.instructions-intro p {
+    font-size: 1.1rem;
+    line-height: 1.4;
+}
+
+.instructions-list-container {
+    grid-column: 1 / span 2;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.instructions-list-container h3 {
+    margin-bottom: 0.8rem;
+    color: var(--primary-color);
+    font-size: 1.3rem;
+}
+
+.instructions-list-container h4 {
+    margin-bottom: 0.5rem;
+    color: white;
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.primary-controls {
+    margin-bottom: 0.8rem;
+}
+
+.primary-controls li {
+    margin-bottom: 0.5rem;
+}
+
+.primary-controls li strong {
+    color: var(--primary-color);
+}
+
+.secondary-controls-container, 
+.backup-controls-container {
+    margin-bottom: 0.5rem;
+}
+
+.control-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 1rem;
+}
+
+.compact-controls {
+    list-style-type: none;
+    padding: 0;
+}
+
+.compact-controls li {
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+}
+
+.key {
+    background-color: #333;
+    color: white;
+    padding: 0.25rem 0.4rem;
+    border-radius: 4px;
+    margin-right: 8px;
+    display: inline-block;
+    min-width: 24px;
+    text-align: center;
+    font-family: monospace;
+    font-size: 0.85rem;
+}
+
+.final-instructions {
+    grid-column: 1 / span 2;
+    margin-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1rem;
+}
+
+.final-instructions p {
+    font-size: 1rem;
+}
+
+.start-button:hover {
+    background-color: #008c59;
+    transform: translateY(-2px);
 }

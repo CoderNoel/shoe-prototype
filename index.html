@@ -13,26 +13,58 @@
         <!-- Initial Instructions -->
         <div id="instructions" class="instructions-overlay">
             <div class="instructions-content">
-                <h2>Smart Shoe Interface</h2>
-                <p>Experience your shoe's floor-projected fitness interface.</p>
+                <h2 class="welcome-title">Smart Shoe Interface</h2>
+                
                 <div class="instruction-demo">
                     <img src="assets/Shoe.png" alt="Smart shoe demo" class="demo-shoe">
                     <div class="demo-projection"></div>
                 </div>
-                <h3>How to Interact:</h3>
-                <ul>
-                    <li><span class="key">←</span> Tilt left foot outward</li>
-                    <li><span class="key">→</span> Tilt right foot inward</li>
-                    <li><span class="key">Enter</span> Tilt foot forward</li>
-                    <li><span class="key">P</span> Pause your workout</li>
-                    <li><span class="key">R</span> Resume workout</li>
-                    <li><span class="key">E</span> End workout</li>
-                    <li><span class="key">S</span> Load sample data</li>
-                    <li><span class="key">M</span> Toggle mouse control</li>
-                    <li><span class="key">V</span> Toggle voice commands</li>
-                    <li><span class="key">T</span> Toggle top cursor tracking</li>
-                </ul>
-                <p>Look down to see your interface projected on the floor. Move your cursor to the top of the screen to tilt the shoe.</p>
+                
+                <div class="instructions-intro">
+                    <p>Experience your Smart Shoe's floor-projected fitness interface using cursor movements to control tilt.</p>
+                </div>
+                
+                <div class="instructions-list-container">
+                    <h3>How to Interact:</h3>
+                    <div class="primary-controls">
+                        <h4>Primary Controls:</h4>
+                        <ul>
+                            <li><strong>Move cursor to top of screen</strong> to tilt shoe</li>
+                            <li><strong>Click on interface elements</strong> to select them</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="secondary-controls-container">
+                        <h4>Additional Controls:</h4>
+                        <ul class="compact-controls">
+                            <li><span class="key">T</span> Toggle cursor tracking (enabled by default)</li>
+                            <li><span class="key">V</span> Toggle voice commands</li>
+                            <li><span class="key">?</span> Show/hide keyboard shortcuts</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="backup-controls-container">
+                        <h4>Backup Keyboard Controls:</h4>
+                        <div class="control-columns">
+                            <ul class="compact-controls">
+                                <li><span class="key">←</span> Tilt left foot</li>
+                                <li><span class="key">→</span> Tilt right foot</li>
+                                <li><span class="key">Enter</span> Tilt forward</li>
+                                <li><span class="key">P</span> Pause workout</li>
+                            </ul>
+                            <ul class="compact-controls">
+                                <li><span class="key">R</span> Resume workout</li>
+                                <li><span class="key">E</span> End workout</li>
+                                <li><span class="key">S</span> Load sample data</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="final-instructions">
+                    <p><strong>The shoe will automatically tilt</strong> when hovering over interactive elements. Click to select.</p>
+                </div>
+                
                 <button id="startBtn" class="start-button">Begin Experience</button>
             </div>
         </div>
@@ -69,6 +101,11 @@
                                     <p>HIIT</p>
                                 </div>
                             </div>
+                            <div class="action-buttons">
+                                <button class="action-button start-workout-btn">
+                                    <i class="fas fa-play"></i> Start Workout
+                                </button>
+                            </div>
                             <div class="indicator-text">
                                 Tilt <span class="left-indicator">◀ left</span> or <span class="right-indicator">right ▶</span> to navigate, <span class="forward-indicator">forward ▼</span> to select
                             </div>
@@ -93,15 +130,9 @@
                                 <div class="value-controls">
                                     <div class="value-btn decrease" id="decreaseValue">
                                         <i class="fas fa-minus"></i>
-                                        <div class="interaction-hint left-hint">
-                                            <i class="fas fa-chevron-left"></i>
-                                        </div>
                                     </div>
                                     <div class="value-btn increase" id="increaseValue">
                                         <i class="fas fa-plus"></i>
-                                        <div class="interaction-hint">
-                                            <i class="fas fa-chevron-right"></i>
-                                        </div>
                                     </div>
                                 </div>
                                 <div class="goal-slider">
@@ -110,6 +141,12 @@
                                         <div class="slider-handle" tabindex="0"></div>
                                     </div>
                                 </div>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="action-button start-workout-btn">
+                                    <i class="fas fa-play"></i> Start Workout
+                                </button>
                             </div>
 
                             <div class="indicator-text">
