@@ -48,10 +48,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let calories = 0;
     let steps = 0;
     let distance = 0;
-    let mouseControlActive = false;
+    let mouseControlActive = true; // Set mouse control active by default
     let lastMouseTilt = null;
     let mouseControlTimeout = null;
     let lastMilestoneStep = 0;
+    
+    // Set cursor tracking as active by default
+    let cursorTrackingActive = true;
     
     // Sample data for quicker testing
     const sampleData = {
@@ -204,7 +207,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // Cursor position tracking for shoe tilt
-    let cursorTrackingActive = true;  // Enable by default
     let cursorTimeout = null;
     
     // Track interactive elements for hover effects
@@ -345,51 +347,61 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle clicks on interactive elements
     document.addEventListener('click', (e) => {
         if (currentHoveredElement) {
-            // Process click based on element type
-            if (currentHoveredElement.classList.contains('workout-option')) {
-                // Update selected workout option
-                selectedWorkoutOption = Array.from(workoutOptions).indexOf(currentHoveredElement);
-                updateSelectedWorkoutOption();
-                showVoiceFeedback(getWorkoutTypeName(selectedWorkoutOption));
-            } else if (currentHoveredElement.classList.contains('goal-tab')) {
-                // Update selected goal tab
-                selectedGoalTab = Array.from(goalTabs).indexOf(currentHoveredElement);
-                updateSelectedGoalTab();
-            } else if (currentHoveredElement.classList.contains('value-btn')) {
-                // Handle value increase/decrease
-                if (currentHoveredElement.classList.contains('decrease')) {
-                    decreaseSliderValue();
-                } else if (currentHoveredElement.classList.contains('increase')) {
-                    increaseSliderValue();
-                }
-            } else if (currentHoveredElement.classList.contains('slider-handle')) {
-                // Focus slider handle
-                sliderHandle.focus();
-                showVoiceFeedback('Adjust goal value with left and right tilts');
-            } else if (currentHoveredElement.classList.contains('mood-option')) {
-                // Update selected mood
-                const moodOptions = document.querySelectorAll('.mood-option');
-                moodOptions.forEach(option => option.classList.remove('selected'));
-                currentHoveredElement.classList.add('selected');
-                showVoiceFeedback(`Mood: ${currentHoveredElement.getAttribute('data-mood')}`);
-            } else if (currentHoveredElement.classList.contains('sync-button')) {
-                // Sync with Apple Health (simulated)
-                currentHoveredElement.style.backgroundColor = '#4fd1ff';
-                currentHoveredElement.style.color = '#0a0e1a';
-                currentHoveredElement.style.boxShadow = '0 0 18px 4px #4fd1ff88';
-                
-                showVoiceFeedback('Syncing with Apple Health...');
-                
-                setTimeout(() => {
-                    showVoiceFeedback('Workout data synchronized successfully');
+            // Create the shoe beam effect first
+            createShoeBeamEffect();
+            
+            // Store the current tilt direction
+            const currentTilt = lastMouseTilt;
+            
+            // Process element-specific actions with delay to wait for beam effect
+            setTimeout(() => {
+                if (currentHoveredElement.classList.contains('workout-option')) {
+                    // Update selected workout option
+                    selectedWorkoutOption = Array.from(workoutOptions).indexOf(currentHoveredElement);
+                    updateSelectedWorkoutOption();
+                    showVoiceFeedback(getWorkoutTypeName(selectedWorkoutOption));
+                } else if (currentHoveredElement.classList.contains('goal-tab')) {
+                    // Update selected goal tab
+                    selectedGoalTab = Array.from(goalTabs).indexOf(currentHoveredElement);
+                    updateSelectedGoalTab();
+                } else if (currentHoveredElement.classList.contains('value-btn')) {
+                    // Handle value increase/decrease
+                    if (currentHoveredElement.classList.contains('decrease')) {
+                        decreaseSliderValue();
+                    } else if (currentHoveredElement.classList.contains('increase')) {
+                        increaseSliderValue();
+                    }
+                } else if (currentHoveredElement.classList.contains('slider-handle')) {
+                    // Focus slider handle
+                    sliderHandle.focus();
+                    showVoiceFeedback('Adjust goal value with left and right tilts');
+                } else if (currentHoveredElement.classList.contains('mood-option')) {
+                    // Update selected mood
+                    const moodOptions = document.querySelectorAll('.mood-option');
+                    moodOptions.forEach(option => option.classList.remove('selected'));
+                    currentHoveredElement.classList.add('selected');
+                    showVoiceFeedback(`Mood: ${currentHoveredElement.getAttribute('data-mood')}`);
+                } else if (currentHoveredElement.classList.contains('sync-button')) {
+                    // Sync with Apple Health (simulated)
+                    currentHoveredElement.style.backgroundColor = '#4fd1ff';
+                    currentHoveredElement.style.color = '#0a0e1a';
+                    currentHoveredElement.style.boxShadow = '0 0 18px 4px #4fd1ff88';
                     
-                    // Reset to start
+                    showVoiceFeedback('Syncing with Apple Health...');
+                    
                     setTimeout(() => {
-                        resetWorkout();
-                        showScreen(0); // Back to workout type selection
-                    }, 3000);
-                }, 2000);
-            }
+                        showVoiceFeedback('Workout data synchronized successfully');
+                        
+                        // Reset to start
+                        setTimeout(() => {
+                            resetWorkout();
+                            showScreen(0); // Back to workout type selection
+                        }, 3000);
+                    }, 2000);
+                }
+            }, 300); // Delay UI update to wait for haptic effect
+            
+            // Do NOT reset the shoe tilt state - leave it in current position
         }
     });
     
@@ -465,10 +477,21 @@ document.addEventListener('DOMContentLoaded', () => {
             // Simulate haptic feedback
             simulateHapticFeedback(direction);
             
-            // Process action based on current screen
-            processScreenAction(direction);
+            // Create beam effect for selection
+            if (direction === 'forward') {
+                createShoeBeamEffect();
+                
+                // Delay the screen action to match the visual effect
+                setTimeout(() => {
+                    processScreenAction(direction);
+                }, 300);
+            } else {
+                // Process immediately for non-selection actions
+                processScreenAction(direction);
+            }
             
-            // Reset shoe position and hide tilt indicator after animation
+            // For arrow key navigation, we still want to reset the tilt after a delay
+            // Since this is emulating physical foot movement that can't stay tilted
             setTimeout(() => {
                 shoeImage.classList.remove(`tilt-${direction}`);
                 tiltIndicator.style.opacity = '0';
@@ -531,6 +554,24 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             hapticEffect.remove();
         }, 300);
+    }
+    
+    // Create a beam effect around the shoe to indicate selection
+    function createShoeBeamEffect() {
+        // Create a circular beam effect around the shoe
+        const beam = document.createElement('div');
+        beam.className = 'shoe-beam-effect';
+        
+        // Add to DOM at the shoe view level
+        const shoeView = document.querySelector('.shoe-view');
+        if (shoeView) {
+            shoeView.appendChild(beam);
+            
+            // Remove after animation completes
+            setTimeout(() => {
+                beam.remove();
+            }, 800);
+        }
     }
     
     // Function to show a specific screen
@@ -1206,7 +1247,7 @@ document.addEventListener('DOMContentLoaded', () => {
             collapseShortcuts.classList.add('fa-minus-circle');
         }
     });
-    
+
     function toggleKeyboardShortcuts() {
         const isVisible = keyboardShortcuts.style.display !== 'none';
         keyboardShortcuts.style.display = isVisible ? 'none' : 'block';
@@ -1357,6 +1398,42 @@ document.addEventListener('DOMContentLoaded', () => {
             default:
                 showVoiceFeedback("Command not recognized");
                 break;
+        }
+    }
+
+    // Update initial instructions
+    const instructionsContent = document.querySelector('.instructions-content');
+    if (instructionsContent) {
+        const instructionsList = instructionsContent.querySelector('ul');
+        if (instructionsList) {
+            // Update instructions to emphasize cursor control
+            instructionsList.innerHTML = `
+                <li><strong>Primary Control: Move cursor to top of screen to tilt shoe</strong></li>
+                <li><strong>Click on interface elements to select them</strong></li>
+                <li><span class="key">T</span> Toggle top cursor tracking (enabled by default)</li>
+                <li><span class="key">V</span> Toggle voice commands</li>
+                <li><span class="key">?</span> Show/hide keyboard shortcuts</li>
+                <li class="secondary-controls"><em>Backup Keyboard Controls:</em></li>
+                <li><span class="key">←</span> Tilt left foot outward</li>
+                <li><span class="key">→</span> Tilt right foot inward</li>
+                <li><span class="key">Enter</span> Tilt foot forward</li>
+                <li><span class="key">P</span> Pause your workout</li>
+                <li><span class="key">R</span> Resume workout</li>
+                <li><span class="key">E</span> End workout</li>
+                <li><span class="key">S</span> Load sample data</li>
+            `;
+        }
+        
+        // Update intro text to emphasize cursor control
+        const introParagraph = instructionsContent.querySelector('p');
+        if (introParagraph) {
+            introParagraph.textContent = 'Experience your Smart Shoe\'s floor-projected fitness interface using cursor movements to control tilt.';
+        }
+        
+        // Update final instructions paragraph
+        const finalParagraph = instructionsContent.querySelectorAll('p')[1];
+        if (finalParagraph) {
+            finalParagraph.innerHTML = '<strong>PRIMARY CONTROL:</strong> Move your cursor to the top of screen to tilt the shoe left/right and click to select. <strong>The shoe will automatically tilt</strong> when hovering over interactive elements.';
         }
     }
 });
