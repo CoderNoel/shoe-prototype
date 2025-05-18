@@ -370,6 +370,102 @@ body {
     100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
 }
 
+/* Keyboard Shortcuts Panel */
+.keyboard-shortcuts {
+    position: fixed;
+    right: 20px;
+    top: 220px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 990;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform-origin: top right;
+}
+
+.keyboard-shortcuts .title {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.keyboard-shortcuts .title i {
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.keyboard-shortcuts .title i:hover {
+    opacity: 1;
+}
+
+.keyboard-shortcuts.collapsed {
+    transform: scale(0.9);
+}
+
+.keyboard-shortcuts.collapsed .shortcuts-list {
+    display: none;
+}
+
+.shortcuts-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.8rem;
+}
+
+.shortcuts-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.shortcuts-list .key-badge {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    padding: 2px 6px;
+    margin-right: 8px;
+    min-width: 18px;
+    text-align: center;
+    font-family: monospace;
+    color: white;
+    font-weight: bold;
+}
+
+.toggle-help {
+    position: fixed;
+    top: 170px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 991;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background 0.3s ease;
+}
+
+.toggle-help:hover {
+    background: var(--primary-color);
+}
+
+.toggle-help i {
+    color: white;
+    font-size: 1.2rem;
+}
+
 /* On-screen controls */
 .on-screen-controls {
     position: fixed;

@@ -1027,6 +1027,39 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add instructions for mouse and keyboard controls
     showVoiceFeedback('Welcome! Use arrow keys to navigate or press M to activate mouse control');
 
+    // Set up keyboard shortcuts panel
+    const toggleHelp = document.getElementById('toggleHelp');
+    const keyboardShortcuts = document.getElementById('keyboardShortcuts');
+    const collapseShortcuts = document.getElementById('collapseShortcuts');
+    
+    // Toggle keyboard shortcuts panel visibility with '?' key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === '?' || e.key === '/') {
+            toggleKeyboardShortcuts();
+        }
+    });
+    
+    // Toggle keyboard shortcuts panel with button
+    toggleHelp.addEventListener('click', toggleKeyboardShortcuts);
+    
+    // Collapse/expand keyboard shortcuts panel
+    collapseShortcuts.addEventListener('click', () => {
+        keyboardShortcuts.classList.toggle('collapsed');
+        // Update icon
+        if (keyboardShortcuts.classList.contains('collapsed')) {
+            collapseShortcuts.classList.remove('fa-minus-circle');
+            collapseShortcuts.classList.add('fa-plus-circle');
+        } else {
+            collapseShortcuts.classList.remove('fa-plus-circle');
+            collapseShortcuts.classList.add('fa-minus-circle');
+        }
+    });
+    
+    function toggleKeyboardShortcuts() {
+        const isVisible = keyboardShortcuts.style.display !== 'none';
+        keyboardShortcuts.style.display = isVisible ? 'none' : 'block';
+    }
+
     // Voice command recognition simulation
     const voiceCommandContainer = document.getElementById('voiceCommandContainer');
     const voiceWaves = document.getElementById('voiceWaves');

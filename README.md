@@ -60,6 +60,7 @@ To create a **hands-free workout experience** that:
 | Mouse Control  | `M` key       | Toggle mouse control for tilting |
 | Voice Commands | `V` key       | Toggle voice command recognition |
 | Top Tracking   | `T` key       | Toggle cursor tracking at top of screen |
+| Toggle Help    | `?` key       | Toggle keyboard shortcuts panel |
 
 ## 🎨 UI/UX Design Guidance
 
@@ -165,3 +166,9 @@ Please design interactions that reflect **real-world cognitive flow**, and simul
 - Voice commands (activate with 'V' key)
 - Top cursor tracking
 - Tilt controls for natural foot interaction simulation
+
+### Persistent Help Panel
+- Always-accessible keyboard shortcuts panel
+- Positioned outside the projected UI for reference
+- Can be toggled on/off with '?' key or button
+- Collapsible to minimize screen space when needed
