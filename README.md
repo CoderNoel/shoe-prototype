@@ -59,6 +59,7 @@ To create a **hands-free workout experience** that:
 | Sample Data    | `S` key       | Load sample workout data |
 | Mouse Control  | `M` key       | Toggle mouse control for tilting |
 | Voice Commands | `V` key       | Toggle voice command recognition |
+| Top Tracking   | `T` key       | Toggle cursor tracking at top of screen |
 
 ## 🎨 UI/UX Design Guidance
 
@@ -152,13 +153,15 @@ Please design interactions that reflect **real-world cognitive flow**, and simul
   - "How am I doing?"
 - Visual feedback with animated sound waves
 
-### Adaptive UI Elements
-- Interface elements tilt and react to user interaction
-- Projection effects intensify based on workout intensity
-- Holographic elements with depth and perspective that simulates floor projection
+### Cursor Position Tracking
+- Move cursor to top of screen to control shoe tilt
+- Automatically tracks left/right movements in top third of viewport
+- Provides intuitive control without requiring keyboard
+- Can be toggled with 'T' key
 
 ### Multiple Interaction Methods
 - Traditional keyboard controls
 - Mouse-based control (activate with 'M' key)
 - Voice commands (activate with 'V' key)
+- Top cursor tracking
 - Tilt controls for natural foot interaction simulation

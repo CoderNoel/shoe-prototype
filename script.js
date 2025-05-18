@@ -203,6 +203,70 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
+    // Cursor position tracking for shoe tilt
+    let cursorTrackingActive = true;  // Enable by default
+    let cursorTimeout = null;
+    
+    document.addEventListener('mousemove', (e) => {
+        // Only track cursor when it's in the top portion of the screen
+        const topTrackingThreshold = window.innerHeight * 0.3; // Top 30% of the screen
+        
+        if (e.clientY < topTrackingThreshold && cursorTrackingActive) {
+            // Clear any pending cursor timeouts
+            if (cursorTimeout) {
+                clearTimeout(cursorTimeout);
+            }
+            
+            // Calculate position in a fixed arc
+            const screenWidth = window.innerWidth;
+            const xPosition = e.clientX;
+            
+            // Divide screen into three zones: left, center, right
+            const leftThreshold = screenWidth * 0.33;
+            const rightThreshold = screenWidth * 0.66;
+            
+            // Remove any existing tilt classes
+            shoeImage.classList.remove('tilt-left', 'tilt-right', 'tilt-forward');
+            
+            if (xPosition < leftThreshold) {
+                // Left zone - tilt left
+                shoeImage.classList.add('tilt-left');
+                lastMouseTilt = 'left';
+            } else if (xPosition > rightThreshold) {
+                // Right zone - tilt right
+                shoeImage.classList.add('tilt-right');
+                lastMouseTilt = 'right';
+            } else {
+                // Center zone - no tilt
+                lastMouseTilt = null;
+            }
+            
+            // Auto-reset after a delay when cursor stops moving
+            cursorTimeout = setTimeout(() => {
+                shoeImage.classList.remove('tilt-left', 'tilt-right');
+                lastMouseTilt = null;
+            }, 1500);
+        } else if (lastMouseTilt !== null && !mouseControlActive) {
+            // Reset when leaving tracking area
+            shoeImage.classList.remove('tilt-left', 'tilt-right');
+            lastMouseTilt = null;
+        }
+    });
+    
+    // Toggle cursor tracking with 'T' key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 't' || e.key === 'T') {
+            cursorTrackingActive = !cursorTrackingActive;
+            showVoiceFeedback(cursorTrackingActive ? 'Top cursor tracking activated' : 'Top cursor tracking deactivated');
+            
+            // Reset shoe position when disabling
+            if (!cursorTrackingActive) {
+                shoeImage.classList.remove('tilt-left', 'tilt-right');
+                lastMouseTilt = null;
+            }
+        }
+    });
+    
     // Load sample data button - added to the workout screen
     const loadSampleData = () => {
         if (!workoutActive) return;
