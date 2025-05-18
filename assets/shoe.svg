@@ -1,0 +1,24 @@
+<!-- This is an SVG representation of a shoe that looks like a sports sneaker -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" width="400" height="200">
+  <!-- Base of the shoe -->
+  <path d="M50,150 C70,140 100,135 130,130 L250,115 C310,110 350,120 370,140 C380,150 380,160 370,170 C350,180 250,190 150,190 C90,190 40,180 30,160 C20,140 30,160 50,150 Z" fill="#222" stroke="#000" stroke-width="2"/>
+  
+  <!-- Midsole -->
+  <path d="M30,160 C40,180 90,190 150,190 C250,190 350,180 370,170 C380,160 380,150 370,140 L368,155 C365,165 250,170 150,170 C90,170 45,165 35,155 C30,145 30,160 30,160 Z" fill="#fff" stroke="#eee" stroke-width="1"/>
+  
+  <!-- Upper part of the shoe -->
+  <path d="M50,150 C70,140 100,135 130,130 L250,115 C280,113 300,115 320,120 C310,100 290,80 250,75 C220,70 180,65 140,70 C100,75 70,90 50,110 C40,120 30,140 50,150 Z" fill="#333" stroke="#000" stroke-width="1"/>
+  
+  <!-- Laces -->
+  <path d="M120,105 L135,102 M120,115 L135,112 M120,125 L135,122" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Tech details to make it look "smart" -->
+  <circle cx="290" cy="100" r="10" fill="#00a86b" stroke="#007a4d" stroke-width="1" opacity="0.8"/>
+  <circle cx="290" cy="100" r="5" fill="#00d88c" stroke="none" opacity="0.6"/>
+  
+  <!-- Glowing effect for "smart" -->
+  <circle cx="290" cy="100" r="15" fill="none" stroke="#00a86b" stroke-width="1" opacity="0.3">
+    <animate attributeName="r" values="15;20;15" dur="2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.3;0.6;0.3" dur="2s" repeatCount="indefinite"/>
+  </circle>
+</svg>
