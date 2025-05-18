@@ -10,299 +10,266 @@
 </head>
 <body>
     <div class="container">
-        <!-- Instruction overlay -->
+        <!-- Initial Instructions -->
         <div id="instructions" class="instructions-overlay">
             <div class="instructions-content">
-                <h2>Smart Shoe Prototype</h2>
-                <p>This is a simulation of a floor-projected interface controlled by foot tilts.</p>
-                <h3>Controls:</h3>
+                <h2>Smart Shoe Interface</h2>
+                <p>Experience your shoe's floor-projected fitness interface.</p>
+                <div class="instruction-demo">
+                    <img src="assets/Shoe.png" alt="Smart shoe demo" class="demo-shoe">
+                    <div class="demo-projection"></div>
+                </div>
+                <h3>How to Interact:</h3>
                 <ul>
-                    <li><span class="key">←</span> Left tilt (navigate left)</li>
-                    <li><span class="key">→</span> Right tilt (navigate right)</li>
-                    <li><span class="key">Enter</span> Forward tilt (select)</li>
-                    <li><span class="key">P</span> Pause workout</li>
+                    <li><span class="key">←</span> Tilt left foot outward</li>
+                    <li><span class="key">→</span> Tilt right foot inward</li>
+                    <li><span class="key">Enter</span> Tilt foot forward</li>
+                    <li><span class="key">P</span> Pause your workout</li>
                     <li><span class="key">R</span> Resume workout</li>
                 </ul>
-                <p>Imagine this UI is being projected on the floor from your shoes.</p>
-                <button id="startBtn" class="button">Start Prototype</button>
+                <p>Look down to see your interface projected on the floor.</p>
+                <button id="startBtn" class="start-button">Begin Experience</button>
             </div>
         </div>
 
-        <!-- Floor projection simulation -->
+        <!-- Main Floor Projection View -->
         <div class="floor-projection">
-            <div class="projection-content">
-                <!-- This is where the different screens will be displayed -->
-                <div id="workout-type-screen" class="screen active">
-                    <div class="circular-menu">
-                        <h2 class="menu-title">Select Workout</h2>
-                        <div class="workout-options">
-                            <div class="workout-option" data-type="run">
-                                <div class="option-circle">
-                                    <img src="assets/icons/run.svg" alt="Run" class="workout-icon">
-                                </div>
-                                <p>Run</p>
-                            </div>
-                            <div class="workout-option selected" data-type="walk">
-                                <div class="option-circle">
-                                    <img src="assets/icons/walk.svg" alt="Walk" class="workout-icon">
-                                </div>
-                                <p>Walk</p>
-                            </div>
-                            <div class="workout-option" data-type="hiit">
-                                <div class="option-circle">
-                                    <img src="assets/icons/hiit.svg" alt="HIIT" class="workout-icon">
-                                </div>
-                                <p>HIIT</p>
-                            </div>
-                        </div>
-                        <div class="indicator-text">
-                            Tilt <span class="left-indicator">◀ left</span> or <span class="right-indicator">right ▶</span> to navigate, <span class="forward-indicator">forward ▼</span> to select
-                        </div>
-                    </div>
-                </div>
+            <!-- Projection Grid for Floor Effect -->
+            <div class="projection-grid"></div>
 
-                <div id="workout-goal-screen" class="screen">
-                    <div class="goal-selector">
-                        <h2 class="menu-title">Choose Goal</h2>
-                        <div class="goal-type-tabs">
-                            <div class="goal-tab selected" data-goal-type="distance">Distance</div>
-                            <div class="goal-tab" data-goal-type="calories">Calories</div>
-                            <div class="goal-tab" data-goal-type="duration">Duration</div>
-                        </div>
-                        
-                        <div class="goal-value-selector">
-                            <div class="goal-value-display">
-                                <span id="goalValue">5.0</span>
-                                <span id="goalUnit">km</span>
-                            </div>
-                            <div class="goal-slider">
-                                <div class="slider-track">
-                                    <div class="slider-fill"></div>
-                                    <div class="slider-handle"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="confirm-button">
-                            <div class="confirm-circle">
-                                <i class="fas fa-check"></i>
-                            </div>
-                            <p>Confirm</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="countdown-screen" class="screen">
-                    <div class="countdown-container">
-                        <div class="countdown-number">3</div>
-                        <p>Get Ready...</p>
-                    </div>
-                </div>
-
-                <div id="start-screen" class="screen">
-                    <div class="workout-start-card">
-                        <h2>Start a Workout</h2>
-                        <div class="goal-container">
-                            <img src="assets/icons/steps.svg" alt="Steps icon" class="goal-icon">
-                            <p>Goal: 5000 steps</p>
-                        </div>
-                    </div>
-                    
-                    <div class="action-buttons">
-                        <div class="action-button yes-button">
-                            <div class="action-circle">
-                                <i class="fas fa-check"></i>
-                            </div>
-                        </div>
-                        
-                        <div class="action-button no-button">
-                            <div class="action-circle">
-                                <i class="fas fa-times"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="workout-screen" class="screen">
-                    <div class="workout-card progress-card">
-                        <div class="card-header">
-                            <i class="fas fa-running"></i>
-                            <h3>Your Progress</h3>
-                            <div class="card-timer">
-                                <div class="timer-row">
-                                    <p>Time Elapsed: <span id="timeElapsed">12 min</span></p>
-                                    <p>Time Remaining: <span id="timeRemaining">48 min</span></p>
-                                </div>
-                                <div class="timer-controls">
-                                    <button id="pauseBtn" class="timer-button" title="Pause Workout"><i class="fas fa-pause"></i></button>
-                                    <button id="stopBtn" class="timer-button" title="Stop Workout"><i class="fas fa-stop"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="stats-container">
-                        <div class="stat-card vitals">
-                            <h4>Vitals</h4>
-                            <ul>
-                                <li><i class="fas fa-heartbeat"></i> <span id="heartRate">83 bpm</span></li>
-                                <li><i class="fas fa-fire"></i> <span id="caloriesBurned">80/22 98%</span></li>
-                                <li><i class="fas fa-lungs"></i> <span id="breathingRate">Steady Breathing</span></li>
-                                <li><i class="fas fa-thermometer-half"></i> <span id="temp">38°C</span></li>
-                            </ul>
-                        </div>
-                        
-                        <div class="stat-card stats">
-                            <h4>Stats</h4>
-                            <ul>
-                                <li><i class="fas fa-shoe-prints"></i> <span id="stepCount">823 steps</span></li>
-                                <li><i class="fas fa-road"></i> <span id="distance">0.57 km</span></li>
-                                <li><i class="fas fa-bolt"></i> <span id="pace">5.2 km/h</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <!-- Step progress visualization -->
-                    <div class="progress-visualization">
-                        <div class="progress-track">
-                            <div id="progressFill" class="progress-fill"></div>
-                            <div id="stepTarget" class="step-target">
-                                <div class="target-marker"></div>
-                                <span>5000 steps</span>
-                            </div>
-                            <div id="currentProgress" class="current-progress">
-                                <div class="progress-marker"></div>
-                                <span id="progressStepCount">0</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Health Alert Banner -->
-                    <div id="healthAlert" class="health-alert">
-                        <div class="alert-icon pulse-icon">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                        <p id="healthAlertText">High heart rate detected</p>
-                    </div>
-                    
-                    <!-- Pause overlay -->
-                    <div id="pauseOverlay" class="pause-overlay">
-                        <div class="pause-content">
-                            <div class="pause-icon">
-                                <i class="fas fa-pause"></i>
-                            </div>
-                            <h3>Workout Paused</h3>
-                            <p>Tilt forward to resume or left to end early</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Mid-workout alert -->
-                    <div id="workoutAlert" class="workout-alert">
-                        <div class="alert-content">
-                            <div class="alert-icon">
-                                <i class="fas fa-exclamation-circle"></i>
-                            </div>
-                            <h3 id="alertTitle">High Heart Rate</h3>
-                            <p id="alertMessage">Your heart rate is elevated. Would you like to slow down?</p>
-                            <div class="alert-options">
-                                <div class="alert-option" data-action="slow-down">
-                                    <div class="alert-option-circle">
-                                        <i class="fas fa-check"></i>
+            <!-- Projected UI Area -->
+            <div class="projection-area">
+                <div class="interface-area">
+                    <!-- Workout Type Selection Screen -->
+                    <div id="workout-type-screen" class="screen active">
+                        <div class="circular-menu">
+                            <h2 class="menu-title">Select Workout</h2>
+                            <div class="workout-options">
+                                <div class="workout-option" data-type="run">
+                                    <div class="option-circle">
+                                        <img src="assets/icons/run.svg" alt="Run" class="workout-icon">
                                     </div>
-                                    <p>Slow Down</p>
+                                    <p>Run</p>
                                 </div>
-                                <div class="alert-option" data-action="ignore">
-                                    <div class="alert-option-circle">
-                                        <i class="fas fa-times"></i>
+                                <div class="workout-option selected" data-type="walk">
+                                    <div class="option-circle">
+                                        <img src="assets/icons/walk.svg" alt="Walk" class="workout-icon">
                                     </div>
-                                    <p>Ignore</p>
+                                    <p>Walk</p>
                                 </div>
+                                <div class="workout-option" data-type="hiit">
+                                    <div class="option-circle">
+                                        <img src="assets/icons/hiit.svg" alt="HIIT" class="workout-icon">
+                                    </div>
+                                    <p>HIIT</p>
+                                </div>
+                            </div>
+                            <div class="indicator-text">
+                                Tilt <span class="left-indicator">◀ left</span> or <span class="right-indicator">right ▶</span> to navigate, <span class="forward-indicator">forward ▼</span> to select
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div id="complete-screen" class="screen">
-                    <div class="trophy-container">
-                        <div class="laurel-left"></div>
-                        <div class="trophy">
-                            <i class="fas fa-trophy"></i>
-                        </div>
-                        <div class="laurel-right"></div>
-                        <h3>Great Job!</h3>
-                        <p class="completion-message">Workout Completed</p>
-                    </div>
-                    
-                    <div class="completion-stats">
-                        <div class="completion-stat">
-                            <div class="stat-circle heart">
-                                <i class="fas fa-heart"></i>
-                                <span class="stat-value">123 bpm</span>
+                    <!-- Goal Selection Screen -->
+                    <div id="workout-goal-screen" class="screen">
+                        <div class="circular-menu">
+                            <h2 class="menu-title">Choose Goal</h2>
+                            <div class="goal-type-tabs">
+                                <div class="goal-tab selected" data-goal-type="distance">Distance</div>
+                                <div class="goal-tab" data-goal-type="calories">Calories</div>
+                                <div class="goal-tab" data-goal-type="duration">Duration</div>
                             </div>
-                            <p class="stat-label">Avg. Heart Rate</p>
-                        </div>
-                        <div class="completion-stat">
-                            <div class="stat-circle steps">
-                                <span class="stat-value">5000</span>
-                                <span class="stat-label">steps</span>
-                            </div>
-                            <p class="stat-label">Total Steps</p>
-                        </div>
-                        <div class="completion-stat">
-                            <div class="stat-circle calories">
-                                <i class="fas fa-fire"></i>
-                                <span id="finalCalories" class="stat-value">320</span>
-                            </div>
-                            <p class="stat-label">Calories Burned</p>
-                        </div>
-                    </div>
-                    
-                    <div class="mood-rating">
-                        <p class="mood-question">How did you feel?</p>
-                        <div class="mood-options">
-                            <div class="mood-option" data-mood="good">
-                                <div class="mood-circle">
-                                    <i class="fas fa-smile"></i>
+                            
+                            <div class="goal-value-selector">
+                                <div class="goal-value-display">
+                                    <span id="goalValue">5.0</span>
+                                    <span id="goalUnit">km</span>
                                 </div>
-                                <p>Good</p>
-                            </div>
-                            <div class="mood-option" data-mood="okay">
-                                <div class="mood-circle">
-                                    <i class="fas fa-meh"></i>
+                                <div class="goal-slider">
+                                    <div class="slider-track">
+                                        <div class="slider-fill"></div>
+                                        <div class="slider-handle" tabindex="0"></div>
+                                    </div>
                                 </div>
-                                <p>Okay</p>
                             </div>
-                            <div class="mood-option" data-mood="tired">
-                                <div class="mood-circle">
-                                    <i class="fas fa-tired"></i>
-                                </div>
-                                <p>Tired</p>
+
+                            <div class="indicator-text">
+                                Tilt <span class="left-indicator">◀ left</span> or <span class="right-indicator">right ▶</span> to adjust, <span class="forward-indicator">forward ▼</span> to confirm
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="sync-option">
-                        <div class="sync-button">
-                            <i class="fas fa-sync-alt"></i>
-                            <span>Sync with Apple Health</span>
+
+                    <!-- Countdown Screen -->
+                    <div id="countdown-screen" class="screen">
+                        <div class="circular-menu">
+                            <div class="countdown-container">
+                                <div class="countdown-number">3</div>
+                                <p>Get Ready...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Workout Active Screen -->
+                    <div id="workout-screen" class="screen">
+                        <div class="circular-menu">
+                            <div class="workout-header">
+                                <i class="fas fa-running"></i>
+                                <h3>Your Progress</h3>
+                                <div class="timer-display">
+                                    <div class="timer-row">
+                                        <p>Time Elapsed: <span id="timeElapsed">0 min</span></p>
+                                        <p>Time Remaining: <span id="timeRemaining">0 min</span></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="stats-container">
+                                <div class="stat-card vitals">
+                                    <h4>Vitals</h4>
+                                    <ul>
+                                        <li><i class="fas fa-heartbeat"></i> <span id="heartRate">80 bpm</span></li>
+                                        <li><i class="fas fa-fire"></i> <span id="caloriesBurned">0 kcal</span></li>
+                                        <li><i class="fas fa-lungs"></i> <span id="breathingRate">Steady</span></li>
+                                        <li><i class="fas fa-thermometer-half"></i> <span id="temp">37°C</span></li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="stat-card stats">
+                                    <h4>Stats</h4>
+                                    <ul>
+                                        <li><i class="fas fa-shoe-prints"></i> <span id="stepCount">0 steps</span></li>
+                                        <li><i class="fas fa-road"></i> <span id="distance">0.00 km</span></li>
+                                        <li><i class="fas fa-bolt"></i> <span id="pace">0.0 km/h</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <!-- Step progress visualization -->
+                            <div class="progress-visualization">
+                                <div class="progress-track">
+                                    <div id="progressFill" class="progress-fill"></div>
+                                    <div id="stepTarget" class="step-target">
+                                        <div class="target-marker"></div>
+                                        <span>5000 steps</span>
+                                    </div>
+                                    <div id="currentProgress" class="current-progress">
+                                        <div class="progress-marker"></div>
+                                        <span id="progressStepCount">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="indicator-text">
+                                Tilt <span class="forward-indicator">forward ▼</span> to pause workout
+                            </div>
+                        </div>
+                        
+                        <!-- Health Alert Banner -->
+                        <div id="healthAlert" class="health-alert">
+                            <div class="alert-icon pulse-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <p id="healthAlertText">High heart rate detected</p>
+                        </div>
+                        
+                        <!-- Pause overlay -->
+                        <div id="pauseOverlay" class="pause-overlay">
+                            <div class="pause-content">
+                                <div class="pause-icon">
+                                    <i class="fas fa-pause"></i>
+                                </div>
+                                <h3>Workout Paused</h3>
+                                <p>Tilt forward to resume or left to end early</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Workout Complete Screen -->
+                    <div id="complete-screen" class="screen">
+                        <div class="circular-menu">
+                            <div class="trophy-container">
+                                <div class="laurel-left">
+                                    <img src="assets/icons/laurel.svg" alt="Laurel left">
+                                </div>
+                                <div class="trophy">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div class="laurel-right">
+                                    <img src="assets/icons/laurel.svg" alt="Laurel right">
+                                </div>
+                                <h3>Great Job!</h3>
+                                <p class="completion-message">Workout Completed</p>
+                            </div>
+                            
+                            <div class="completion-stats">
+                                <div class="completion-stat">
+                                    <div class="stat-circle heart">
+                                        <i class="fas fa-heart"></i>
+                                        <span class="stat-value">0 bpm</span>
+                                    </div>
+                                    <p class="stat-label">Avg. Heart Rate</p>
+                                </div>
+                                <div class="completion-stat">
+                                    <div class="stat-circle steps">
+                                        <img src="assets/icons/steps.svg" alt="Steps" class="stat-icon">
+                                        <span class="stat-value">0</span>
+                                    </div>
+                                    <p class="stat-label">Total Steps</p>
+                                </div>
+                                <div class="completion-stat">
+                                    <div class="stat-circle calories">
+                                        <i class="fas fa-fire"></i>
+                                        <span id="finalCalories" class="stat-value">0</span>
+                                    </div>
+                                    <p class="stat-label">Calories Burned</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mood-rating">
+                                <p class="mood-question">How did you feel?</p>
+                                <div class="mood-options">
+                                    <div class="mood-option" data-mood="good">
+                                        <div class="mood-circle">
+                                            <i class="fas fa-smile"></i>
+                                        </div>
+                                        <p>Good</p>
+                                    </div>
+                                    <div class="mood-option" data-mood="okay">
+                                        <div class="mood-circle">
+                                            <i class="fas fa-meh"></i>
+                                        </div>
+                                        <p>Okay</p>
+                                    </div>
+                                    <div class="mood-option" data-mood="tired">
+                                        <div class="mood-circle">
+                                            <i class="fas fa-tired"></i>
+                                        </div>
+                                        <p>Tired</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="sync-option">
+                                <div class="sync-button">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span>Sync with Apple Health</span>
+                                </div>
+                            </div>
+                            
+                            <div class="indicator-text">
+                                Tilt <span class="left-indicator">◀ left</span> or <span class="right-indicator">right ▶</span> to select mood, <span class="forward-indicator">forward ▼</span> to sync
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Shoe overlay at the bottom -->
-            <div class="shoe-overlay">
-                <div class="shoe-container">
-                    <img id="shoeImage" src="assets/shoe.svg" alt="Smart shoe" class="shoe-image">
-                    <div class="tech-indicators">
-                        <div class="tech-indicator left"></div>
-                        <div class="tech-indicator center"></div>
-                        <div class="tech-indicator right"></div>
-                    </div>
-                </div>
+
+            <!-- User's Shoe POV -->
+            <div class="shoe-view">
+                <img id="shoeImage" src="assets/Shoe.png" alt="Smart shoe" class="shoe-image">
             </div>
 
-            <!-- Foot tilt indicators (hidden by default) -->
+            <!-- Foot tilt indicator -->
             <div id="tiltIndicator" class="tilt-indicator">
                 <div id="tiltArrow" class="tilt-arrow"></div>
             </div>
@@ -312,7 +279,7 @@
                 <p id="voiceText"></p>
             </div>
 
-            <!-- On-screen controls for testing (optional) -->
+            <!-- On-screen controls for testing -->
             <div class="on-screen-controls">
                 <button id="leftBtn" class="control-btn" title="Tilt Left"><i class="fas fa-arrow-left"></i><span class="sr-only">Tilt Left</span></button>
                 <button id="selectBtn" class="control-btn" title="Tilt Forward"><i class="fas fa-arrow-up"></i><span class="sr-only">Tilt Forward</span></button>

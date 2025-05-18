@@ -81,6 +81,9 @@ document.addEventListener('DOMContentLoaded', () => {
         instructions.style.display = 'none';
         showScreen(0); // Show workout type selection screen
         showVoiceFeedback('Select a workout type');
+        
+        // Preload assets for smooth UX
+        preloadAssets();
     });
     
     // Keyboard controls
@@ -135,9 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Show tilt indicator
             tiltIndicator.style.opacity = '1';
             
-            // Highlight the active tech indicator
-            highlightTechIndicator(direction);
-            
             // Adjust tilt indicator direction
             if (direction === 'left') {
                 tiltArrow.style.transform = 'rotate(-90deg)';
@@ -154,7 +154,6 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 shoeImage.classList.remove(`tilt-${direction}`);
                 tiltIndicator.style.opacity = '0';
-                resetTechIndicators();
             }, 500);
         }, 10); // Very short timeout to ensure class removal is processed
     }
@@ -182,51 +181,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     }
     
-    // Highlight the appropriate tech indicator based on tilt direction
-    function highlightTechIndicator(direction) {
-        const indicators = document.querySelectorAll('.tech-indicator');
-        
-        indicators.forEach(indicator => {
-            indicator.style.animation = 'none';
-            indicator.style.opacity = '0.3';
+    // Function to show a specific screen
+    function showScreen(index) {
+        screens.forEach((screen, i) => {
+            screen.classList.toggle('active', i === index);
         });
+        currentScreenIndex = index;
         
-        if (direction === 'left') {
-            const leftIndicator = document.querySelector('.tech-indicator.left');
-            leftIndicator.style.backgroundColor = '#ffffff';
-            leftIndicator.style.opacity = '1';
-            leftIndicator.style.boxShadow = '0 0 20px #ffffff, 0 0 30px var(--primary-color)';
-            leftIndicator.style.transform = 'scale(1.5)';
-        } else if (direction === 'right') {
-            const rightIndicator = document.querySelector('.tech-indicator.right');
-            rightIndicator.style.backgroundColor = '#ffffff';
-            rightIndicator.style.opacity = '1';
-            rightIndicator.style.boxShadow = '0 0 20px #ffffff, 0 0 30px var(--primary-color)';
-            rightIndicator.style.transform = 'scale(1.5)';
-        } else { // forward
-            const centerIndicator = document.querySelector('.tech-indicator.center');
-            centerIndicator.style.backgroundColor = '#ffffff';
-            centerIndicator.style.opacity = '1';
-            centerIndicator.style.boxShadow = '0 0 20px #ffffff, 0 0 30px var(--primary-color)';
-            centerIndicator.style.transform = 'scale(1.5)';
+        // Create a small floor ripple to show the transition
+        createRippleEffect('forward');
+        
+        // Special screen initialization
+        if (index === 3) { // Workout screen
+            if (!workoutActive) {
+                startWorkout();
+            }
+        } else if (index === 4) { // Complete screen
+            if (workoutActive) {
+                endWorkout();
+                celebrateCompletion();
+            }
         }
-    }
-    
-    // Reset all tech indicators to their normal state
-    function resetTechIndicators() {
-        const indicators = document.querySelectorAll('.tech-indicator');
-        
-        indicators.forEach((indicator, index) => {
-            indicator.style.backgroundColor = 'var(--primary-color)';
-            indicator.style.opacity = '0.7';
-            indicator.style.boxShadow = '0 0 10px var(--primary-color)';
-            indicator.style.transform = 'scale(1)';
-            
-            // Restart the animations with different delays
-            setTimeout(() => {
-                indicator.style.animation = `pulseLight 2s infinite ${index * 0.6}s`;
-            }, 100);
-        });
     }
     
     // Process screen-specific actions
@@ -252,425 +227,496 @@ document.addEventListener('DOMContentLoaded', () => {
                 
             case 1: // Goal Selection
                 if (direction === 'left') {
-                    // Move goal tab left or decrease value
-                    if (document.activeElement === sliderHandle || !document.activeElement) {
-                        // Decrease slider value
-                        sliderValue = Math.max(0, sliderValue - 5);
-                        updateSlider();
+                    // Navigate left through goal types or decrease slider value
+                    if (document.activeElement === sliderHandle) {
+                        // Decrease value
+                        decreaseSliderValue();
                     } else {
-                        // Move between tabs
+                        // Select previous goal type
                         selectedGoalTab = Math.max(0, selectedGoalTab - 1);
                         updateSelectedGoalTab();
                     }
                 } else if (direction === 'right') {
-                    // Move goal tab right or increase value
-                    if (document.activeElement === sliderHandle || !document.activeElement) {
-                        // Increase slider value
-                        sliderValue = Math.min(100, sliderValue + 5);
-                        updateSlider();
+                    // Navigate right through goal types or increase slider value
+                    if (document.activeElement === sliderHandle) {
+                        // Increase value
+                        increaseSliderValue();
                     } else {
-                        // Move between tabs
+                        // Select next goal type
                         selectedGoalTab = Math.min(goalTabs.length - 1, selectedGoalTab + 1);
                         updateSelectedGoalTab();
                     }
                 } else if (direction === 'forward') {
-                    // Start countdown
-                    showScreen(2); // Show countdown screen
-                    startCountdown();
-                }
-                break;
-                
-            case 2: // Countdown Screen
-                // No actions during countdown - it's automatic
-                break;
-                
-            case 3: // Start Screen (legacy)
-                if (direction === 'left') {
-                    highlightButton('no-button');
-                    showVoiceFeedback('Cancel workout?');
-                } else if (direction === 'right') {
-                    highlightButton('yes-button');
-                    showVoiceFeedback('Start workout?');
-                } else if (direction === 'forward') {
-                    // Check if yes button is selected
-                    if (document.querySelector('.yes-button').classList.contains('selected')) {
-                        startWorkout();
-                    } else if (document.querySelector('.no-button').classList.contains('selected')) {
-                        showVoiceFeedback('Workout canceled');
-                        setTimeout(() => {
-                            resetWorkout();
-                            showScreen(0); // Back to workout type selection
-                        }, 1500);
+                    // Select slider or confirm goal
+                    if (document.activeElement === sliderHandle) {
+                        // Confirm goal
+                        showScreen(2); // Show countdown screen
+                        startCountdown();
                     } else {
-                        showVoiceFeedback('Please select yes or no first');
+                        // Focus slider
+                        sliderHandle.focus();
+                        showVoiceFeedback('Adjust goal value with left and right tilts');
                     }
                 }
                 break;
                 
-            case 4: // Workout screen
-                if (direction === 'left' && workoutPaused) {
-                    endWorkout();
-                } else if (direction === 'forward' && workoutPaused) {
-                    resumeWorkout();
+            case 2: // Countdown screen
+                // No actions during countdown
+                break;
+                
+            case 3: // Workout Screen
+                if (workoutPaused) {
+                    if (direction === 'forward') {
+                        resumeWorkout();
+                    } else if (direction === 'left') {
+                        endWorkout();
+                        showScreen(4); // Show completion screen
+                    }
+                } else {
+                    if (direction === 'forward') {
+                        pauseWorkout();
+                    }
                 }
                 break;
                 
-            case 5: // Complete screen
-                if (direction === 'forward') {
-                    resetWorkout();
-                    showScreen(0); // Back to workout type selection
+            case 4: // Workout Complete
+                // Handle mood selection and sync option
+                // Only one selection allowed in mood options
+                const moodOptions = document.querySelectorAll('.mood-option');
+                if (direction === 'left') {
+                    // Previous mood option
+                    let selectedIndex = Array.from(moodOptions).findIndex(option => option.classList.contains('selected'));
+                    if (selectedIndex === -1) selectedIndex = 0;
+                    else selectedIndex = Math.max(0, selectedIndex - 1);
+                    
+                    moodOptions.forEach((option, i) => {
+                        option.classList.toggle('selected', i === selectedIndex);
+                    });
+                    
+                    showVoiceFeedback(`Mood: ${moodOptions[selectedIndex].getAttribute('data-mood')}`);
+                } else if (direction === 'right') {
+                    // Next mood option
+                    let selectedIndex = Array.from(moodOptions).findIndex(option => option.classList.contains('selected'));
+                    if (selectedIndex === -1) selectedIndex = 0;
+                    else selectedIndex = Math.min(moodOptions.length - 1, selectedIndex + 1);
+                    
+                    moodOptions.forEach((option, i) => {
+                        option.classList.toggle('selected', i === selectedIndex);
+                    });
+                    
+                    showVoiceFeedback(`Mood: ${moodOptions[selectedIndex].getAttribute('data-mood')}`);
+                } else if (direction === 'forward') {
+                    // Sync with Apple Health (simulated)
+                    const syncButton = document.querySelector('.sync-button');
+                    if (syncButton) {
+                        syncButton.style.backgroundColor = '#4fd1ff';
+                        syncButton.style.color = '#0a0e1a';
+                        syncButton.style.boxShadow = '0 0 18px 4px #4fd1ff88';
+                        
+                        showVoiceFeedback('Syncing with Apple Health...');
+                        
+                        setTimeout(() => {
+                            showVoiceFeedback('Workout data synchronized successfully');
+                            
+                            // Reset to start
+                            setTimeout(() => {
+                                resetWorkout();
+                                showScreen(0); // Back to workout type selection
+                            }, 3000);
+                        }, 2000);
+                    }
                 }
                 break;
         }
     }
     
-    // Helper functions for workout type selection
+    // Update selected workout option
     function updateSelectedWorkoutOption() {
-        workoutOptions.forEach((option, index) => {
-            option.classList.toggle('selected', index === selectedWorkoutOption);
+        workoutOptions.forEach((option, i) => {
+            option.classList.toggle('selected', i === selectedWorkoutOption);
         });
     }
     
+    // Get workout type name from index
     function getWorkoutTypeName(index) {
         const types = ['Run', 'Walk', 'HIIT'];
-        return types[index];
+        return types[index] || '';
     }
     
-    // Helper functions for goal selection
+    // Update selected goal tab
     function updateSelectedGoalTab() {
-        goalTabs.forEach((tab, index) => {
-            tab.classList.toggle('selected', index === selectedGoalTab);
+        goalTabs.forEach((tab, i) => {
+            tab.classList.toggle('selected', i === selectedGoalTab);
         });
         
-        // Update goal type and unit
-        const goalTypes = ['distance', 'calories', 'duration'];
-        currentGoalType = goalTypes[selectedGoalTab];
-        goalUnit.textContent = goalSettings[currentGoalType].unit;
+        currentGoalType = goalTabs[selectedGoalTab].getAttribute('data-goal-type');
         
-        // Update slider value based on new goal type
+        // Update goal value and unit
+        const settings = goalSettings[currentGoalType];
+        goalUnit.textContent = settings.unit;
+        
+        // Recalculate value based on slider position
+        const value = calculateValueFromSlider(sliderValue, settings);
+        goalValue.textContent = settings.format(value);
+        
+        showVoiceFeedback(`${currentGoalType} goal selected`);
+    }
+    
+    // Update slider
+    function updateSlider() {
+        sliderFill.style.width = `${sliderValue}%`;
+        sliderHandle.style.left = `${sliderValue}%`;
+        
+        const settings = goalSettings[currentGoalType];
+        const value = calculateValueFromSlider(sliderValue, settings);
+        goalValue.textContent = settings.format(value);
+        
+        showVoiceFeedback(`${value} ${settings.unit}`);
+    }
+    
+    // Increase slider value
+    function increaseSliderValue() {
+        sliderValue = Math.min(100, sliderValue + 5);
         updateSlider();
     }
     
-    function updateSlider() {
-        if (!sliderHandle || !sliderFill) return;
-        
-        // Update slider position
-        sliderHandle.style.left = `${sliderValue}%`;
-        sliderFill.style.width = `${sliderValue}%`;
-        
-        // Calculate actual value based on min/max and format it
-        const settings = goalSettings[currentGoalType];
-        const range = settings.max - settings.min;
-        const actualValue = settings.min + (range * sliderValue / 100);
-        
-        // Update displayed value
-        goalValue.textContent = settings.format(actualValue);
+    // Decrease slider value
+    function decreaseSliderValue() {
+        sliderValue = Math.max(0, sliderValue - 5);
+        updateSlider();
     }
     
-    // Countdown function
+    // Calculate value from slider position
+    function calculateValueFromSlider(percent, settings) {
+        return settings.min + (settings.max - settings.min) * (percent / 100);
+    }
+    
+    // Start countdown
     function startCountdown() {
         const countdownEl = document.querySelector('.countdown-number');
         let count = 3;
         
         countdownEl.textContent = count;
+        showVoiceFeedback('Get ready');
         
-        const countInterval = setInterval(() => {
+        const interval = setInterval(() => {
             count--;
-            
             if (count > 0) {
                 countdownEl.textContent = count;
+                showVoiceFeedback(count.toString());
             } else {
-                clearInterval(countInterval);
-                showScreen(4); // Go to workout screen directly
-                startWorkout();
+                clearInterval(interval);
+                showScreen(3); // Show workout screen
+                
+                // Create a strong ripple effect to indicate workout start
+                createWorkoutStartRipple();
             }
         }, 1000);
     }
     
-    // Highlight selected button
-    function highlightButton(buttonClass) {
-        document.querySelectorAll('.action-button').forEach(btn => {
-            btn.classList.remove('selected');
-        });
-        document.querySelector(`.${buttonClass}`).classList.add('selected');
+    // Create a strong ripple effect for workout start
+    function createWorkoutStartRipple() {
+        const ripple = document.createElement('div');
+        ripple.className = 'ripple-effect';
+        ripple.style.left = '50%';
+        ripple.style.transform = 'translate(-50%, -50%) scale(0.5)';
+        ripple.style.animation = 'ripple 1.5s ease-out forwards';
+        ripple.style.background = 'var(--tertiary-color)';
+        
+        document.querySelector('.floor-projection').appendChild(ripple);
+        
+        // Create multiple ripples for dramatic effect
+        setTimeout(() => {
+            const ripple2 = document.createElement('div');
+            ripple2.className = 'ripple-effect';
+            ripple2.style.left = '40%';
+            document.querySelector('.floor-projection').appendChild(ripple2);
+            
+            setTimeout(() => {
+                const ripple3 = document.createElement('div');
+                ripple3.className = 'ripple-effect';
+                ripple3.style.left = '60%';
+                document.querySelector('.floor-projection').appendChild(ripple3);
+            }, 200);
+        }, 200);
     }
     
     // Start workout
     function startWorkout() {
-        showScreen(4); // Use correct index for workout screen
         workoutActive = true;
         workoutPaused = false;
-        workoutStartTime = Date.now();
+        workoutStartTime = new Date();
         
-        showVoiceFeedback('Workout starting now');
+        // Show initial stats
+        updateWorkoutStats();
         
-        // Set up workout interval
+        // Set up interval to update stats
         workoutInterval = setInterval(() => {
             if (!workoutPaused) {
                 updateWorkoutStats();
             }
         }, 1000);
+        
+        showVoiceFeedback('Workout started');
+        
+        // Simulate random health alert after 10-20 seconds
+        setTimeout(() => {
+            if (workoutActive && !workoutPaused) {
+                showHealthAlert('High heart rate detected. Consider slowing down.');
+            }
+        }, 10000 + Math.random() * 10000);
     }
     
     // Pause workout
     function pauseWorkout() {
+        if (!workoutActive || workoutPaused) return;
+        
         workoutPaused = true;
-        workoutElapsedTime += (Date.now() - workoutStartTime);
+        workoutElapsedTime += (new Date() - workoutStartTime);
         
         // Show pause overlay
         document.getElementById('pauseOverlay').classList.add('active');
         
-        showVoiceFeedback('Workout paused. Tilt forward to resume or left to end');
+        showVoiceFeedback('Workout paused');
     }
     
     // Resume workout
     function resumeWorkout() {
+        if (!workoutActive || !workoutPaused) return;
+        
         workoutPaused = false;
-        workoutStartTime = Date.now();
+        workoutStartTime = new Date();
         
         // Hide pause overlay
         document.getElementById('pauseOverlay').classList.remove('active');
         
-        showVoiceFeedback('Resuming workout');
+        showVoiceFeedback('Workout resumed');
     }
     
     // End workout
     function endWorkout() {
+        if (!workoutActive) return;
+        
         clearInterval(workoutInterval);
+        
+        if (!workoutPaused) {
+            workoutElapsedTime += (new Date() - workoutStartTime);
+        }
+        
         workoutActive = false;
         workoutPaused = false;
         
-        // Update final stats on completion screen
-        document.querySelector('.stat-circle.heart .stat-value').textContent = `${heartRate} bpm`;
-        document.querySelector('.stat-circle.steps .stat-value').textContent = steps.toString();
-        document.getElementById('finalCalories').textContent = calories.toString();
+        // Hide pause overlay if visible
+        document.getElementById('pauseOverlay').classList.remove('active');
         
-        showScreen(5); // Use correct index for completion screen
-        showVoiceFeedback('Workout completed! Great job!');
+        // Update final stats
+        document.querySelector('#finalCalories').textContent = calories;
         
-        // Set up mood selection handlers
-        setupMoodSelection();
-        
-        // Add a confetti effect or celebration animation
-        celebrateCompletion();
+        showVoiceFeedback('Workout completed');
     }
     
-    // Setup mood selection functionality
-    function setupMoodSelection() {
+    // Reset workout
+    function resetWorkout() {
+        workoutActive = false;
+        workoutPaused = false;
+        workoutElapsedTime = 0;
+        heartRate = 80;
+        calories = 0;
+        steps = 0;
+        distance = 0;
+        
+        // Reset UI elements
+        updateSelectedWorkoutOption();
+        updateSelectedGoalTab();
+        
         const moodOptions = document.querySelectorAll('.mood-option');
-        moodOptions.forEach(option => {
-            option.addEventListener('click', (e) => {
-                // Remove selected class from all options
-                moodOptions.forEach(opt => opt.classList.remove('selected'));
-                
-                // Add selected class to clicked option
-                e.currentTarget.classList.add('selected');
-                
-                const mood = e.currentTarget.getAttribute('data-mood');
-                showVoiceFeedback(`You felt ${mood} during this workout`);
-            });
-        });
+        moodOptions.forEach(option => option.classList.remove('selected'));
         
-        // Setup sync button
         const syncButton = document.querySelector('.sync-button');
-        syncButton.addEventListener('click', () => {
-            syncButton.innerHTML = '<i class="fas fa-check"></i><span>Synced with Apple Health</span>';
-            syncButton.style.backgroundColor = 'rgba(0, 168, 107, 0.2)';
-            syncButton.style.borderColor = 'rgba(0, 168, 107, 0.5)';
-            syncButton.querySelector('i').style.color = '#00a86b';
-            
-            showVoiceFeedback('Workout data synced with Apple Health');
-        });
+        if (syncButton) {
+            syncButton.style.backgroundColor = '';
+            syncButton.style.color = '';
+            syncButton.style.boxShadow = '';
+        }
     }
     
-    // Celebration animation
+    // Celebrate workout completion with visual effects
     function celebrateCompletion() {
-        // Add a simple celebration animation
-        const trophy = document.querySelector('.trophy');
-        
-        // Enhanced glow effect
-        trophy.style.boxShadow = '0 0 30px rgba(255, 215, 0, 0.8), 0 0 50px rgba(255, 255, 255, 0.6)';
-        
-        // Create a confetti-like effect using emojis
-        const confettiEmojis = ['🎉', '🎊', '✨', '🏆', '💪', '🥇'];
-        const container = document.getElementById('complete-screen');
-        
-        for (let i = 0; i < 30; i++) {
+        // Create multiple celebration ripples
+        for (let i = 0; i < 5; i++) {
             setTimeout(() => {
-                const emoji = document.createElement('div');
-                emoji.className = 'confetti-emoji';
-                emoji.textContent = confettiEmojis[Math.floor(Math.random() * confettiEmojis.length)];
-                emoji.style.left = Math.random() * 100 + 'vw';
-                emoji.style.animationDuration = (Math.random() * 2 + 3) + 's'; // Between 3-5s
-                
-                container.appendChild(emoji);
-                
-                // Remove after animation completes
-                setTimeout(() => {
-                    emoji.remove();
-                }, 5000);
-            }, i * 150);
+                const ripple = document.createElement('div');
+                ripple.className = 'ripple-effect';
+                ripple.style.left = `${30 + Math.random() * 40}%`;
+                ripple.style.backgroundColor = getRandomColor();
+                document.querySelector('.floor-projection').appendChild(ripple);
+            }, i * 300);
         }
+        
+        // Highlight trophy with glow effect
+        const trophy = document.querySelector('.trophy');
+        if (trophy) {
+            trophy.style.animation = 'pulse 1s infinite';
+            trophy.style.boxShadow = '0 0 30px rgba(255, 215, 0, 0.8)';
+        }
+    }
+    
+    // Get random celebration color
+    function getRandomColor() {
+        const colors = [
+            'var(--primary-color)',
+            'var(--secondary-color)',
+            'var(--tertiary-color)',
+            '#ffb450',
+            '#4fd1ff'
+        ];
+        return colors[Math.floor(Math.random() * colors.length)];
     }
     
     // Preload assets
     function preloadAssets() {
-        // Create fake progress for loading experience
-        let loadingProgress = 0;
-        const loadingInterval = setInterval(() => {
-            loadingProgress += 10;
-            if (loadingProgress >= 100) {
-                clearInterval(loadingInterval);
-            }
-        }, 200);
+        const imagesToPreload = [
+            'assets/icons/run.svg',
+            'assets/icons/walk.svg',
+            'assets/icons/hiit.svg',
+            'assets/icons/heart.svg',
+            'assets/icons/steps.svg',
+            'assets/icons/time.svg',
+            'assets/icons/laurel.svg'
+        ];
+        
+        imagesToPreload.forEach(src => {
+            const img = new Image();
+            img.src = src;
+        });
     }
     
-    // Update workout statistics
+    // Update workout stats with simulated values
     function updateWorkoutStats() {
+        if (!workoutActive) return;
+        
         // Calculate elapsed time
-        const currentTime = Date.now();
-        const elapsedSeconds = Math.floor((currentTime - workoutStartTime + workoutElapsedTime) / 1000);
-        const elapsedMinutes = Math.floor(elapsedSeconds / 60);
+        let currentElapsedTime = workoutElapsedTime;
+        if (!workoutPaused) {
+            currentElapsedTime += (new Date() - workoutStartTime);
+        }
         
-        // Update stats based on elapsed time (simulated data)
-        heartRate = 80 + Math.floor(Math.random() * 10) + Math.min(40, elapsedMinutes * 2);
-        steps = Math.min(5000, Math.floor(elapsedSeconds * (5 + Math.random() * 2)));
-        distance = (steps / 1300).toFixed(2); // Approx. conversion
-        calories = Math.floor(elapsedMinutes * (8 + Math.random() * 3));
+        const elapsedMinutes = Math.floor(currentElapsedTime / 60000);
         
-        // Update DOM elements
-        heartRateEl.textContent = `${heartRate} bpm`;
-        caloriesEl.textContent = `${calories}/${calories - 2} ${Math.min(98, calories)}%`;
-        stepCountEl.textContent = `${steps} steps`;
-        distanceEl.textContent = `${distance} km`;
+        // Update time display
         timeElapsedEl.textContent = `${elapsedMinutes} min`;
-        timeRemainingEl.textContent = `${Math.max(0, 60 - elapsedMinutes)} min`;
+        
+        // Get goal and calculate remaining time
+        const goalType = currentGoalType;
+        const settings = goalSettings[goalType];
+        const goalValue = calculateValueFromSlider(sliderValue, settings);
+        
+        if (goalType === 'duration') {
+            const remainingMinutes = Math.max(0, goalValue - elapsedMinutes);
+            timeRemainingEl.textContent = `${remainingMinutes} min`;
+            
+            // End workout if time is up
+            if (remainingMinutes <= 0 && workoutActive) {
+                showScreen(4); // Show completion screen
+            }
+        }
+        
+        // Update steps (simulate steady pace with small random variations)
+        const baseStepRate = 100; // steps per minute
+        const randomVariation = Math.floor(Math.random() * 10) - 5; // -5 to +5
+        const newSteps = Math.floor(elapsedMinutes * baseStepRate) + randomVariation;
+        steps = newSteps;
+        stepCountEl.textContent = `${steps} steps`;
+        
+        // Update distance (based on steps)
+        distance = (steps * 0.0007).toFixed(2); // Approximate conversion
+        distanceEl.textContent = `${distance} km`;
+        
+        // Update heart rate (start at 80, increase steadily, then plateau with small variations)
+        const baseHeartRate = 80 + Math.min(60, elapsedMinutes * 5);
+        const heartRateVariation = Math.floor(Math.random() * 6) - 3; // -3 to +3
+        heartRate = baseHeartRate + heartRateVariation;
+        heartRateEl.textContent = `${heartRate} bpm`;
+        
+        // Update calories (based on heartrate and time)
+        // Simple formula: higher heart rate burns more calories
+        calories = Math.floor((heartRate - 70) * 0.1 * elapsedMinutes);
+        caloriesEl.textContent = `${calories} kcal`;
+        
+        // End workout if calorie goal reached
+        if (goalType === 'calories' && calories >= goalValue && workoutActive) {
+            showScreen(4); // Show completion screen
+        }
         
         // Update progress visualization
-        updateProgressVisualization(steps, 5000);
-        
-        // Check if workout goal is reached
-        if (steps >= 5000) {
-            endWorkout();
-            return;
-        }
-        
-        // Trigger health alerts based on conditions
-        if (heartRate > 140 && Math.random() < 0.1 && !document.getElementById('workoutAlert').classList.contains('active')) {
-            if (heartRate > 160) {
-                // More urgent alert for very high heart rate
-                showHealthAlert('Very high heart rate detected!', 'danger');
-                
-                // After a short delay, show the workout alert that requires action
-                setTimeout(() => {
-                    showWorkoutAlert('High Heart Rate', 'Your heart rate is very high. You should slow down.', 'heart');
-                }, 3000);
-            } else {
-                // Regular alert for elevated heart rate
-                showHealthAlert('High heart rate detected', 'warning');
-            }
-        } 
-        // Random inactivity alert if steps haven't increased significantly
-        else if (elapsedSeconds > 30 && elapsedSeconds % 30 === 0 && Math.random() < 0.2 && steps < 100) {
-            showHealthAlert('Low activity detected', 'info');
-        }
-        // Random encouragement
-        else if (elapsedSeconds > 30 && elapsedSeconds % 60 === 0 && Math.random() < 0.3) {
-            showVoiceFeedback(getRandomEncouragement());
-        }
+        updateProgressVisualization(steps, 5000); // Assuming 5000 steps target
     }
     
-    // Update the progress visualization
+    // Update progress visualization
     function updateProgressVisualization(currentSteps, targetSteps) {
         const progressFill = document.getElementById('progressFill');
         const currentProgress = document.getElementById('currentProgress');
         const progressStepCount = document.getElementById('progressStepCount');
         
-        // Calculate percentage
-        const percentage = Math.min(100, (currentSteps / targetSteps) * 100);
+        if (!progressFill || !currentProgress || !progressStepCount) return;
         
-        // Update fill width
-        progressFill.style.width = `${percentage}%`;
+        const percentComplete = Math.min(100, (currentSteps / targetSteps) * 100);
+        
+        // Update progress bar fill
+        progressFill.style.width = `${percentComplete}%`;
         
         // Update marker position
-        currentProgress.style.transform = `translateX(${percentage}%)`;
+        currentProgress.style.left = `${percentComplete}%`;
         
         // Update step count
         progressStepCount.textContent = currentSteps;
         
-        // Add pulse animation near achievement points
-        if (percentage >= 25 && percentage < 26 || 
-            percentage >= 50 && percentage < 51 || 
-            percentage >= 75 && percentage < 76 || 
-            percentage >= 99 && percentage <= 100) {
-            
-            const progressMarker = document.querySelector('.progress-marker');
-            progressMarker.style.animation = 'none';
-            
-            // Force reflow to restart animation
-            void progressMarker.offsetWidth;
-            
-            // Apply celebration pulse
-            progressMarker.style.animation = 'pulseLight 0.5s 3';
-            
-            // Show achievement message
-            if (percentage >= 25 && percentage < 26) {
-                showVoiceFeedback('25% of your goal completed!');
-            } else if (percentage >= 50 && percentage < 51) {
-                showVoiceFeedback('Halfway there! Keep going!');
-            } else if (percentage >= 75 && percentage < 76) {
-                showVoiceFeedback('75% complete! Almost there!');
-            } else if (percentage >= 99 && percentage <= 100) {
-                showVoiceFeedback('Goal achieved! Great job!');
+        // Pulse animation when milestones reached
+        if (currentSteps > 0 && currentSteps % 1000 === 0) {
+            const marker = currentProgress.querySelector('.progress-marker');
+            if (marker) {
+                marker.classList.add('pulse');
+                setTimeout(() => marker.classList.remove('pulse'), 2000);
             }
+            
+            // Celebratory ripple
+            createRippleEffect('forward');
+            
+            showVoiceFeedback(`Milestone reached: ${currentSteps} steps`);
         }
     }
     
-    // Show health alert banner
-    function showHealthAlert(message, type = 'warning') {
+    // Show voice feedback
+    function showVoiceFeedback(message) {
+        voiceText.textContent = message;
+        voiceFeedback.classList.add('active');
+        
+        // Remove active class after 3 seconds
+        setTimeout(() => {
+            voiceFeedback.classList.remove('active');
+        }, 3000);
+    }
+    
+    // Show health alert
+    function showHealthAlert(message) {
         const alertEl = document.getElementById('healthAlert');
-        const alertText = document.getElementById('healthAlertText');
-        const alertIcon = alertEl.querySelector('.alert-icon i');
+        const alertTextEl = document.getElementById('healthAlertText');
         
-        // Update message
-        alertText.textContent = message;
+        if (!alertEl || !alertTextEl) return;
         
-        // Update icon based on alert type
-        if (type === 'danger') {
-            alertIcon.className = 'fas fa-exclamation-triangle';
-            alertEl.style.backgroundColor = 'rgba(220, 53, 69, 0.85)';
-        } else if (type === 'warning') {
-            alertIcon.className = 'fas fa-exclamation-circle';
-            alertEl.style.backgroundColor = 'rgba(255, 193, 7, 0.85)';
-        } else if (type === 'info') {
-            alertIcon.className = 'fas fa-info-circle';
-            alertEl.style.backgroundColor = 'rgba(23, 162, 184, 0.85)';
-        }
-        
-        // Show the alert
+        alertTextEl.textContent = message;
         alertEl.classList.add('active');
         
-        // Announce to screen readers
-        showVoiceFeedback(message);
+        // Create a warning ripple
+        const ripple = document.createElement('div');
+        ripple.className = 'ripple-effect';
+        ripple.style.left = '50%';
+        ripple.style.backgroundColor = 'var(--secondary-color)';
+        document.querySelector('.floor-projection').appendChild(ripple);
         
-        // Hide after a few seconds
+        // Show warning for 5 seconds
         setTimeout(() => {
             alertEl.classList.remove('active');
         }, 5000);
     }
-    
-    // Preload assets
-    function preloadAssets() {
-        // Create fake progress for loading experience
-        let loadingProgress = 0;
-        const loadingInterval = setInterval(() => {
-            loadingProgress += 10;
-            if (loadingProgress >= 100) {
-                clearInterval(loadingInterval);
-            }
-        }, 200);
-    }
-    
-    // Initialize
-    preloadAssets();
 });
