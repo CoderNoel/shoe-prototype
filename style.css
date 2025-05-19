@@ -555,30 +555,8 @@ body {
 }
 
 /* Tilt Indicator */
-.tilt-indicator {
-    position: absolute;
-    bottom: 180px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 80px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 60;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.tilt-arrow {
-    width: 40px;
-    height: 40px;
-    background-color: var(--primary-color);
-    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-    transform: rotate(0deg);
-    transition: transform 0.3s ease;
-    filter: drop-shadow(0 0 10px var(--primary-color));
-    opacity: 0.8;
+.tilt-indicator, .tilt-arrow {
+    display: none !important;
 }
 
 /* Shoe beam selection effect */
