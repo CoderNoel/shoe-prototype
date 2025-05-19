@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const projectionArea = document.querySelector('.projection-area');
     const projectionBeam = document.getElementById('projectionBeam');
     
+    // Add flag to track back button hover state
+    let isBackButtonHovered = false;
+    
     // On-screen control buttons
     const leftBtn = document.getElementById('leftBtn');
     const selectBtn = document.getElementById('selectBtn');
@@ -334,6 +337,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Track interactive elements for hover effects with improved detection
     document.addEventListener('mousemove', (e) => {
         if (!uiActive || !cursorTrackingActive) return;
+        
+        // Skip mousemove tilt handling if back button is being hovered
+        if (isBackButtonHovered) return;
         
         // Calculate screen sections with a narrower center region
         const screenWidth = window.innerWidth;
@@ -2110,23 +2116,67 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Back button hover: tilt shoe further left
     backBtn.addEventListener('mouseenter', () => {
+        // Force debugging to console to verify the event is triggered
+        console.log("Back button hover detected");
+        
+        // Set the flag to prevent mousemove from interfering
+        isBackButtonHovered = true;
+        
+        // First, make sure to remove all other tilt classes
         shoeImage.classList.remove('tilt-left', 'tilt-right', 'tilt-forward', 'tilt-left-tap', 'tilt-right-tap');
+        
+        // Add specific back button tilt
         shoeImage.classList.add('tilt-back-btn');
+        
+        // Get shoe tip light element and manually position it
+        const shoeTipLight = document.getElementById('shoeTipLight');
+        if (shoeTipLight) {
+            // Apply explicit styles to ensure it moves with the shoe
+            shoeTipLight.style.transition = 'all 0.45s cubic-bezier(0.25, 0.1, 0.25, 1)';
+            shoeTipLight.style.left = 'calc(50% - 270px)';  // Much further left to match shoe position
+            shoeTipLight.style.bottom = '130px';  // Adjusted to match height
+            shoeTipLight.style.transform = 'translateX(-50%) rotate(-40deg)';
+            shoeTipLight.style.filter = 'blur(5px)';
+            shoeTipLight.style.boxShadow = '0 0 20px 8px rgba(0, 168, 107, 0.8)';
+        }
         
         // Create a beam effect pointing toward the back button
         const beam = document.createElement('div');
         beam.className = 'shoe-beam-effect';
+        beam.id = 'back-btn-beam';
         beam.style.transform = 'translate(-80%, 0) scale(0.8)';
-        beam.style.left = '30%';
+        beam.style.left = '20%'; // Adjusted more to the left
+        beam.style.bottom = '190px'; // Match light position
+        beam.style.animation = 'none'; // Prevent fadeout animation
+        beam.style.opacity = '0.8'; // Keep visible
         document.querySelector('.shoe-view').appendChild(beam);
-        
-        // Remove beam after animation completes
-        setTimeout(() => {
-            beam.remove();
-        }, 800);
     });
+    
     backBtn.addEventListener('mouseleave', () => {
+        console.log("Back button mouseleave detected");
+        
+        // Reset the flag to allow mousemove handling again
+        isBackButtonHovered = false;
+        
+        // Remove the back button tilt class
         shoeImage.classList.remove('tilt-back-btn');
+        
+        // Reset shoe tip light styles manually
+        const shoeTipLight = document.getElementById('shoeTipLight');
+        if (shoeTipLight) {
+            shoeTipLight.style.transition = 'all 0.45s cubic-bezier(0.25, 0.1, 0.25, 1)';
+            shoeTipLight.style.left = '50%';
+            shoeTipLight.style.bottom = '225px';
+            shoeTipLight.style.transform = 'translateX(-50%)';
+            shoeTipLight.style.filter = 'blur(4px)';
+            shoeTipLight.style.boxShadow = '0 0 15px 4px rgba(0, 168, 107, 0.7)';
+        }
+        
+        // Remove beam when no longer hovering
+        const beam = document.getElementById('back-btn-beam');
+        if (beam) {
+            beam.remove();
+        }
     });
 
     // Add demo mode info key
@@ -2154,4 +2204,5 @@ document.addEventListener('DOMContentLoaded', () => {
             projectionBeam.style.maxWidth = `${projAreaRect.width}px`;
         }
     }, 100);
+
 });

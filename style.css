@@ -606,9 +606,11 @@ body {
     z-index: 5; /* Same z-index as the beam to appear connected */
     pointer-events: none;
     box-shadow: 0 0 15px 4px rgba(0, 168, 107, 0.7);
-    transition: transform 0.2s ease-out, 
-                left 0.2s ease-out,
-                bottom 0.2s ease-out;
+    transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                left 0.45s cubic-bezier(0.25, 0.1, 0.25, 1),
+                bottom 0.45s cubic-bezier(0.25, 0.1, 0.25, 1),
+                filter 0.45s cubic-bezier(0.25, 0.1, 0.25, 1),
+                box-shadow 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
     animation: tipGlow 2s infinite alternate;
 }
 
@@ -2279,6 +2281,14 @@ body {
     transform: scale(0.96);
 }
 
+@media (max-width: 1200px) {
+    .back-btn {
+        position: fixed;
+        top: 20%;
+        left: 10%;
+    }
+}
+
 @media (max-width: 600px) {
     .back-btn {
         top: 15px;
@@ -2290,7 +2300,7 @@ body {
 }
 
 .shoe-image.tilt-back-btn {
-    transform: rotate(-35deg) translateX(-50px) translateY(-25px);
+    transform: rotate(-40deg) translateX(-110px) translateY(-20px);
     transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
@@ -2437,7 +2447,7 @@ body {
 /* Better match tap animations */
 .shoe-image.tilt-left-tap ~ .shoe-tip-light {
     left: calc(50% - 70px);
-    bottom: 225px;
+    bottom: 205px; /* Adjusted for tap animation */
     transform: translateX(-50%) rotate(-15deg);
     animation: tapGlow 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -2449,6 +2459,20 @@ body {
     transform: translateX(-50%) scale(1.2);
     filter: blur(7px);
     box-shadow: 0 0 35px 12px rgba(0, 168, 107, 0.9);
+}
+
+/* Back button tilt for shoe tip light */
+.shoe-image.tilt-back-btn ~ .shoe-tip-light {
+    left: calc(50% - 85px);
+    bottom: 210px;
+    transform: translateX(-50%) rotate(-35deg) translateX(-30px);
+    filter: blur(5px);
+    box-shadow: 0 0 20px 8px rgba(0, 168, 107, 0.8);
+    transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                left 0.45s cubic-bezier(0.25, 0.1, 0.25, 1),
+                bottom 0.45s cubic-bezier(0.25, 0.1, 0.25, 1),
+                filter 0.45s cubic-bezier(0.25, 0.1, 0.25, 1),
+                box-shadow 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 @keyframes tipGlow {
