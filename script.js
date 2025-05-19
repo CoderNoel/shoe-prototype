@@ -149,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showVoiceFeedback('Select a workout type');
         preloadAssets();
         uiActive = true; // Enable UI interactivity
+        updateBackButton();
     });
     
     // Keyboard controls
@@ -465,6 +466,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 celebrateCompletion();
             }
         }
+        updateBackButton();
     }
     
     // Handle clicks on interactive elements - simplified for reliability
@@ -1794,5 +1796,38 @@ document.addEventListener('DOMContentLoaded', () => {
             // Create a beam effect for selection
             createShoeBeamEffect();
         });
+    });
+
+    // Show/hide back button based on current screen
+    function updateBackButton() {
+        if (currentScreenIndex === 0 || currentScreenIndex === 4 || instructions.style.display !== 'none') {
+            backBtn.style.display = 'none';
+        } else {
+            backBtn.style.display = 'flex';
+        }
+    }
+
+    // Back button click handler
+    const backBtn = document.getElementById('backBtn');
+    backBtn.addEventListener('click', () => {
+        // Visual feedback on click
+        backBtn.classList.add('clicked');
+        setTimeout(() => backBtn.classList.remove('clicked'), 180);
+        if (currentScreenIndex === 1) {
+            showScreen(0); // Goal selection -> Workout type
+        } else if (currentScreenIndex === 2) {
+            showScreen(1); // Countdown -> Goal selection
+        } else if (currentScreenIndex === 3) {
+            showScreen(1); // Workout -> Goal selection
+        }
+    });
+
+    // Back button hover: tilt shoe further left
+    backBtn.addEventListener('mouseenter', () => {
+        shoeImage.classList.remove('tilt-left', 'tilt-right', 'tilt-forward', 'tilt-left-tap', 'tilt-right-tap');
+        shoeImage.classList.add('tilt-back-btn');
+    });
+    backBtn.addEventListener('mouseleave', () => {
+        shoeImage.classList.remove('tilt-back-btn');
     });
 });

@@ -71,6 +71,10 @@
 
         <!-- Main Floor Projection View -->
         <div class="floor-projection">
+            <!-- Floating Back Button (now outside projection-area, inside floor-projection) -->
+            <button id="backBtn" class="back-btn" aria-label="Go back" style="display: none;">
+              <i class="fas fa-chevron-left"></i>
+            </button>
             <!-- Projection Grid for Floor Effect -->
             <div class="projection-grid"></div>
 
@@ -100,11 +104,6 @@
                                     </div>
                                     <p>HIIT</p>
                                 </div>
-                            </div>
-                            <div class="action-buttons">
-                                <button class="action-button start-workout-btn">
-                                    <i class="fas fa-play"></i> Start Workout
-                                </button>
                             </div>
                             <div class="indicator-text">
                                 Tilt <span class="left-indicator">◀ left</span> or <span class="right-indicator">right ▶</span> to navigate, <span class="forward-indicator">forward ▼</span> to select
