@@ -460,11 +460,17 @@ document.addEventListener('DOMContentLoaded', () => {
         // Determine which element was clicked (if any)
         if (workoutOption) {
             console.log("Workout option clicked");
-            // Update selected workout option - ONLY SELECT, DON'T START
-            selectedWorkoutOption = Array.from(document.querySelectorAll('.' + WORKOUT_OPTION)).indexOf(workoutOption);
+            // Update selected workout option
+            selectedWorkoutOption = Array.from(document.querySelectorAll('.workout-option')).indexOf(workoutOption);
             updateSelectedWorkoutOption();
             showVoiceFeedback(getWorkoutTypeName(selectedWorkoutOption));
-            // Prevent any other actions
+            // If on the workout selection screen, proceed to goal selection
+            if (currentScreenIndex === 0) {
+                setTimeout(() => {
+                    showScreen(1);
+                    showVoiceFeedback(`Select your ${currentGoalType} goal`);
+                }, 100); // Small delay for animation
+            }
             e.stopPropagation();
             return;
         } 
