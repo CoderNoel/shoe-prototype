@@ -166,6 +166,30 @@
 
         <!-- Main Floor Projection View -->
         <div class="floor-projection">
+            <!-- Author Information -->
+            <div class="author-info">
+                <div class="author-content">
+                    <span class="author-label">Smart Shoe Simulation</span>
+                    <span class="author-divider">|</span>
+                    <span class="course-code">DECO2500</span>
+                    <span class="author-name">by Noel</span>
+                </div>
+            </div>
+
+            <!-- GitHub/Credits Information -->
+            <div class="github-info">
+                <div class="github-content">
+                    <div class="github-item">
+                        <i class="fas fa-code-branch"></i>
+                        <a href="https://github.com/codernoel/shoe-simulation" target="_blank" rel="noopener">View Source Code</a>
+                    </div>
+                    <div class="github-item">
+                        <i class="fab fa-github"></i>
+                        <span>Hosted on GitHub Pages</span>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Floating Back Button (now outside projection-area, inside floor-projection) -->
             <button id="backBtn" class="back-btn" aria-label="Go back" style="display: none;">
               <i class="fas fa-chevron-left"></i>
@@ -471,90 +495,91 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- User's Shoe POV -->
-            <div class="shoe-view">
-                <img id="shoeImage" src="assets/Shoe.png" alt="Smart shoe" class="shoe-image">
-                <div id="tiltIndicator" class="tilt-indicator">
-                    <div id="tiltArrow" class="tilt-arrow"></div>
-                </div>
-                <!-- Add shoe tip light source -->
-                <div id="shoeTipLight" class="shoe-tip-light"></div>
+        <!-- User's Shoe POV -->
+        <div class="shoe-view">
+            <img id="shoeImage" src="assets/Shoe.png" alt="Smart shoe" class="shoe-image">
+            <div id="tiltIndicator" class="tilt-indicator">
+                <div id="tiltArrow" class="tilt-arrow"></div>
             </div>
+            <!-- Add shoe tip light source -->
+            <div id="shoeTipLight" class="shoe-tip-light"></div>
+        </div>
 
-            <!-- Voice Command Recognition -->
-            <div id="voiceCommandContainer" class="voice-command-container">
-                <div class="voice-command-indicator">
-                    <div id="voiceWaves" class="voice-waves">
-                        <div class="wave"></div>
-                        <div class="wave"></div>
-                        <div class="wave"></div>
-                    </div>
-                    <div class="voice-mic">
-                        <i class="fas fa-microphone"></i>
-                    </div>
+        <!-- Voice Command Recognition -->
+        <div id="voiceCommandContainer" class="voice-command-container">
+            <div class="voice-command-indicator">
+                <div id="voiceWaves" class="voice-waves">
+                    <div class="wave"></div>
+                    <div class="wave"></div>
+                    <div class="wave"></div>
                 </div>
-                <div id="voiceCommandText" class="voice-command-text">
-                    Say a command...
-                </div>
-                <div class="voice-command-help">
-                    <div id="voiceHelpToggle" class="voice-help-toggle">
-                        <i class="fas fa-question-circle"></i>
-                    </div>
-                    <div id="voiceCommandHelp" class="voice-commands-list">
-                        <h4>Available Commands:</h4>
-                        <ul>
-                            <li>"Start workout"</li>
-                            <li>"Pause workout"</li>
-                            <li>"Resume workout"</li>
-                            <li>"End workout"</li>
-                            <li>"Show stats"</li>
-                            <li>"How am I doing?"</li>
-                        </ul>
-                    </div>
+                <div class="voice-mic">
+                    <i class="fas fa-microphone"></i>
                 </div>
             </div>
-            
-            <!-- Voice Feedback Area -->
-            <div id="voiceFeedback" class="voice-feedback">
-                <i class="fas fa-comment-alt"></i>
-                <p id="voiceText">Welcome to Smart Shoe</p>
+            <div id="voiceCommandText" class="voice-command-text">
+                Say a command...
             </div>
-
-            <!-- On-screen controls for testing -->
-            <div class="on-screen-controls">
-                <button id="leftBtn" class="control-btn" title="Tilt Left"><i class="fas fa-arrow-left"></i><span class="sr-only">Tilt Left</span></button>
-                <button id="selectBtn" class="control-btn" title="Tilt Forward"><i class="fas fa-arrow-up"></i><span class="sr-only">Tilt Forward</span></button>
-                <button id="rightBtn" class="control-btn" title="Tilt Right"><i class="fas fa-arrow-right"></i><span class="sr-only">Tilt Right</span></button>
+            <div class="voice-command-help">
+                <div id="voiceHelpToggle" class="voice-help-toggle">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div id="voiceCommandHelp" class="voice-commands-list">
+                    <h4>Available Commands:</h4>
+                    <ul>
+                        <li>"Start workout"</li>
+                        <li>"Pause workout"</li>
+                        <li>"Resume workout"</li>
+                        <li>"End workout"</li>
+                        <li>"Show stats"</li>
+                        <li>"How am I doing?"</li>
+                    </ul>
+                </div>
             </div>
         </div>
         
-        <!-- Keyboard Shortcuts Help -->
-        <div class="toggle-help" id="toggleHelp">
-            <i class="fas fa-keyboard"></i>
+        <!-- Voice Feedback Area -->
+        <div id="voiceFeedback" class="voice-feedback">
+            <i class="fas fa-comment-alt"></i>
+            <p id="voiceText">Welcome to Smart Shoe</p>
         </div>
-        
-        <div class="keyboard-shortcuts" id="keyboardShortcuts">
-            <div class="title">
-                <span>Keyboard Shortcuts</span>
-                <i class="fas fa-minus-circle" id="collapseShortcuts"></i>
-            </div>
-            <ul class="shortcuts-list">
-                <li><span class="key-badge">←</span> Tilt left</li>
-                <li><span class="key-badge">→</span> Tilt right</li>
-                <li><span class="key-badge">↵</span> Tilt forward</li>
-                <li><span class="key-badge">P</span> Pause workout</li>
-                <li><span class="key-badge">R</span> Resume workout</li>
-                <li><span class="key-badge">E</span> End workout</li>
-                <li><span class="key-badge">M</span> Mouse control</li>
-                <li><span class="key-badge">D</span> Demo mode active</li>
-                <li><span class="key-badge">V</span> Voice commands</li>
-                <li><span class="key-badge">T</span> Top tracking</li>
-                <li><span class="key-badge">?</span> Toggle help</li>
-            </ul>
+
+        <!-- On-screen controls for testing -->
+        <div class="on-screen-controls">
+            <button id="leftBtn" class="control-btn" title="Tilt Left"><i class="fas fa-arrow-left"></i><span class="sr-only">Tilt Left</span></button>
+            <button id="selectBtn" class="control-btn" title="Tilt Forward"><i class="fas fa-arrow-up"></i><span class="sr-only">Tilt Forward</span></button>
+            <button id="rightBtn" class="control-btn" title="Tilt Right"><i class="fas fa-arrow-right"></i><span class="sr-only">Tilt Right</span></button>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Keyboard Shortcuts Help -->
+    <div class="toggle-help" id="toggleHelp">
+        <i class="fas fa-keyboard"></i>
+    </div>
+    
+    <div class="keyboard-shortcuts" id="keyboardShortcuts">
+        <div class="title">
+            <span>Keyboard Shortcuts</span>
+            <i class="fas fa-minus-circle" id="collapseShortcuts"></i>
+        </div>
+        <ul class="shortcuts-list">
+            <li><span class="key-badge">←</span> Tilt left</li>
+            <li><span class="key-badge">→</span> Tilt right</li>
+            <li><span class="key-badge">↵</span> Tilt forward</li>
+            <li><span class="key-badge">P</span> Pause workout</li>
+            <li><span class="key-badge">R</span> Resume workout</li>
+            <li><span class="key-badge">E</span> End workout</li>
+            <li><span class="key-badge">M</span> Mouse control</li>
+            <li><span class="key-badge">D</span> Demo mode active</li>
+            <li><span class="key-badge">V</span> Voice commands</li>
+            <li><span class="key-badge">T</span> Top tracking</li>
+            <li><span class="key-badge">?</span> Toggle help</li>
+        </ul>
+    </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
