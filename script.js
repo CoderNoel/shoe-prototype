@@ -59,6 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set cursor tracking as active by default
     let cursorTrackingActive = true;
     
+    // Add a flag to control UI interactivity
+    let uiActive = false;
+    
     // Sample data for quicker testing
     const sampleData = {
         workoutTime: 300000, // 5 minutes in milliseconds
@@ -95,17 +98,19 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentGoalType = 'distance';
     
     // Start button click event
-    startBtn.addEventListener('click', () => {
+    startBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
         instructions.style.display = 'none';
         showScreen(0); // Show workout type selection
         showVoiceFeedback('Select a workout type');
-        
-        // Preload assets for smooth UX
         preloadAssets();
+        uiActive = true; // Enable UI interactivity
     });
     
     // Keyboard controls
     document.addEventListener('keydown', (event) => {
+        if (!uiActive) return;
         switch (event.key) {
             case 'ArrowLeft':
                 handleTilt('left');
@@ -141,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Mouse control for shoe movement
     floorProjection.addEventListener('mousemove', (e) => {
-        if (!mouseControlActive) return;
+        if (!uiActive || !mouseControlActive) return;
         
         const rect = floorProjection.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -190,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Mouse click to perform selected tilt action
     floorProjection.addEventListener('click', (e) => {
-        if (!mouseControlActive) return;
+        if (!uiActive || !mouseControlActive) return;
         
         // Check if the click originated from value buttons
         const clickedValueButton = e.target.closest('.value-btn');
@@ -246,8 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Track interactive elements for hover effects with improved detection
     document.addEventListener('mousemove', (e) => {
-        // Only track cursor when tracking is active
-        if (!cursorTrackingActive) return;
+        if (!uiActive || !cursorTrackingActive) return;
         
         // Calculate screen sections with a narrower center region
         const screenWidth = window.innerWidth;
@@ -422,6 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Handle clicks on interactive elements - simplified for reliability
     document.addEventListener('click', (e) => {
+        if (!uiActive) return;
         console.log("Click detected on:", e.target);
         
         // Find the clicked element or its closest interactive parent
