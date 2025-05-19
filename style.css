@@ -843,10 +843,12 @@ body {
 }
 
 .workout-icon {
+    filter: none !important;
+    color: #fff !important;
+    fill: #fff !important;
     width: 30px;
     height: 30px;
-    filter: invert(1);
-    opacity: 0.8;
+    display: block;
 }
 
 .workout-option:hover, .workout-option.hover-effect {
@@ -865,6 +867,10 @@ body {
     background-color: var(--primary-color);
     border-color: white;
     box-shadow: 0 0 20px var(--primary-color), 0 0 40px rgba(0, 168, 107, 0.4);
+}
+
+.workout-option.selected .workout-icon {
+    filter: drop-shadow(0 0 8px var(--primary-color));
 }
 
 .indicator-text {
@@ -1201,22 +1207,32 @@ body {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.9));
 }
 
 .laurel-left {
-    left: -30px;
-    transform: translateY(-50%) scaleX(-1);
+    left: -85px;
+    transform: translateY(-50%);
 }
 
 .laurel-right {
-    right: -30px;
+    right: -85px;
 }
 
 .laurel-left img, .laurel-right img {
     width: 50px;
     height: auto;
-    filter: invert(86%) sepia(43%) saturate(4459%) hue-rotate(358deg) brightness(101%) contrast(104%);
-    opacity: 0.8;
+    display: block;
+    color: #FFD700 !important;
+    fill: #FFD700 !important;
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.7)) !important;
+    /* Fix rectangle background */
+    background: transparent;
+}
+
+/* Ensure SVG paths are gold */
+.laurel-img path {
+    fill: #FFD700 !important;
 }
 
 .trophy-container h3 {
