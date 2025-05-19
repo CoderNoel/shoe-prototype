@@ -356,7 +356,7 @@ body {
     position: absolute;
     width: 5px;
     height: 50px;
-    bottom: 5%;
+    bottom: 3%;
     border-radius: 50%;
     background: var(--primary-color);
     transform: translate(-50%, -50%);
@@ -402,13 +402,25 @@ body {
     }
 }
 
+/* Left shoe ripple effect - adjusts angle to match the left tilted shoe */
+.ripple-effect.left-tilt {
+    transform-origin: center;
+    transform: translate(-30%, 0) rotate(-20deg) scale(0.4);
+}
+
+/* Right shoe ripple effect - adjusts angle to match the right tilted shoe */
+.ripple-effect.right-tilt {
+    transform-origin: center;
+    transform: translate(-70%, 0) rotate(20deg) scale(0.4);
+}
+
 /* Haptic feedback visual effects */
 .haptic-effect {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    bottom: 0;
+    bottom: 70;
     pointer-events: none;
     z-index: 200;
     animation: hapticPulse 0.3s ease-out forwards;
@@ -565,7 +577,7 @@ body {
     width: 350px;
     height: 120px;
     left: 50%;
-    bottom: 150px; /* Higher position to appear at shoe tip */
+    bottom: 150px; /* Default position for forward tilt */
     transform: translate(-50%, 0);
     border-radius: 50%;
     background: radial-gradient(ellipse at center top, 
@@ -575,7 +587,7 @@ body {
     z-index: 30;
     pointer-events: none;
     animation: beamPulse 1s ease-out forwards;
-    filter: blur(8px);
+    filter: blur(10px);
     transform-origin: center top;
 }
 
@@ -585,12 +597,12 @@ body {
         transform: translate(-50%, 0) scaleY(0.3);
     }
     40% {
-        opacity: 0.9;
+        opacity: 0.95;
         transform: translate(-50%, 0) scaleY(1);
     }
     100% {
         opacity: 0;
-        transform: translate(-50%, 0) scaleY(1.1);
+        transform: translate(-50%, 0) scaleY(1.2);
     }
 }
 

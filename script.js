@@ -839,13 +839,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (underShoe) {
             // Position based on shoe tilt direction - at the tip where it would contact the floor
             if (direction === 'left') {
-                // Appear from left side tip of shoe 
-                ripple.style.left = '45%';
-                ripple.style.bottom = '150px'; // Higher position, at the tip of the shoe
+                // Appear from left side tip of shoe - adjusted to match the tilted shoe
+                ripple.style.left = '40%';
+                ripple.style.bottom = '170px'; // Position at the left tip of tilted shoe
+                ripple.classList.add('left-tilt'); // Add class for left tilt styling
             } else if (direction === 'right') {
-                // Appear from right side tip of shoe
+                // Appear from right side tip of shoe - adjusted to match the tilted shoe
                 ripple.style.left = '60%';
-                ripple.style.bottom = '150px'; // Higher position, at the tip of the shoe
+                ripple.style.bottom = '170px'; // Position at the right tip of tilted shoe
+                ripple.classList.add('right-tilt'); // Add class for right tilt styling
             } else { // forward
                 // Appear from center front tip of shoe
                 ripple.style.left = '50%';
@@ -853,7 +855,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             // Make ripple appear to come from the shoe impact
-            ripple.style.transform = 'translate(-50%, 0) scale(0.3)';
+            if (direction === 'forward') {
+                ripple.style.transform = 'translate(-50%, 0) scale(0.3)';
+            }
             ripple.style.animation = 'rippleFromShoe 1s ease-out forwards';
         } else {
             // Regular positioning based on direction
@@ -918,14 +922,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Check current shoe tilt to adjust beam position
         if (shoeImage.classList.contains('tilt-left') || shoeImage.classList.contains('tilt-left-tap')) {
             // Left tilt - shift beam left and adjust height to match tip
-            beam.style.transform = 'translate(-60%, 0)';
-            beam.style.left = '45%';
-            beam.style.bottom = '145px'; // Align with left-tilted shoe tip
+            beam.style.transform = 'translate(-70%, 0)';
+            beam.style.left = '40%';
+            beam.style.bottom = '170px'; // Align with left-tilted shoe tip
         } else if (shoeImage.classList.contains('tilt-right') || shoeImage.classList.contains('tilt-right-tap')) {
             // Right tilt - shift beam right and adjust height to match tip
-            beam.style.transform = 'translate(-40%, 0)';
-            beam.style.left = '55%';
-            beam.style.bottom = '145px'; // Align with right-tilted shoe tip
+            beam.style.transform = 'translate(-30%, 0)';
+            beam.style.left = '60%';
+            beam.style.bottom = '170px'; // Align with right-tilted shoe tip
         } else if (shoeImage.classList.contains('tilt-forward')) {
             // Forward tilt - slightly higher position
             beam.style.bottom = '180px'; // Align with forward-pointing shoe tip
