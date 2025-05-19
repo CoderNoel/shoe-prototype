@@ -455,7 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const indicator = document.querySelector('#workout-screen .indicator-text');
                 if (indicator) {
                     indicator.innerHTML = `
-                        Tilt <span class="forward-indicator">forward ▼</span> to pause workout | 
+                        Tilt <span class="forward-indicator">forward ▲</span> to pause workout | 
                         Press <span class="key" style="font-size: 0.8rem; padding: 0.1rem 0.3rem;">E</span> to end workout |
                         Press <span class="key" style="font-size: 0.8rem; padding: 0.1rem 0.3rem;">D</span> to show demo info
                     `;
@@ -1268,6 +1268,27 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Show pause overlay
         document.getElementById('pauseOverlay').classList.add('active');
+        
+        // Update pause screen progress metrics
+        const pauseUserMarker = document.getElementById('pauseUserMarker');
+        if (pauseUserMarker) {
+            // Get the target steps based on demo mode
+            const targetSteps = demoTargetSteps;
+            const progressPercent = Math.min((steps / targetSteps) * 100, 100);
+            pauseUserMarker.style.left = `${progressPercent}%`;
+            
+            // Update pause screen metrics
+            const pauseStepMetric = document.getElementById('pauseStepMetric');
+            const pauseCalorieMetric = document.getElementById('pauseCalorieMetric');
+            
+            if (pauseStepMetric) {
+                pauseStepMetric.textContent = `${steps} steps`;
+            }
+            
+            if (pauseCalorieMetric) {
+                pauseCalorieMetric.textContent = `${calories} kcal`;
+            }
+        }
         
         showVoiceFeedback('Workout paused');
     }
