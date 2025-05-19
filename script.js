@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const voiceFeedback = document.getElementById('voiceFeedback');
     const voiceText = document.getElementById('voiceText');
     const floorProjection = document.querySelector('.floor-projection');
+    const projectionArea = document.querySelector('.projection-area');
+    const projectionBeam = document.getElementById('projectionBeam');
     
     // On-screen control buttons
     const leftBtn = document.getElementById('leftBtn');
@@ -51,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let calories = 0;
     let steps = 0;
     let distance = 0;
-    let mouseControlActive = true; // Set mouse control active by default
+    let mouseTiltActive = true; // Set mouse control active by default
     let lastMouseTilt = null;
     let mouseControlTimeout = null;
     let lastMilestoneStep = 0;
@@ -198,12 +200,16 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Mouse control for shoe movement
     floorProjection.addEventListener('mousemove', (e) => {
-        if (!uiActive || !mouseControlActive) return;
+        if (!uiActive || !mouseTiltActive) return;
         
         const rect = floorProjection.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const width = rect.width;
         const centerThreshold = width * 0.1; // 10% of width for center area
+        
+        // Get projection area dimensions to limit beam width
+        const projectionAreaRect = projectionArea.getBoundingClientRect();
+        const projectionAreaWidth = projectionAreaRect.width;
         
         // Clear any pending timeouts
         if (mouseControlTimeout) {
@@ -215,11 +221,22 @@ document.addEventListener('DOMContentLoaded', () => {
             if (lastMouseTilt !== 'left') {
                 shoeImage.classList.remove('tilt-right', 'tilt-forward');
                 shoeImage.classList.add('tilt-left');
+                
+                // Synchronize projection area tilt
+                projectionArea.classList.remove('tilt-right');
+                projectionArea.classList.add('tilt-left');
+                
+                // Synchronize projection beam tilt
+                projectionBeam.classList.remove('tilt-right');
+                projectionBeam.classList.add('tilt-left');
+                
                 lastMouseTilt = 'left';
                 
                 // Auto-reset after a delay
                 mouseControlTimeout = setTimeout(() => {
                     shoeImage.classList.remove('tilt-left');
+                    projectionArea.classList.remove('tilt-left');
+                    projectionBeam.classList.remove('tilt-left');
                     lastMouseTilt = null;
                 }, 1000);
             }
@@ -228,11 +245,22 @@ document.addEventListener('DOMContentLoaded', () => {
             if (lastMouseTilt !== 'right') {
                 shoeImage.classList.remove('tilt-left', 'tilt-forward');
                 shoeImage.classList.add('tilt-right');
+                
+                // Synchronize projection area tilt
+                projectionArea.classList.remove('tilt-left');
+                projectionArea.classList.add('tilt-right');
+                
+                // Synchronize projection beam tilt
+                projectionBeam.classList.remove('tilt-left');
+                projectionBeam.classList.add('tilt-right');
+                
                 lastMouseTilt = 'right';
                 
                 // Auto-reset after a delay
                 mouseControlTimeout = setTimeout(() => {
                     shoeImage.classList.remove('tilt-right');
+                    projectionArea.classList.remove('tilt-right');
+                    projectionBeam.classList.remove('tilt-right');
                     lastMouseTilt = null;
                 }, 1000);
             }
@@ -240,6 +268,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Center area
             if (lastMouseTilt !== null) {
                 shoeImage.classList.remove('tilt-left', 'tilt-right', 'tilt-forward');
+                projectionArea.classList.remove('tilt-left', 'tilt-right');
+                projectionBeam.classList.remove('tilt-left', 'tilt-right');
                 lastMouseTilt = null;
             }
         }
@@ -247,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Mouse click to perform selected tilt action
     floorProjection.addEventListener('click', (e) => {
-        if (!uiActive || !mouseControlActive) return;
+        if (!uiActive || !mouseTiltActive) return;
         
         // Check if the click originated from value buttons
         const clickedValueButton = e.target.closest('.value-btn');
@@ -267,8 +297,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Toggle mouse control
     document.addEventListener('keydown', (e) => {
         if (e.key === 'm' || e.key === 'M') {
-            mouseControlActive = !mouseControlActive;
-            showVoiceFeedback(mouseControlActive ? 'Mouse control activated' : 'Mouse control deactivated');
+            mouseTiltActive = !mouseTiltActive;
+            showVoiceFeedback(mouseTiltActive ? 'Mouse control activated' : 'Mouse control deactivated');
         }
     });
     
@@ -314,21 +344,75 @@ document.addEventListener('DOMContentLoaded', () => {
         // Get cursor position
         const xPosition = e.clientX;
         
+        // Get shoe tip light element and projection beam
+        const shoeTipLight = document.getElementById('shoeTipLight');
+        const projectionBeam = document.getElementById('projectionBeam');
+        
+        // Get projection area dimensions to limit beam width
+        const projectionAreaRect = projectionArea.getBoundingClientRect();
+        const projectionAreaWidth = projectionAreaRect.width;
+        
         // Remove any existing tilt classes
         shoeImage.classList.remove('tilt-left', 'tilt-right', 'tilt-forward', 'tilt-left-tap', 'tilt-right-tap');
+        projectionArea.classList.remove('tilt-left', 'tilt-right');
+        projectionBeam.classList.remove('tilt-left', 'tilt-right');
+        shoeTipLight.classList.remove('tilt-left', 'tilt-right');
         
-        // Determine tilt based on cursor position
+        // Calculate position for the shoe tip light based on cursor position
         if (xPosition < centerLeft) {
             // Left zone - tilt left
             shoeImage.classList.add('tilt-left');
+            projectionArea.classList.add('tilt-left');
+            projectionBeam.classList.add('tilt-left');
+            shoeTipLight.classList.add('tilt-left');
+            
+            // Calculate more precise positioning for the light based on cursor position
+            const leftPercent = Math.max(0, Math.min(1, (centerLeft - xPosition) / centerLeft));
+            const leftOffset = 70 + (leftPercent * 10); // 70px base offset + up to 10px more based on cursor
+            
+            // Apply calculated position to light
+            shoeTipLight.style.left = `calc(50% - ${leftOffset}px)`;
+            shoeTipLight.style.bottom = `${235 - (leftPercent * 5)}px`;
+            
+            // Position the projection beam to match the light's position EXACTLY
+            projectionBeam.style.left = shoeTipLight.style.left;
+            projectionBeam.style.bottom = shoeTipLight.style.bottom;
+            
             lastMouseTilt = 'left';
         } else if (xPosition > centerRight) {
             // Right zone - tilt right
             shoeImage.classList.add('tilt-right');
+            projectionArea.classList.add('tilt-right');
+            projectionBeam.classList.add('tilt-right');
+            shoeTipLight.classList.add('tilt-right');
+            
+            // Calculate more precise positioning for the light based on cursor position
+            const rightEdge = screenWidth;
+            const rightPercent = Math.max(0, Math.min(1, (xPosition - centerRight) / (rightEdge - centerRight)));
+            const rightOffset = 70 + (rightPercent * 10); // 70px base offset + up to 10px more based on cursor
+            
+            // Apply calculated position to light
+            shoeTipLight.style.left = `calc(50% + ${rightOffset}px)`;
+            shoeTipLight.style.bottom = `${235 - (rightPercent * 5)}px`;
+            
+            // Position the projection beam to match the light's position EXACTLY
+            projectionBeam.style.left = shoeTipLight.style.left;
+            projectionBeam.style.bottom = shoeTipLight.style.bottom;
+            
             lastMouseTilt = 'right';
         } else {
-            // Narrow center zone - no tilt, will be forward when clicked
+            // Center zone - no tilt
             lastMouseTilt = null;
+            
+            // Reset shoe tip light position for center position
+            shoeTipLight.style.left = '50%';
+            shoeTipLight.style.bottom = '242px'; // Exact match with CSS value
+            shoeTipLight.style.transform = 'translateX(-50%)';
+            
+            // Reset projection beam position to match light
+            projectionBeam.style.left = '50%';
+            projectionBeam.style.bottom = '242px'; // Exact match with CSS value
+            projectionBeam.style.transform = 'translateX(-50%)';
         }
         
         // Check if cursor is over any interactive elements and apply hover effect
@@ -755,8 +839,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentlyTiltedLeft = shoeImage.classList.contains('tilt-left');
         const currentlyTiltedRight = shoeImage.classList.contains('tilt-right');
         
-        // Remove previous classes to ensure new animation plays
-        shoeImage.classList.remove('tilt-left', 'tilt-right', 'tilt-forward', 'tilt-left-tap', 'tilt-right-tap');
+        // Ensure previous states are reset
+        shoeImage.classList.remove('tilt-left', 'tilt-right', 'tilt-forward', 'tilt-left-tap', 'tilt-right-tap', 'tilt-back-btn');
+        
+        // Get projection beam and shoe tip light elements
+        const projectionBeam = document.getElementById('projectionBeam');
+        const shoeTipLight = document.getElementById('shoeTipLight');
+        
+        // Remove tilt classes from projection components
+        projectionBeam.classList.remove('tilt-left', 'tilt-right');
+        shoeTipLight.classList.remove('tilt-left', 'tilt-right');
+        projectionArea.classList.remove('tilt-left', 'tilt-right');
+        
+        // Reset inline styles from mousemove handler
+        shoeTipLight.style.left = '';
+        shoeTipLight.style.bottom = '';
+        shoeTipLight.style.transform = '';
+        
+        // Reset projection beam styles
+        projectionBeam.style.width = '';
+        projectionBeam.style.left = '';
+        projectionBeam.style.bottom = '';
+        projectionBeam.style.height = '';
+        projectionBeam.style.transform = '';
+        projectionBeam.style.clipPath = '';
         
         // Force browser to recognize the removal before adding
         setTimeout(() => {
@@ -778,12 +884,25 @@ document.addEventListener('DOMContentLoaded', () => {
             // Simulate haptic feedback
             simulateHapticFeedback(direction);
             
-            // Create beam effect for all directional tilts 
-            createShoeBeamEffect();
+            // Create beam effect for directional tilts
+            if (direction === 'forward') {
+                createShoeBeamEffect();
+            }
             
             // Apply the appropriate animation class based on direction
             if (direction === 'forward') {
                 shoeImage.classList.add('tilt-forward');
+                
+                // Position shoe tip light for forward tilt
+                shoeTipLight.style.transform = 'translateX(-50%) scale(1.2)';
+                shoeTipLight.style.filter = 'blur(7px)';
+                shoeTipLight.style.boxShadow = '0 0 35px 12px rgba(0, 168, 107, 0.9)';
+                
+                // Position projection beam for forward tilt - narrower triangle pointing up
+                projectionBeam.style.height = '430px';
+                projectionBeam.style.transform = 'translateX(-50%) scaleY(1.05)';
+                projectionBeam.style.opacity = '1';
+                projectionBeam.style.clipPath = 'polygon(50% 100%, 20% 0%, 80% 0%)';
                 
                 // Delay the screen action to match the visual effect for tap animation
                 setTimeout(() => {
@@ -794,37 +913,135 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     shoeImage.classList.remove('tilt-forward');
                     tiltIndicator.style.opacity = '0';
+                    
+                    // Reset shoe tip light styles
+                    shoeTipLight.style.transform = '';
+                    shoeTipLight.style.filter = '';
+                    shoeTipLight.style.boxShadow = '';
+                    
+                    // Reset projection beam styles
+                    projectionBeam.style.height = '';
+                    projectionBeam.style.transform = '';
+                    projectionBeam.style.opacity = '';
+                    projectionBeam.style.clipPath = '';
                 }, 700);
             } else if (direction === 'left') {
                 // Apply the tap animation
                 shoeImage.classList.add('tilt-left-tap');
+                projectionArea.classList.add('tilt-left');
+                projectionBeam.classList.add('tilt-left');
+                shoeTipLight.classList.add('tilt-left');
+                
+                // Ensure shoe tip light follows the left tap animation
+                shoeTipLight.style.left = 'calc(50% - 70px)';
+                shoeTipLight.style.bottom = '225px';
+                shoeTipLight.style.transform = 'translateX(-50%) rotate(-15deg)';
+                
+                // Position projection beam to align with light - match positions exactly
+                projectionBeam.style.left = shoeTipLight.style.left;
+                projectionBeam.style.bottom = shoeTipLight.style.bottom;
+                projectionBeam.style.height = '420px';
+                projectionBeam.style.transform = 'translateX(-50%) rotate(-12deg)';
+                projectionBeam.style.clipPath = 'polygon(45% 100%, 20% 0%, 80% 0%)';
                 
                 // Process the action during animation
                 setTimeout(() => {
                     processScreenAction(direction);
                 }, 250);
                 
-                // Let the animation complete naturally (no need to switch to static)
                 // Reset after the full animation + a small delay
                 setTimeout(() => {
-                    shoeImage.classList.remove('tilt-left-tap');
-                    tiltIndicator.style.opacity = '0';
+                    if (!mouseTiltActive) {
+                        shoeImage.classList.remove('tilt-left-tap');
+                        projectionArea.classList.remove('tilt-left');
+                        projectionBeam.classList.remove('tilt-left');
+                        shoeTipLight.classList.remove('tilt-left');
+                        tiltIndicator.style.opacity = '0';
+                        
+                        // Reset shoe tip light styles
+                        shoeTipLight.style.left = '';
+                        shoeTipLight.style.bottom = '';
+                        shoeTipLight.style.transform = '';
+                        
+                        // Reset projection beam styles
+                        projectionBeam.style.left = '';
+                        projectionBeam.style.bottom = '';
+                        projectionBeam.style.transform = '';
+                        projectionBeam.style.clipPath = '';
+                        projectionBeam.style.width = '';
+                        projectionBeam.style.height = '';
+                    } else {
+                        // If mouse tilt is active, keep the tilt style but remove the tap animation
+                        shoeImage.classList.remove('tilt-left-tap');
+                        shoeImage.classList.add('tilt-left');
+                    }
                 }, 700);
             } else if (direction === 'right') {
                 // Apply the tap animation
                 shoeImage.classList.add('tilt-right-tap');
+                projectionArea.classList.add('tilt-right');
+                projectionBeam.classList.add('tilt-right');
+                shoeTipLight.classList.add('tilt-right');
+                
+                // Ensure shoe tip light follows the right tap animation
+                shoeTipLight.style.left = 'calc(50% + 70px)';
+                shoeTipLight.style.bottom = '225px';
+                shoeTipLight.style.transform = 'translateX(-50%) rotate(15deg)';
+                
+                // Position projection beam to align with light - match positions exactly
+                projectionBeam.style.left = shoeTipLight.style.left;
+                projectionBeam.style.bottom = shoeTipLight.style.bottom;
+                projectionBeam.style.height = '420px';
+                projectionBeam.style.transform = 'translateX(-50%) rotate(12deg)';
+                projectionBeam.style.clipPath = 'polygon(55% 100%, 20% 0%, 80% 0%)';
                 
                 // Process the action during animation
                 setTimeout(() => {
                     processScreenAction(direction);
                 }, 250);
                 
-                // Let the animation complete naturally (no need to switch to static)
                 // Reset after the full animation + a small delay
                 setTimeout(() => {
-                    shoeImage.classList.remove('tilt-right-tap');
-                    tiltIndicator.style.opacity = '0';
+                    if (!mouseTiltActive) {
+                        shoeImage.classList.remove('tilt-right-tap');
+                        projectionArea.classList.remove('tilt-right');
+                        projectionBeam.classList.remove('tilt-right');
+                        shoeTipLight.classList.remove('tilt-right');
+                        tiltIndicator.style.opacity = '0';
+                        
+                        // Reset shoe tip light styles
+                        shoeTipLight.style.left = '';
+                        shoeTipLight.style.bottom = '';
+                        shoeTipLight.style.transform = '';
+                        
+                        // Reset projection beam styles
+                        projectionBeam.style.left = '';
+                        projectionBeam.style.bottom = '';
+                        projectionBeam.style.transform = '';
+                        projectionBeam.style.clipPath = '';
+                        projectionBeam.style.width = '';
+                        projectionBeam.style.height = '';
+                    } else {
+                        // If mouse tilt is active, keep the tilt style but remove the tap animation
+                        shoeImage.classList.remove('tilt-right-tap');
+                        shoeImage.classList.add('tilt-right');
+                    }
                 }, 700);
+            } else if (direction === 'back-btn') {
+                // Special case for back button
+                shoeImage.classList.add('tilt-back-btn');
+                
+                // Position light for back button tap
+                shoeTipLight.style.left = 'calc(50% - 75px)';
+                shoeTipLight.style.bottom = '230px';
+                shoeTipLight.style.transform = 'translateX(-50%) rotate(-35deg)';
+                
+                // Position projection beam for back button
+                projectionBeam.style.left = shoeTipLight.style.left;
+                projectionBeam.style.bottom = shoeTipLight.style.bottom;
+                projectionBeam.style.height = '420px';
+                projectionBeam.style.transform = 'translateX(-50%) rotate(-30deg)';
+                projectionBeam.style.clipPath = 'polygon(40% 100%, 20% 0%, 80% 0%)';
             }
         }, 10); // Very short timeout to ensure class removal is processed
     }
@@ -1918,4 +2135,23 @@ document.addEventListener('DOMContentLoaded', () => {
             showVoiceFeedback(`Demo mode active: workout will complete in ${demoCompletionTime/1000} seconds`);
         }
     });
+
+    // Add window resize handler to update beam dimensions
+    window.addEventListener('resize', () => {
+        if (projectionBeam && projectionArea) {
+            // Get current dimensions of the projection area
+            const projAreaRect = projectionArea.getBoundingClientRect();
+            
+            // Update beam max-width to match projection area width
+            projectionBeam.style.maxWidth = `${projAreaRect.width}px`;
+        }
+    });
+    
+    // Call once on load to set initial dimensions
+    setTimeout(() => {
+        if (projectionBeam && projectionArea) {
+            const projAreaRect = projectionArea.getBoundingClientRect();
+            projectionBeam.style.maxWidth = `${projAreaRect.width}px`;
+        }
+    }, 100);
 });

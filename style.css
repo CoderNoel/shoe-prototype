@@ -293,6 +293,13 @@ body {
     margin-bottom: 0.5rem;
 }
 
+/* Add subtle pulsing effect to the beam */
+@keyframes beamPulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 0.9; }
+    100% { opacity: 0.7; }
+}
+
 /* Floor Projection Simulation */
 .floor-projection {
     position: relative;
@@ -452,6 +459,33 @@ body {
     margin-bottom: 500px; /* Reduced margin to pull the projection up */
     transform: perspective(1000px) rotateX(10deg) translateY(60px) translateZ(100px);
     transform-origin: center bottom;
+    transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Add tilt animations for projection area */
+.projection-area.tilt-left {
+    transform: perspective(1000px) rotateX(10deg) rotateZ(-3deg) translateY(60px) translateZ(100px);
+}
+
+.projection-area.tilt-right {
+    transform: perspective(1000px) rotateX(10deg) rotateZ(3deg) translateY(60px) translateZ(100px);
+}
+
+/* Enhance floor projection with additional subtle light effect */
+.floor-projection::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 600px;
+    bottom: 100px;
+    left: 0;
+    background: radial-gradient(
+        ellipse at center,
+        rgba(0, 168, 107, 0.03) 0%,
+        transparent 70%
+    );
+    pointer-events: none;
+    z-index: 3;
 }
 
 .interface-area {
@@ -492,7 +526,7 @@ body {
 /* Shoe view styles */
 .shoe-view {
     position: absolute;
-    bottom: -15px; /* Lower position to create more space */
+    bottom: -5px; /* Raised position to better connect with light */
     left: 50%;
     transform: translateX(-50%) translateY(30%);
     width: 100%;
@@ -502,284 +536,164 @@ body {
     perspective: 1000px;
 }
 
-.shoe-image {
-    width: 280px;
-    height: auto;
-    transform-origin: bottom center;
-    transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
-    z-index: 20;
-    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
-}
-
-/* Shoe tilt animations */
-.shoe-image.tilt-left {
-    transform: rotate(-15deg) translateX(-20px) translateY(-15px);
-    transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-.shoe-image.tilt-right {
-    transform: rotate(15deg) translateX(20px) translateY(-15px);
-    transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-.shoe-image.tilt-forward {
-    transform: rotateX(20deg) translateY(-30px);
-    transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-/* Shoe tap animations with tilt */
-.shoe-image.tilt-left-tap {
-    animation: tapLeftAnimation 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.shoe-image.tilt-right-tap {
-    animation: tapRightAnimation 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@keyframes tapLeftAnimation {
-    0% {
-        transform: rotate(-15deg) translateX(-20px) translateY(-15px);
-    }
-    40% {
-        transform: rotate(-15deg) rotateX(20deg) translateX(-20px) translateY(-35px);
-    }
-    70% {
-        transform: rotate(-15deg) rotateX(10deg) translateX(-20px) translateY(-25px);
-    }
-    100% {
-        transform: rotate(-15deg) translateX(-20px) translateY(-15px);
-    }
-}
-
-@keyframes tapRightAnimation {
-    0% {
-        transform: rotate(15deg) translateX(20px) translateY(-15px);
-    }
-    40% {
-        transform: rotate(15deg) rotateX(20deg) translateX(20px) translateY(-35px);
-    }
-    70% {
-        transform: rotate(15deg) rotateX(10deg) translateX(20px) translateY(-25px);
-    }
-    100% {
-        transform: rotate(15deg) translateX(20px) translateY(-15px);
-    }
-}
-
-/* Tilt Indicator */
-.tilt-indicator, .tilt-arrow {
-    display: none !important;
-}
-
-/* Shoe beam selection effect */
-.shoe-beam-effect {
+/* Projection beam from shoe to content - triangular shape */
+.projection-beam {
     position: absolute;
-    width: 350px;
-    height: 120px;
+    width: 450px; /* Matched to circular-menu max-width */
+    max-width: 450px; /* Match exactly with circular-menu max-width */
+    height: 500px; /* Reduced height to ensure it doesn't extend past UI */
+    bottom: 225px; /* Match with the shoe-tip-light position */
     left: 50%;
-    bottom: 180px; /* Increased to match the adjusted shoe position */
-    transform: translate(-50%, 0);
-    border-radius: 50%;
-    background: radial-gradient(ellipse at center top, 
-                               rgba(0, 168, 107, 0.5) 0%, 
-                               rgba(0, 168, 107, 0.2) 40%, 
-                               transparent 70%);
-    z-index: 30;
+    transform-origin: bottom center;
+    transform: translateX(-50%);
+    background: linear-gradient(
+        to top, 
+        rgba(0, 168, 107, 0.15) 0%,
+        rgba(0, 168, 107, 0.08) 50%,
+        rgba(0, 168, 107, 0.02) 90%
+    );
+    clip-path: polygon(50% 100%, 30% 0%, 70% 0%); /* Narrower clip-path */
     pointer-events: none;
-    animation: beamPulse 1s ease-out forwards;
-    filter: blur(10px);
-    transform-origin: center top;
+    z-index: 5; /* Same z-index as tip light to appear connected */
+    opacity: 0.85;
+    transition: transform 0.2s ease-out, 
+                left 0.2s ease-out,
+                bottom 0.2s ease-out,
+                width 0.2s ease-out,
+                max-width 0.2s ease-out;
+    animation: beamPulse 3s infinite ease-in-out;
 }
 
 @keyframes beamPulse {
-    0% {
-        opacity: 0;
-        transform: translate(-50%, 0) scaleY(0.3);
-    }
-    40% {
-        opacity: 0.95;
-        transform: translate(-50%, 0) scaleY(1);
-    }
-    100% {
-        opacity: 0;
-        transform: translate(-50%, 0) scaleY(1.2);
-    }
+    0% { opacity: 0.7; }
+    50% { opacity: 0.9; }
+    100% { opacity: 0.7; }
 }
 
-/* Voice feedback */
-.voice-feedback {
+/* Projection beam tilting animations - adjusted to maintain connection */
+.projection-beam.tilt-left {
+    transform: translateX(-70px) rotate(-12deg);
+    bottom: 215px; /* Adjusted to maintain connection with light */
+    width: 450px; /* Maintain width */
+    max-width: 450px;
+    clip-path: polygon(45% 100%, 30% 0%, 70% 0%);
+}
+
+.projection-beam.tilt-right {
+    transform: translateX(70px) rotate(12deg);
+    bottom: 215px; /* Adjusted to maintain connection with light */
+    width: 450px; /* Maintain width */
+    max-width: 450px;
+    clip-path: polygon(55% 100%, 30% 0%, 70% 0%);
+}
+
+/* Enhance the projection beam with glow effect */
+.projection-beam::before {
+    content: '';
     position: absolute;
-    bottom: 160px; /* Increased to prevent overlap with the shoe */
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 0.5rem 1.5rem;
-    border-radius: 30px;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
-    font-size: 1rem;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    z-index: 60;
-    text-align: center;
-    max-width: 80%;
-}
-
-.voice-feedback.active {
-    opacity: 1;
-    animation: fadeInOut 4s ease-in-out forwards;
-}
-
-@keyframes fadeInOut {
-    0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
-    10% { opacity: 1; transform: translateX(-50%) translateY(0); }
-    80% { opacity: 1; transform: translateX(-50%) translateY(0); }
-    100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
-}
-
-/* Keyboard Shortcuts Panel */
-.keyboard-shortcuts {
-    position: fixed;
-    right: 20px;
-    top: 220px;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    border-radius: 12px;
-    padding: 12px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    z-index: 990;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    transform-origin: top right;
-}
-
-.keyboard-shortcuts .title {
-    font-size: 0.9rem;
-    margin-bottom: 8px;
-    color: var(--primary-color);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.keyboard-shortcuts .title i {
-    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        ellipse at bottom, 
+        rgba(0, 168, 107, 0.15), 
+        transparent 70%
+    );
+    filter: blur(10px);
     opacity: 0.7;
-    transition: opacity 0.2s;
+    z-index: 0;
 }
 
-.keyboard-shortcuts .title i:hover {
-    opacity: 1;
-}
-
-.keyboard-shortcuts.collapsed {
-    transform: scale(0.9);
-}
-
-.keyboard-shortcuts.collapsed .shortcuts-list {
-    display: none;
-}
-
-.shortcuts-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    font-size: 0.8rem;
-}
-
-.shortcuts-list li {
-    display: flex;
-    align-items: center;
-    margin-bottom: 4px;
-    color: rgba(255, 255, 255, 0.8);
-}
-
-.shortcuts-list .key-badge {
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 4px;
-    padding: 2px 6px;
-    margin-right: 8px;
-    min-width: 18px;
-    text-align: center;
-    font-family: monospace;
-    color: white;
-    font-weight: bold;
-}
-
-.toggle-help {
-    position: fixed;
-    top: 170px;
-    right: 20px;
-    width: 40px;
-    height: 40px;
-    background: rgba(0, 0, 0, 0.6);
+/* Add light source at the tip of the shoe */
+.shoe-tip-light {
+    position: absolute;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    z-index: 991;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: background 0.3s ease;
-}
-
-.toggle-help:hover {
-    background: var(--primary-color);
-}
-
-.toggle-help i {
-    color: white;
-    font-size: 1.2rem;
-}
-
-/* On-screen controls */
-.on-screen-controls {
-    position: fixed;
-    bottom: 20px;
+    background: radial-gradient(
+        circle, 
+        rgba(0, 255, 153, 1) 0%, 
+        rgba(0, 168, 107, 0.7) 40%, 
+        rgba(0, 168, 107, 0.2) 70%,
+        transparent 90%
+    );
+    filter: blur(4px);
+    bottom: 225px; /* Aligned with the beam - correct position */
     left: 50%;
     transform: translateX(-50%);
-    display: flex;
-    gap: 20px;
-    z-index: 100;
+    z-index: 5; /* Same z-index as the beam to appear connected */
+    pointer-events: none;
+    box-shadow: 0 0 15px 4px rgba(0, 168, 107, 0.7);
+    transition: transform 0.2s ease-out, 
+                left 0.2s ease-out,
+                bottom 0.2s ease-out;
+    animation: tipGlow 2s infinite alternate;
 }
 
-.control-btn {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: 2px solid var(--primary-color);
-    font-size: 1.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 0 15px rgba(0, 168, 107, 0.2);
+/* Enhanced glow effect for the tip */
+@keyframes tipGlow {
+    0% { 
+        box-shadow: 0 0 15px 3px rgba(0, 168, 107, 0.7); 
+        filter: blur(4px); 
+        opacity: 0.9;
+    }
+    100% { 
+        box-shadow: 0 0 20px 8px rgba(0, 168, 107, 0.8); 
+        filter: blur(5px); 
+        opacity: 1;
+    }
 }
 
-.control-btn:active, .control-btn:hover {
-    background-color: var(--primary-color);
-    transform: scale(1.1);
-}
-
-.sr-only {
+/* Make the beam directly connect to the light */
+.projection-beam::after {
+    content: '';
     position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 35px;
+    height: 15px; /* Half-height to blend with the light */
+    background: radial-gradient(ellipse at center top, 
+        rgba(0, 255, 153, 0.9) 0%, 
+        rgba(0, 168, 107, 0.5) 40%, 
+        rgba(0, 168, 107, 0.1) 70%,
+        transparent 100%
+    );
+    border-radius: 50% 50% 0 0;
+    filter: blur(4px);
+    z-index: 5;
 }
 
-/* Circular menu updated styling */
+/* More precise position adjustments for tilt */
+.shoe-tip-light.tilt-left {
+    left: calc(50% - 70px);
+    bottom: 215px; /* Adjusted to maintain connection with beam */
+    transform: translateX(-50%) rotate(-15deg);
+}
+
+.shoe-tip-light.tilt-right {
+    left: calc(50% + 70px);
+    bottom: 215px; /* Adjusted to maintain connection with beam */
+    transform: translateX(-50%) rotate(15deg);
+}
+
+/* Better match tap animations */
+.shoe-image.tilt-left-tap ~ .shoe-tip-light {
+    left: calc(50% - 70px);
+    bottom: 205px; /* Adjusted for tap animation */
+    transform: translateX(-50%) rotate(-15deg);
+    animation: tapGlow 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.shoe-image.tilt-right-tap ~ .shoe-tip-light {
+    left: calc(50% + 70px);
+    bottom: 205px; /* Adjusted for tap animation */
+    transform: translateX(-50%) rotate(15deg);
+    animation: tapGlow 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Circular menu updated styling - no change to width, just added comment */
 .circular-menu {
     background-color: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(8px);
@@ -788,7 +702,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 1.5rem;
     width: 90%;
-    max-width: 450px;
+    max-width: 450px; /* This width is matched by projection beam */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 168, 107, 0.2);
     transform: perspective(1000px) rotateX(10deg);
     transform-origin: center bottom;
@@ -796,7 +710,7 @@ body {
     flex-direction: column;
     align-items: center;
     margin: 0 auto;
-    margin-bottom: 140px; /* Reduced to better match adjusted shoe position */
+    margin-bottom: 120px; /* Adjusted to position right at the end of the beam */
 }
 
 .menu-title {
@@ -2460,4 +2374,387 @@ body {
     display: flex;
     justify-content: space-around;
     border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Enhance the projection beam with glow effect */
+.projection-beam::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        ellipse at bottom, 
+        rgba(0, 168, 107, 0.15), 
+        transparent 70%
+    );
+    filter: blur(10px);
+    opacity: 0.7;
+    z-index: 0;
+}
+
+/* Add back the regular tilt classes for the light */
+.shoe-tip-light.tilt-left {
+    left: calc(50% - 65px);
+    bottom: 230px;
+    transform: translateX(-50%) rotate(-15deg);
+}
+
+.shoe-tip-light.tilt-right {
+    left: calc(50% + 65px);
+    bottom: 230px;
+    transform: translateX(-50%) rotate(15deg);
+}
+
+/* Adjust light positions during tap animations */
+.shoe-image.tilt-left-tap ~ .shoe-tip-light {
+    left: calc(50% - 65px);
+    bottom: 220px;
+    transform: translateX(-50%) rotate(-15deg);
+}
+
+/* ... existing code ... */
+
+/* Shoe view styles */
+.shoe-image {
+    width: 280px;
+    height: auto;
+    transform-origin: bottom center;
+    transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+    z-index: 20;
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
+}
+
+/* Shoe tilt animations */
+.shoe-image.tilt-left {
+    transform: rotate(-15deg) translateX(-20px) translateY(-15px);
+    transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.shoe-image.tilt-right {
+    transform: rotate(15deg) translateX(20px) translateY(-15px);
+    transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.shoe-image.tilt-forward {
+    transform: rotateX(20deg) translateY(-30px);
+    transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Shoe tap animations with tilt */
+.shoe-image.tilt-left-tap {
+    animation: tapLeftAnimation 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.shoe-image.tilt-right-tap {
+    animation: tapRightAnimation 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes tapLeftAnimation {
+    0% {
+        transform: rotate(-15deg) translateX(-20px) translateY(-15px);
+    }
+    40% {
+        transform: rotate(-15deg) rotateX(20deg) translateX(-20px) translateY(-35px);
+    }
+    70% {
+        transform: rotate(-15deg) rotateX(10deg) translateX(-20px) translateY(-25px);
+    }
+    100% {
+        transform: rotate(-15deg) translateX(-20px) translateY(-15px);
+    }
+}
+
+@keyframes tapRightAnimation {
+    0% {
+        transform: rotate(15deg) translateX(20px) translateY(-15px);
+    }
+    40% {
+        transform: rotate(15deg) rotateX(20deg) translateX(20px) translateY(-35px);
+    }
+    70% {
+        transform: rotate(15deg) rotateX(10deg) translateX(20px) translateY(-25px);
+    }
+    100% {
+        transform: rotate(15deg) translateX(20px) translateY(-15px);
+    }
+}
+
+/* Better match tap animations */
+.shoe-image.tilt-left-tap ~ .shoe-tip-light {
+    left: calc(50% - 70px);
+    bottom: 225px;
+    transform: translateX(-50%) rotate(-15deg);
+    animation: tapGlow 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ... existing code ... */
+
+/* Shoe image tilt forward */
+.shoe-image.tilt-forward ~ .shoe-tip-light {
+    transform: translateX(-50%) scale(1.2);
+    filter: blur(7px);
+    box-shadow: 0 0 35px 12px rgba(0, 168, 107, 0.9);
+}
+
+@keyframes tipGlow {
+    0% { 
+        box-shadow: 0 0 15px 3px rgba(0, 168, 107, 0.6); 
+        filter: blur(4px); 
+        opacity: 0.85;
+    }
+    100% { 
+        box-shadow: 0 0 30px 10px rgba(0, 168, 107, 0.8); 
+        filter: blur(6px); 
+        opacity: 1;
+    }
+}
+
+@keyframes tapGlow {
+    0% {
+        box-shadow: 0 0 15px 5px rgba(0, 168, 107, 0.6);
+        filter: blur(5px);
+    }
+    50% {
+        box-shadow: 0 0 40px 15px rgba(0, 168, 107, 1);
+        filter: blur(8px);
+    }
+    100% {
+        box-shadow: 0 0 25px 8px rgba(0, 168, 107, 0.8);
+        filter: blur(6px);
+    }
+}
+
+/* Tilt Indicator */
+.tilt-indicator, .tilt-arrow {
+    display: none !important;
+}
+
+/* Shoe beam selection effect */
+.shoe-beam-effect {
+    position: absolute;
+    width: 350px;
+    height: 120px;
+    left: 50%;
+    bottom: 180px; /* Increased to match the adjusted shoe position */
+    transform: translate(-50%, 0);
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center top, 
+                               rgba(0, 168, 107, 0.5) 0%, 
+                               rgba(0, 168, 107, 0.2) 40%, 
+                               transparent 70%);
+    z-index: 30;
+    pointer-events: none;
+    animation: beamSelectionPulse 1s ease-out forwards;
+    filter: blur(10px);
+    transform-origin: center top;
+}
+
+@keyframes beamSelectionPulse {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 0) scaleY(0.3);
+    }
+    40% {
+        opacity: 0.95;
+        transform: translate(-50%, 0) scaleY(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, 0) scaleY(1.2);
+    }
+}
+
+/* Voice feedback */
+.voice-feedback {
+    position: absolute;
+    bottom: 160px; /* Increased to prevent overlap with the shoe */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 1.5rem;
+    border-radius: 30px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1rem;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 60;
+    text-align: center;
+    max-width: 80%;
+}
+
+.voice-feedback.active {
+    opacity: 1;
+    animation: fadeInOut 4s ease-in-out forwards;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+    10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+}
+
+/* Keyboard Shortcuts Panel */
+.keyboard-shortcuts {
+    position: fixed;
+    right: 20px;
+    top: 220px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 990;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform-origin: top right;
+}
+
+.keyboard-shortcuts .title {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.keyboard-shortcuts .title i {
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.keyboard-shortcuts .title i:hover {
+    opacity: 1;
+}
+
+.keyboard-shortcuts.collapsed {
+    transform: scale(0.9);
+}
+
+.keyboard-shortcuts.collapsed .shortcuts-list {
+    display: none;
+}
+
+.shortcuts-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.8rem;
+}
+
+.shortcuts-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.shortcuts-list .key-badge {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    padding: 2px 6px;
+    margin-right: 8px;
+    min-width: 18px;
+    text-align: center;
+    font-family: monospace;
+    color: white;
+    font-weight: bold;
+}
+
+.toggle-help {
+    position: fixed;
+    top: 170px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 991;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background 0.3s ease;
+}
+
+.toggle-help:hover {
+    background: var(--primary-color);
+}
+
+.toggle-help i {
+    color: white;
+    font-size: 1.2rem;
+}
+
+/* On-screen controls */
+.on-screen-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    z-index: 100;
+}
+
+.control-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: 2px solid var(--primary-color);
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 15px rgba(0, 168, 107, 0.2);
+}
+
+.control-btn:active, .control-btn:hover {
+    background-color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Adjust animations for tilted states */
+.shoe-image.tilt-left-tap ~ .projection-beam::after {
+    bottom: 0;
+    left: calc(50% - 2px); /* Slight adjustment for tilt */
+}
+
+.shoe-image.tilt-right-tap ~ .projection-beam::after {
+    bottom: 0;
+    left: calc(50% + 2px); /* Slight adjustment for tilt */
+}
+
+/* Adjust beam position for tilt animations */
+.projection-beam.tilt-left::after {
+    left: calc(50% - 5px);
+}
+
+.projection-beam.tilt-right::after {
+    left: calc(50% + 5px);
 }
