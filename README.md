@@ -2,180 +2,146 @@
 
 ## 👟 Project Overview
 
-This project is a **web-based simulation prototype** of the Health & Fitness feature of a Smart Shoe product. The real product is a wearable shoe that **projects a UI onto the floor** and allows **interaction using foot tilts** (left/right/forward). This prototype simulates those interactions for testing purposes on a desktop browser, using keyboard or click inputs.
+This project is a **web-based simulation prototype** of a Smart Shoe with health and fitness tracking capabilities. The concept represents a wearable shoe that **projects a UI onto the floor** and allows **hands-free interaction using foot tilts** (left/right/forward). The simulation demonstrates the user experience in a desktop browser using **cursor tracking and mouse clicks** as the primary interaction method, with keyboard controls as a backup option.
 
-## 🌟 Vision
+## 🌟 Key Features
 
-To create a **hands-free workout experience** that:
-- Helps users **track workouts and vitals** in real time
-- Reduces dependency on smartphones during physical activity
-- Uses **natural foot gestures** (tilt left/right/forward) as input
-- Projects feedback into the user's natural line of sight (floor level)
-- Supports accessibility, safety, and motivational design
+- **Hands-free Workout Experience**: Track workouts and health metrics without touching a screen
+- **Natural Interaction**: Use cursor movements to simulate foot tilt gestures
+- **Projected Interface**: UI appears as if projected onto the floor from the shoe
+- **Real-time Metrics**: Monitor steps, heart rate, calories, and more during workouts
+- **Workout Completion**: View achievements and sync with Apple Health
+- **Voice Feedback**: Simulated voice assistive technology with on-screen text
+- **Multiple Control Options**: Mouse, keyboard shortcuts, or on-screen buttons
 
-## 🎯 Primary User Flow (Simulated)
+## 💻 Primary Interaction Method
 
-### 1. Select Workout Type
-- Display: Circular menu with options (Run, Walk, HIIT)
-- Interaction: Tilt left/right to rotate, forward to select
+This simulation uses **cursor position tracking** as the primary interaction method:
 
-### 2. Choose Workout Goal
-- Options:
-  - Distance (e.g. 2 km)
-  - Calories (e.g. 300 kcal)
-  - Duration (e.g. 20 min)
-- Interaction: Tilt left/right to adjust value, forward to confirm
+- **Cursor at top of screen**: Activates tilt controls (moves shoe left/right)
+- **Hovering over UI elements**: Automatically tilts the shoe in that direction
+- **Clicking**: Represents a forward tilt to select/confirm
 
-### 3. Begin Workout
-- Display: Time elapsed, distance, steps, heart rate, etc.
-- Controls:
-  - Pause / Resume via tilt
-  - Voice feedback simulated with subtitles
-  - Warnings/alerts based on vitals
+This approach creates an intuitive way to simulate how users would interact with the projected interface using natural foot movements.
 
-### 4. Mid-Workout Alert
-- Trigger: High heart rate or inactivity
-- Choice: "Slow down" or "Ignore"
-- Interaction: Tilt to choose
+## 🎯 User Flow
 
-### 5. Pause State
-- Message: "Paused. Tilt forward to resume or left to end early"
+### 1. Start Experience
+- View project information and instructions
+- Learn about the interaction methods
+- Begin the simulation
 
-### 6. Workout Complete
-- Trophy animation + stats summary
-- Prompt: "How did you feel?" (Good, Okay, Tired)
-- Share: "Sync with Apple Health" (mocked)
+### 2. Select Workout Type
+- Choose between Walk, Run, or Cycling
+- Tilt left/right by moving cursor, click to select
 
-## 🕹️ Controls (Keyboard Simulation)
+### 3. Choose Workout Goal
+- Select goal type: Distance, Calories, or Duration
+- Adjust the value using controls or slider
+- Confirm workout settings
 
-| Real Foot Tilt | Simulated Key | Description |
-|----------------|---------------|-------------|
-| Tilt Left      | `←` Arrow     | Scroll left, choose "No" |
-| Tilt Right     | `→` Arrow     | Scroll right, choose "Yes" |
-| Tilt Forward   | `Enter`       | Confirm / Select |
-| Pause          | `P` key       | Pause workout |
-| Resume         | `R` key       | Resume workout |
-| End Workout    | `E` key       | End current workout |
-| Sample Data    | `S` key       | Load sample workout data |
-| Mouse Control  | `M` key       | Toggle mouse control for tilting |
-| Voice Commands | `V` key       | Toggle voice command recognition |
-| Top Tracking   | `T` key       | Toggle cursor tracking at top of screen |
-| Toggle Help    | `?` key       | Toggle keyboard shortcuts panel |
+### 4. Active Workout Experience
+- View real-time stats and progress visualization
+- Interact with workout controls
+- Receive alerts based on workout metrics
+- Pause/resume as needed
 
-## 🎨 UI/UX Design Guidance
+### 5. Workout Completion
+- View achievement summary with workout statistics
+- Rate your experience (Good, Okay, Tired)
+- Sync with Apple Health
 
-- 👁️‍🗨️ Interface elements should **appear as projections** on the floor (angle/shadow blur to imply projection)
-- 👟 Visual of **shoes in bottom-center** of screen for reference
-- 💬 Subtitles simulate voice feedback (e.g., "Workout starting now")
-- ⚠️ Pop-ups appear **low and center** like floor projections, not traditional modals
-- 🔄 Foot tilt indicators appear briefly when actions are taken (left/right/forward)
-- 📱 Avoid any touch buttons — this is **not** a smartphone app
+### 6. End Screen
+- View completion message
+- Option to try the simulation again
 
-## 🧑‍🔬 Target Users
+## 🕹️ Controls
 
-- Young adults and middle-aged users who regularly run, walk, or do HIIT
-- People who use Apple Health or fitness tracking apps
-- Users who dislike carrying phones during workouts
-- Users with minor accessibility challenges (glasses, limited hand mobility)
+### Primary Controls (Mouse/Cursor)
+- **Move cursor to top of screen**: Activates tilt controls
+- **Move cursor left/right**: Tilts shoe in that direction
+- **Hover over UI element**: Automatically focuses that element
+- **Click**: Selects the currently focused element
 
-## 🧠 Design Principles Used
+### Backup Keyboard Controls
 
-- **Natural Mapping**: Feet tilt → interface reacts on ground
-- **Immediate Feedback**: Real-time updates on stats
-- **Motivational Design**: Celebratory visuals and encouragement
-- **Accessibility**: Reduced cognitive load, no hand interaction needed
+| Action           | Key           | Description                        |
+|------------------|---------------|------------------------------------|
+| Tilt Left        | `←` Arrow     | Move selection left                |
+| Tilt Right       | `→` Arrow     | Move selection right               |
+| Tilt Forward     | `Enter`       | Confirm / Select current option    |
+| Pause Workout    | `P` key       | Pause current workout              |
+| Resume Workout   | `R` key       | Resume paused workout              |
+| End Workout      | `E` key       | End current workout early          |
+| Sample Data      | `S` key       | Load sample workout data           |
+| Toggle Tracking  | `T` key       | Toggle cursor position tracking    |
+| Voice Commands   | `V` key       | Toggle voice command simulation    |
+| Help Panel       | `?` key       | Toggle keyboard shortcuts panel    |
 
-## 🧪 Testing Mode
+## 🎨 Design Elements
 
-This prototype is used in user testing where:
-- Participants sit in front of a screen
-- Are instructed to **imagine this is a floor projection**
-- Interact using arrow keys or on-screen tilt simulation buttons
-- Think aloud during testing
-- Reflect on ease of use, clarity of projection, and comfort of control
+- **Projected Interface**: UI elements appear with perspective, shadows, and glow effects
+- **Shoe Visualization**: Virtual shoe shows tilt animations to represent foot movements
+- **Projection Light**: Green light at shoe tip shows where the interface projects from
+- **Circular Menus**: Intuitive circular interface for easy navigation with foot tilts
+- **Progress Visualization**: 3D path representation of workout progress
+- **Adaptive Feedback**: Visual cues for interactions and achievements
 
-## 📦 Assets
+## 📱 Device Compatibility
 
-- Shoe image overlay (PNG/transparent)
-- Icons: Run, Walk, HIIT, Trophy, Heart, Pause, Sync
-- Optional: Blurred floor texture as projection base
+- **Desktop**: Full experience with all features (recommended)
+- **Tablet**: Compatible with touch-based controls
+- **Mobile**: Not supported - displays compatibility message explaining desktop requirement
 
-## 🔧 Copilot Usage
+## 🧠 Design Principles
 
-If using GitHub Copilot or ChatGPT, focus on generating:
-- Simple HTML/CSS structure simulating projection
-- JavaScript to handle:
-  - Arrow key events and transitions
-  - Alert simulation triggers
-  - Tilt animation feedback
-- Optional: CSS transitions or GSAP/Framer Motion animation for subtle floor-like effects
+- **Natural Mapping**: Interface movement matches physical foot movements
+- **Glanceable Information**: Important metrics visible at a glance for safety during workouts
+- **Progressive Disclosure**: Information revealed as needed to prevent overwhelm
+- **Immediate Feedback**: Visual responses to all user actions
+- **Motivational Design**: Encouraging feedback and achievement celebration
 
-## 📁 Project Structure (Recommended)
+## 📁 Project Structure
 
 ```
 smart-shoe-sim/
-├── index.html
-├── style.css
-├── script.js
+├── index.html         # Main HTML structure
+├── style.css          # All styling and animations
+├── script.js          # Interaction logic and simulation
 ├── assets/
-│   ├── shoes.png
-│   ├── icons/
-│   └── bg-projection.png
-└── README.md
+│   ├── icons/         # UI icons (SVG format)
+│   ├── Shoe.png       # Main shoe visualization
+│   └── logo.png       # Project logo
+└── README.md          # Project documentation
 ```
+
+## 🧪 Testing Recommendations
+
+For the optimal experience when testing this prototype:
+
+1. Use a **desktop browser** (Chrome or Firefox recommended)
+2. Position screen at a **comfortable viewing angle**
+3. Try all interaction methods (mouse tracking, keyboard, buttons)
+4. Complete the full workout simulation flow
+5. Test various workout types and goals
+6. Observe the end-to-end experience from start to finish
+
+## 🔧 Technical Implementation
+
+This prototype is built with:
+- **HTML5** for structure
+- **CSS3** for styling, animations, and visual effects
+- **JavaScript** for interactions and simulation logic
+- **No external JS libraries** for maximum compatibility
+
+All interactions are handled through event listeners that translate mouse/keyboard input into simulated foot movement represented visually in the interface.
 
 ## 📝 Final Notes
 
-This simulation is NOT a full app, but a **proof-of-concept for usability testing**. Its purpose is to let users experience the interaction concept of our Smart Shoe's Health & Fitness feature without needing the physical device.
+This simulation represents a **proof-of-concept for usability testing** rather than a production application. It demonstrates the interaction model and UI approach for projected interfaces controlled by foot gestures, enabling evaluation of this novel interaction paradigm without requiring specialized hardware.
 
-Please design interactions that reflect **real-world cognitive flow**, and simulate projected UI elements as realistically as possible.
+---
 
-## 🌟 Enhanced Features
-
-### Haptic Feedback Simulation
-- Visual haptic pulses provide feedback for each foot gesture
-- Subtle vibration simulation (when supported by device)
-- Different feedback patterns for left, right, and forward tilts
-
-### Advanced 3D Visualization
-- Immersive progress path visualization with 3D perspective
-- Animated path with milestone markers
-- Dynamic user position indicator that moves as you progress
-- Visual and auditory feedback at key milestones (50%, 100%)
-
-### Voice Command Recognition
-- Activate with 'V' key to simulate voice input
-- Available commands include:
-  - "Start workout"
-  - "Pause workout"
-  - "Resume workout"
-  - "End workout"
-  - "Show stats"
-  - "How am I doing?"
-- Visual feedback with animated sound waves
-
-### Cursor Position Tracking
-- Move cursor to top of screen to control shoe tilt
-- Automatically tracks left/right movements in top third of viewport
-- Provides intuitive control without requiring keyboard
-- Can be toggled with 'T' key
-
-### Improved UI Navigation
-- Interactive elements show hover states that match foot gestures
-- Shoe automatically tilts based on UI element position
-- Clear visual increase/decrease buttons for value adjustments
-- Animated hints indicate how to interact with each control
-- Automatic cursor-to-foot position mapping for intuitive feedback
-
-### Multiple Interaction Methods
-- Traditional keyboard controls
-- Mouse-based control (activate with 'M' key)
-- Voice commands (activate with 'V' key)
-- Top cursor tracking
-- Tilt controls for natural foot interaction simulation
-
-### Persistent Help Panel
-- Always-accessible keyboard shortcuts panel
-- Positioned outside the projected UI for reference
-- Can be toggled on/off with '?' key or button
-- Collapsible to minimize screen space when needed
+**DECO2500 – Human-Computer Interaction**  
+The University of Queensland  
+Created by Noel
