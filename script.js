@@ -839,17 +839,17 @@ document.addEventListener('DOMContentLoaded', () => {
             if (direction === 'left') {
                 // Appear from left side tip of shoe - adjusted to match the tilted shoe
                 ripple.style.left = '40%';
-                ripple.style.bottom = '170px'; // Position at the left tip of tilted shoe
+                ripple.style.bottom = '130px'; // Position at the left tip of tilted shoe
                 ripple.classList.add('left-tilt'); // Add class for left tilt styling
             } else if (direction === 'right') {
                 // Appear from right side tip of shoe - adjusted to match the tilted shoe
                 ripple.style.left = '60%';
-                ripple.style.bottom = '170px'; // Position at the right tip of tilted shoe
+                ripple.style.bottom = '130px'; // Position at the right tip of tilted shoe
                 ripple.classList.add('right-tilt'); // Add class for right tilt styling
             } else { // forward
                 // Appear from center front tip of shoe
                 ripple.style.left = '50%';
-                ripple.style.bottom = '180px'; // Higher position, at the tip of the shoe when pointing forward
+                ripple.style.bottom = '140px'; // Higher position, at the tip of the shoe when pointing forward
             }
             
             // Make ripple appear to come from the shoe impact
@@ -1081,7 +1081,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Get workout type name from index
     function getWorkoutTypeName(index) {
-        const types = ['Run', 'Walk', 'HIIT'];
+        const types = ['Run', 'Walk', 'Cycling'];
         return types[index] || '';
     }
     
@@ -1171,20 +1171,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         document.querySelector('.floor-projection').appendChild(ripple);
         
-        // Create multiple ripples for dramatic effect
-        setTimeout(() => {
-            const ripple2 = document.createElement('div');
-            ripple2.className = 'ripple-effect';
-            ripple2.style.left = '40%';
-            document.querySelector('.floor-projection').appendChild(ripple2);
-            
-            setTimeout(() => {
-                const ripple3 = document.createElement('div');
-                ripple3.className = 'ripple-effect';
-                ripple3.style.left = '60%';
-                document.querySelector('.floor-projection').appendChild(ripple3);
-            }, 200);
-        }, 200);
+        // Removed additional random ripples
     }
     
     // Start workout
@@ -1193,6 +1180,22 @@ document.addEventListener('DOMContentLoaded', () => {
         workoutPaused = false;
         workoutStartTime = new Date();
         demoProgressPercentage = 0;
+        
+        // Update workout header icon based on selected workout type
+        const workoutHeaderIcon = document.querySelector('.workout-header i');
+        if (workoutHeaderIcon) {
+            // Reset all icon classes
+            workoutHeaderIcon.className = '';
+            
+            // Set appropriate icon based on workout type
+            if (selectedWorkoutOption === 0) {
+                workoutHeaderIcon.className = 'fas fa-running';
+            } else if (selectedWorkoutOption === 1) {
+                workoutHeaderIcon.className = 'fas fa-walking';
+            } else if (selectedWorkoutOption === 2) {
+                workoutHeaderIcon.className = 'fas fa-biking';
+            }
+        }
         
         // Reset stats for new workout
         heartRate = 80;
@@ -1372,18 +1375,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Celebrate workout completion with visual effects
     function celebrateCompletion() {
-        // Create multiple celebration ripples
-        for (let i = 0; i < 5; i++) {
-            setTimeout(() => {
-                const ripple = document.createElement('div');
-                ripple.className = 'ripple-effect';
-                ripple.style.left = `${30 + Math.random() * 40}%`;
-                ripple.style.backgroundColor = getRandomColor();
-                document.querySelector('.floor-projection').appendChild(ripple);
-            }, i * 300);
-        }
+        // We're keeping this function but removing the random ripples
+        // during active workout sessions
         
-        // Highlight trophy with glow effect
+        // Highlight trophy with glow effect (only present on completion screen)
         const trophy = document.querySelector('.trophy');
         if (trophy) {
             trophy.style.animation = 'pulse 1s infinite';
@@ -1408,7 +1403,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const imagesToPreload = [
             'assets/icons/run.svg',
             'assets/icons/walk.svg',
-            'assets/icons/hiit.svg',
+            'assets/icons/cycling.svg',
             'assets/icons/heart.svg',
             'assets/icons/steps.svg',
             'assets/icons/time.svg',
@@ -1554,12 +1549,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Celebration effect for reaching milestones
     function celebrateMilestone(steps) {
-        // Create a celebration ripple
-        const ripple = document.createElement('div');
-        ripple.className = 'ripple-effect';
-        ripple.style.left = `${30 + Math.random() * 40}%`;
-        ripple.style.backgroundColor = getRandomColor();
-        document.querySelector('.floor-projection').appendChild(ripple);
+        // Removed random ripple effect
         
         // Celebrate with visual effects
         celebrateCompletion();
@@ -1622,12 +1612,7 @@ document.addEventListener('DOMContentLoaded', () => {
         alertTextEl.textContent = message;
         alertEl.classList.add('active');
         
-        // Create a warning ripple
-        const ripple = document.createElement('div');
-        ripple.className = 'ripple-effect';
-        ripple.style.left = '50%';
-        ripple.style.backgroundColor = 'var(--secondary-color)';
-        document.querySelector('.floor-projection').appendChild(ripple);
+        // Removed warning ripple
         
         // Show warning for 5 seconds
         setTimeout(() => {
@@ -1910,6 +1895,18 @@ document.addEventListener('DOMContentLoaded', () => {
     backBtn.addEventListener('mouseenter', () => {
         shoeImage.classList.remove('tilt-left', 'tilt-right', 'tilt-forward', 'tilt-left-tap', 'tilt-right-tap');
         shoeImage.classList.add('tilt-back-btn');
+        
+        // Create a beam effect pointing toward the back button
+        const beam = document.createElement('div');
+        beam.className = 'shoe-beam-effect';
+        beam.style.transform = 'translate(-80%, 0) scale(0.8)';
+        beam.style.left = '30%';
+        document.querySelector('.shoe-view').appendChild(beam);
+        
+        // Remove beam after animation completes
+        setTimeout(() => {
+            beam.remove();
+        }, 800);
     });
     backBtn.addEventListener('mouseleave', () => {
         shoeImage.classList.remove('tilt-back-btn');
