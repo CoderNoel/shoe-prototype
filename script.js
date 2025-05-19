@@ -2145,8 +2145,8 @@ document.addEventListener('DOMContentLoaded', () => {
         beam.className = 'shoe-beam-effect';
         beam.id = 'back-btn-beam';
         beam.style.transform = 'translate(-80%, 0) scale(0.8)';
-        beam.style.left = '20%'; // Adjusted more to the left
-        beam.style.bottom = '190px'; // Match light position
+        beam.style.left = '40%'; // Adjusted more to the left
+        beam.style.bottom = '70px'; // Match light position
         beam.style.animation = 'none'; // Prevent fadeout animation
         beam.style.opacity = '0.8'; // Keep visible
         document.querySelector('.shoe-view').appendChild(beam);
