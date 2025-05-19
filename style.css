@@ -449,8 +449,8 @@ body {
     width: 100%;
     max-width: 900px;
     z-index: 10;
-    margin-bottom: 580px; /* Move projection further in front of shoe */
-    transform: perspective(1000px) rotateX(10deg) translateY(120px) translateZ(100px);
+    margin-bottom: 500px; /* Reduced margin to pull the projection up */
+    transform: perspective(1000px) rotateX(10deg) translateY(60px) translateZ(100px);
     transform-origin: center bottom;
 }
 
@@ -492,9 +492,9 @@ body {
 /* Shoe view styles */
 .shoe-view {
     position: absolute;
-    bottom: 5px; /* Place shoe at bottom of screen but visible */
+    bottom: -15px; /* Lower position to create more space */
     left: 50%;
-    transform: translateX(-50%) translateY(20%);
+    transform: translateX(-50%) translateY(30%);
     width: 100%;
     display: flex;
     justify-content: center;
@@ -577,7 +577,7 @@ body {
     width: 350px;
     height: 120px;
     left: 50%;
-    bottom: 150px; /* Default position for forward tilt */
+    bottom: 180px; /* Increased to match the adjusted shoe position */
     transform: translate(-50%, 0);
     border-radius: 50%;
     background: radial-gradient(ellipse at center top, 
@@ -609,7 +609,7 @@ body {
 /* Voice feedback */
 .voice-feedback {
     position: absolute;
-    bottom: 130px;
+    bottom: 160px; /* Increased to prevent overlap with the shoe */
     left: 50%;
     transform: translateX(-50%);
     background-color: rgba(255, 255, 255, 0.1);
@@ -796,7 +796,7 @@ body {
     flex-direction: column;
     align-items: center;
     margin: 0 auto;
-    margin-bottom: 200px; /* Center horizontally */
+    margin-bottom: 140px; /* Reduced to better match adjusted shoe position */
 }
 
 .menu-title {
@@ -2248,4 +2248,5 @@ body {
     width: 90%;
     max-width: 500px;
     margin: 0 auto;
+    margin-bottom: 120px; /* Adjusted to match new layout */
 }
