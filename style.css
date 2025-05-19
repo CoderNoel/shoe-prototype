@@ -546,22 +546,16 @@ body {
     left: 50%;
     transform-origin: bottom center;
     transform: translateX(-50%);
-    background: linear-gradient(
-        to top, 
-        rgba(0, 168, 107, 0.15) 0%,
-        rgba(0, 168, 107, 0.08) 50%,
-        rgba(0, 168, 107, 0.02) 90%
-    );
-    clip-path: polygon(50% 100%, 30% 0%, 70% 0%); /* Narrower clip-path */
+    background: transparent; /* Make invisible */
+    clip-path: none; /* Remove the triangular shape */
     pointer-events: none;
     z-index: 5; /* Same z-index as tip light to appear connected */
-    opacity: 0.85;
+    opacity: 0; /* Hide completely */
     transition: transform 0.2s ease-out, 
                 left 0.2s ease-out,
                 bottom 0.2s ease-out,
                 width 0.2s ease-out,
                 max-width 0.2s ease-out;
-    animation: beamPulse 3s infinite ease-in-out;
 }
 
 @keyframes beamPulse {
@@ -587,22 +581,9 @@ body {
     clip-path: polygon(55% 100%, 30% 0%, 70% 0%);
 }
 
-/* Enhance the projection beam with glow effect */
+/* Hide the projection beam glow effect */
 .projection-beam::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(
-        ellipse at bottom, 
-        rgba(0, 168, 107, 0.15), 
-        transparent 70%
-    );
-    filter: blur(10px);
-    opacity: 0.7;
-    z-index: 0;
+    display: none;
 }
 
 /* Add light source at the tip of the shoe */
@@ -645,24 +626,9 @@ body {
     }
 }
 
-/* Make the beam directly connect to the light */
+/* Hide the beam-light connection */
 .projection-beam::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 35px;
-    height: 15px; /* Half-height to blend with the light */
-    background: radial-gradient(ellipse at center top, 
-        rgba(0, 255, 153, 0.9) 0%, 
-        rgba(0, 168, 107, 0.5) 40%, 
-        rgba(0, 168, 107, 0.1) 70%,
-        transparent 100%
-    );
-    border-radius: 50% 50% 0 0;
-    filter: blur(4px);
-    z-index: 5;
+    display: none;
 }
 
 /* More precise position adjustments for tilt */
@@ -2376,22 +2342,9 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Enhance the projection beam with glow effect */
+/* Hide the projection beam glow effect */
 .projection-beam::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(
-        ellipse at bottom, 
-        rgba(0, 168, 107, 0.15), 
-        transparent 70%
-    );
-    filter: blur(10px);
-    opacity: 0.7;
-    z-index: 0;
+    display: none;
 }
 
 /* Add back the regular tilt classes for the light */
@@ -2739,22 +2692,10 @@ body {
     border-width: 0;
 }
 
-/* Adjust animations for tilted states */
-.shoe-image.tilt-left-tap ~ .projection-beam::after {
-    bottom: 0;
-    left: calc(50% - 2px); /* Slight adjustment for tilt */
-}
-
-.shoe-image.tilt-right-tap ~ .projection-beam::after {
-    bottom: 0;
-    left: calc(50% + 2px); /* Slight adjustment for tilt */
-}
-
-/* Adjust beam position for tilt animations */
-.projection-beam.tilt-left::after {
-    left: calc(50% - 5px);
-}
-
+/* Hide beam tilt animations */
+.shoe-image.tilt-left-tap ~ .projection-beam::after,
+.shoe-image.tilt-right-tap ~ .projection-beam::after,
+.projection-beam.tilt-left::after,
 .projection-beam.tilt-right::after {
-    left: calc(50% + 5px);
+    display: none;
 }
