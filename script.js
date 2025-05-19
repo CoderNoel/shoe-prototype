@@ -56,13 +56,21 @@ document.addEventListener('DOMContentLoaded', () => {
     let mouseControlTimeout = null;
     let lastMilestoneStep = 0;
     
+    // Add demo mode flag and settings
+    let demoMode = true; // Always use demo mode for this prototype
+    let demoCompletionTime = 20000; // Complete demo in 20 seconds
+    let demoProgressPercentage = 0;
+    let demoTargetSteps = 5000;
+    let demoTargetCalories = 300;
+    let demoMaxHeartRate = 145;
+    
     // Set cursor tracking as active by default
     let cursorTrackingActive = true;
     
     // Add a flag to control UI interactivity
     let uiActive = false;
     
-    // Sample data for quicker testing
+    // Sample data for quicker testing - no longer needed with demo mode
     const sampleData = {
         workoutTime: 300000, // 5 minutes in milliseconds
         steps: 500,
@@ -443,20 +451,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!workoutActive) {
                 startWorkout();
                 
-                // Create load sample data button
+                // Show demo mode indicator
                 const indicator = document.querySelector('#workout-screen .indicator-text');
                 if (indicator) {
                     indicator.innerHTML = `
                         Tilt <span class="forward-indicator">forward ▼</span> to pause workout | 
                         Press <span class="key" style="font-size: 0.8rem; padding: 0.1rem 0.3rem;">E</span> to end workout |
-                        Press <span class="key" style="font-size: 0.8rem; padding: 0.1rem 0.3rem;">S</span> to load sample data
+                        Press <span class="key" style="font-size: 0.8rem; padding: 0.1rem 0.3rem;">D</span> to show demo info
                     `;
                 }
                 
-                // Add load sample data key
+                // Add demo mode info key
                 document.addEventListener('keydown', (e) => {
-                    if ((e.key === 's' || e.key === 'S') && workoutActive) {
-                        loadSampleData();
+                    if ((e.key === 'd' || e.key === 'D') && workoutActive) {
+                        showVoiceFeedback(`Demo mode active: workout will complete in ${demoCompletionTime/1000} seconds`);
                     }
                 });
             }
@@ -735,20 +743,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Load sample data button - added to the workout screen
     const loadSampleData = () => {
+        // This function is no longer needed with the new demo mode
         if (!workoutActive) return;
         
-        // Set workout elapsed time to sample value
-        workoutElapsedTime = sampleData.workoutTime;
-        
-        // Update stats with sample data
-        steps = sampleData.steps;
-        heartRate = sampleData.heartRate;
-        calories = sampleData.calories;
-        distance = (steps * 0.0007).toFixed(2);
-        
-        // Update UI
-        updateWorkoutStats();
-        showVoiceFeedback('Sample data loaded');
+        showVoiceFeedback('Using demo mode: workout will complete in 20 seconds');
     };
     
     // Handle foot tilt (left, right, forward)
@@ -1194,32 +1192,71 @@ document.addEventListener('DOMContentLoaded', () => {
         workoutActive = true;
         workoutPaused = false;
         workoutStartTime = new Date();
+        demoProgressPercentage = 0;
+        
+        // Reset stats for new workout
+        heartRate = 80;
+        calories = 0;
+        steps = 0;
+        distance = 0;
+        
+        // Calculate target values based on selected goal
+        if (currentGoalType === 'distance') {
+            const targetDistance = calculateValueFromSlider(sliderValue, goalSettings.distance);
+            demoTargetSteps = Math.round(targetDistance / 0.0007); // Convert km to steps
+        } else if (currentGoalType === 'calories') {
+            demoTargetCalories = calculateValueFromSlider(sliderValue, goalSettings.calories);
+        }
         
         // Show initial stats
         updateWorkoutStats();
         
-        // Set up interval to update stats
+        // Set up interval to update stats - faster for demo mode
         workoutInterval = setInterval(() => {
             if (!workoutPaused) {
+                // Update demo progress
+                demoProgressPercentage = Math.min(100, demoProgressPercentage + (100 / (demoCompletionTime / 200)));
+                
+                // Calculate workout elapsed time based on demo progress
+                if (currentGoalType === 'duration') {
+                    const targetDuration = calculateValueFromSlider(sliderValue, goalSettings.duration);
+                    workoutElapsedTime = (demoProgressPercentage / 100) * (targetDuration * 60000);
+                } else {
+                    workoutElapsedTime = (demoProgressPercentage / 100) * demoCompletionTime * 5; // Simulate a longer workout
+                }
+                
+                // Update steps based on progress percentage
+                steps = Math.round((demoProgressPercentage / 100) * demoTargetSteps);
+                
+                // Update calories based on progress percentage
+                calories = Math.round((demoProgressPercentage / 100) * demoTargetCalories);
+                
+                // Update heart rate - starts at 80, peaks at around 75% progress, then slightly decreases
+                const progressFactor = demoProgressPercentage < 75 
+                    ? demoProgressPercentage / 75 
+                    : 1 - ((demoProgressPercentage - 75) / 100);
+                heartRate = Math.round(80 + (demoMaxHeartRate - 80) * progressFactor);
+                
                 updateWorkoutStats();
+                
+                // Auto-complete workout when demo reaches 100%
+                if (demoProgressPercentage >= 100 && workoutActive) {
+                    endWorkout();
+                    showScreen(4); // Show completion screen
+                    createRippleEffect('forward', true);
+                    celebrateCompletion();
+                }
             }
-        }, 1000);
+        }, 200); // Update 5 times per second for smoother progress
         
         showVoiceFeedback('Workout started');
         
-        // Simulate random health alert after 10-20 seconds
+        // Simulate random health alert at 60-70% progress
         setTimeout(() => {
             if (workoutActive && !workoutPaused) {
                 showHealthAlert('High heart rate detected. Consider slowing down.');
             }
-        }, 10000 + Math.random() * 10000);
-        
-        // Remind about ending workout after 30 seconds
-        setTimeout(() => {
-            if (workoutActive && !workoutPaused) {
-                showVoiceFeedback('Press E to end your workout at any time');
-            }
-        }, 30000);
+        }, demoCompletionTime * 0.6);
     }
     
     // Pause workout
@@ -1377,8 +1414,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const minutesElapsed = Math.floor(workoutElapsedTime / 60000);
         timeElapsedEl.textContent = `${minutesElapsed} min`;
         
+        // Get the target steps based on demo mode
+        const targetSteps = demoTargetSteps;
+        
         // Update progress visualization
-        const targetSteps = 5000; // Example target
         updateProgressVisualization(steps, targetSteps);
 
         // Update advanced 3D progress visualization
@@ -1404,49 +1443,59 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update user marker position
         const userMarker = document.getElementById('userMarker');
         const pathWidth = 90; // Path is 90% of container width (see CSS)
-        userMarker.style.left = `${5 + (pathWidth * progressPercent / 100)}%`;
+        if (userMarker) {
+            userMarker.style.left = `${5 + (pathWidth * progressPercent / 100)}%`;
+        }
         
         // Update completion percentage text
         const completionPercent = document.getElementById('completionPercent');
-        completionPercent.textContent = `${Math.round(progressPercent)}%`;
+        if (completionPercent) {
+            completionPercent.textContent = `${Math.round(progressPercent)}%`;
+        }
         
         // Update calorie progress
         const calorieProgress = document.getElementById('calorieProgress');
-        const calorieTarget = 300; // Example target
-        calorieProgress.textContent = `${calories}/${calorieTarget}`;
+        if (calorieProgress) {
+            calorieProgress.textContent = `${calories}/${demoTargetCalories}`;
+        }
         
         // Clear existing milestones
         const milestoneContainer = document.getElementById('milestoneMarkers');
-        milestoneContainer.innerHTML = '';
-        
-        // Add milestone markers (every 20% of target)
-        for (let i = 1; i < 5; i++) {
-            const milestone = document.createElement('div');
-            milestone.className = 'milestone';
-            const milestonePosition = 5 + (pathWidth * (i * 20) / 100);
-            milestone.style.left = `${milestonePosition}%`;
+        if (milestoneContainer) {
+            milestoneContainer.innerHTML = '';
             
-            // If we've passed this milestone, add a class to style it differently
-            if (progressPercent >= i * 20) {
-                milestone.classList.add('reached');
+            // Add milestone markers (every 20% of target)
+            for (let i = 1; i < 5; i++) {
+                const milestone = document.createElement('div');
+                milestone.className = 'milestone';
+                const milestonePosition = 5 + (pathWidth * (i * 20) / 100);
+                milestone.style.left = `${milestonePosition}%`;
+                
+                // If we've passed this milestone, add a class to style it differently
+                if (progressPercent >= i * 20) {
+                    milestone.classList.add('reached');
+                }
+                
+                milestoneContainer.appendChild(milestone);
             }
-            
-            milestoneContainer.appendChild(milestone);
         }
         
         // Animation effects based on progress
         const visualizationContainer = document.querySelector('.visualization-container');
-        
-        // More advanced 3D effect as you progress
-        const progressRotation = 15 - (progressPercent / 100) * 5; // Gradually reduce the rotation from 15 to 10 degrees
-        visualizationContainer.style.transform = `rotateX(${progressRotation}deg)`;
+        if (visualizationContainer) {
+            // More advanced 3D effect as you progress
+            const progressRotation = 15 - (progressPercent / 100) * 5; // Gradually reduce the rotation from 15 to 10 degrees
+            visualizationContainer.style.transform = `rotateX(${progressRotation}deg)`;
+        }
         
         // Increase glow effect as you approach target
-        const glowIntensity = Math.min(5 + (progressPercent / 100) * 15, 20);
-        userMarker.style.boxShadow = `0 0 ${glowIntensity}px var(--primary-color)`;
+        if (userMarker) {
+            const glowIntensity = Math.min(5 + (progressPercent / 100) * 15, 20);
+            userMarker.style.boxShadow = `0 0 ${glowIntensity}px var(--primary-color)`;
+        }
         
         // Add shake effect when reaching exact 50% mark
-        if (Math.abs(progressPercent - 50) < 1 && !userMarker.classList.contains('milestone-pulse')) {
+        if (Math.abs(progressPercent - 50) < 3 && userMarker && !userMarker.classList.contains('milestone-pulse')) {
             userMarker.classList.add('milestone-pulse');
             setTimeout(() => {
                 userMarker.classList.remove('milestone-pulse');
@@ -1457,12 +1506,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // Celebrate when reaching 100%
-        if (progressPercent >= 100 && !userMarker.classList.contains('celebration')) {
+        if (progressPercent >= 99 && userMarker && !userMarker.classList.contains('celebration')) {
             userMarker.classList.add('celebration');
             
             // Add celebration effect to path
             const progressPath = document.getElementById('progressPath');
-            progressPath.classList.add('path-complete');
+            if (progressPath) {
+                progressPath.classList.add('path-complete');
+            }
             
             // Voice feedback at 100%
             showVoiceFeedback("Target reached! Excellent work!");
@@ -1504,19 +1555,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update step count
         progressStepCount.textContent = currentSteps;
         
-        // Pulse animation when milestones reached
-        if (currentSteps > 0 && currentSteps % 1000 === 0) {
-            const marker = currentProgress.querySelector('.progress-marker');
-            if (marker) {
-                marker.classList.add('pulse');
-                setTimeout(() => marker.classList.remove('pulse'), 2000);
-            }
-            
-            // Celebratory ripple
-            createRippleEffect('forward');
-            
-            showVoiceFeedback(`Milestone reached: ${currentSteps} steps`);
+            // Pulse animation when milestones reached
+    if (currentSteps > 0 && currentSteps % 1000 === 0) {
+        const marker = currentProgress.querySelector('.progress-marker');
+        if (marker) {
+            marker.classList.add('pulse');
+            setTimeout(() => marker.classList.remove('pulse'), 2000);
         }
+        
+        showVoiceFeedback(`Milestone reached: ${currentSteps} steps`);
+    }
     }
     
     // Show voice feedback
@@ -1833,5 +1881,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     backBtn.addEventListener('mouseleave', () => {
         shoeImage.classList.remove('tilt-back-btn');
+    });
+
+    // Add demo mode info key
+    document.addEventListener('keydown', (e) => {
+        if ((e.key === 'd' || e.key === 'D') && workoutActive) {
+            showVoiceFeedback(`Demo mode active: workout will complete in ${demoCompletionTime/1000} seconds`);
+        }
     });
 });
