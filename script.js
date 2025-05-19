@@ -97,6 +97,49 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let currentGoalType = 'distance';
     
+    // Smart goal value arrays
+    const distanceSteps = [0.5, 1, 2, 5, 10, 20, 30, 50, 100];
+    const calorieSteps = [50, 100, 200, 300, 500, 750, 1000, 1500, 2000];
+    const durationSteps = [5, 10, 15, 20, 30, 45, 60, 90, 120];
+    
+    // Helper to get current index in array
+    function getCurrentGoalIndex(goalType, value) {
+        let arr = [];
+        if (goalType === 'distance') arr = distanceSteps;
+        else if (goalType === 'calories') arr = calorieSteps;
+        else if (goalType === 'duration') arr = durationSteps;
+        // Find closest value (in case of floating point imprecision)
+        let idx = arr.findIndex(v => Math.abs(v - value) < 0.01);
+        if (idx === -1) {
+            // If not found, clamp to nearest
+            let minDiff = Infinity, minIdx = 0;
+            arr.forEach((v, i) => { if (Math.abs(v - value) < minDiff) { minDiff = Math.abs(v - value); minIdx = i; } });
+            idx = minIdx;
+        }
+        return idx;
+    }
+    
+    // Helper to get smart step array for current goal type
+    function getCurrentStepArray() {
+        if (currentGoalType === 'distance') return distanceSteps;
+        if (currentGoalType === 'calories') return calorieSteps;
+        if (currentGoalType === 'duration') return durationSteps;
+        return [];
+    }
+    
+    // Store the current index in the smart step array
+    let currentStepIndex = 0;
+    
+    // Set default value to first smart step for current goal type
+    function setDefaultGoalValue() {
+        const arr = getCurrentStepArray();
+        currentStepIndex = 0;
+        updateSlider();
+    }
+    
+    // On load, set default goal value
+    setDefaultGoalValue();
+    
     // Start button click event
     startBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -1043,47 +1086,51 @@ document.addEventListener('DOMContentLoaded', () => {
         goalTabs.forEach((tab, i) => {
             tab.classList.toggle('selected', i === selectedGoalTab);
         });
-        
         currentGoalType = goalTabs[selectedGoalTab].getAttribute('data-goal-type');
-        
         // Update goal value and unit
         const settings = goalSettings[currentGoalType];
         goalUnit.textContent = settings.unit;
-        
-        // Recalculate value based on slider position
-        const value = calculateValueFromSlider(sliderValue, settings);
-        goalValue.textContent = settings.format(value);
-        
+        // Set default value for new goal type
+        setDefaultGoalValue();
         showVoiceFeedback(`${currentGoalType} goal selected`);
     }
     
-    // Update slider
+    // Update slider based on currentStepIndex
     function updateSlider() {
-        sliderFill.style.width = `${sliderValue}%`;
-        sliderHandle.style.left = `${sliderValue}%`;
-        
+        const arr = getCurrentStepArray();
         const settings = goalSettings[currentGoalType];
-        const value = calculateValueFromSlider(sliderValue, settings);
+        // Clamp index
+        if (currentStepIndex < 0) currentStepIndex = 0;
+        if (currentStepIndex > arr.length - 1) currentStepIndex = arr.length - 1;
+        const value = arr[currentStepIndex];
+        // Calculate percent position based on index
+        const percent = (arr.length === 1) ? 0 : (currentStepIndex / (arr.length - 1)) * 100;
+        sliderFill.style.width = `${percent}%`;
+        sliderHandle.style.left = `${percent}%`;
         goalValue.textContent = settings.format(value);
-        
         showVoiceFeedback(`${value} ${settings.unit}`);
     }
     
-    // Increase slider value
+    // Plus/Minus button logic: only move to next/previous in smart step array
     function increaseSliderValue() {
-        sliderValue = Math.min(100, sliderValue + 5);
+        const arr = getCurrentStepArray();
+        if (currentStepIndex < arr.length - 1) currentStepIndex++;
         updateSlider();
     }
     
-    // Decrease slider value
     function decreaseSliderValue() {
-        sliderValue = Math.max(0, sliderValue - 5);
+        if (currentStepIndex > 0) currentStepIndex--;
         updateSlider();
     }
     
-    // Calculate value from slider position
+    // Calculate value from slider position (not used for direct mapping anymore)
     function calculateValueFromSlider(percent, settings) {
-        return settings.min + (settings.max - settings.min) * (percent / 100);
+        // This function is now only used for legacy code, but we always use smart steps
+        const arr = getCurrentStepArray();
+        if (arr.length === 1) return arr[0];
+        // Find the closest index for the given percent
+        const idx = Math.round((percent / 100) * (arr.length - 1));
+        return arr[idx];
     }
     
     // Start countdown
