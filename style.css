@@ -36,22 +36,41 @@ body {
     align-items: center;
 }
 
-/* Project Information Screen */
-.project-info-overlay {
+/* Screens Container for Sliding Effects */
+.intro-screens-container {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
+    height: 100%;
+    z-index: 1001;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    transition: transform 0.7s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.5s ease;
+    will-change: transform, opacity;
+}
+
+/* Sliding transition animation classes */
+.project-info-overlay.sliding,
+.instructions-overlay.sliding {
+    transition: transform 0.7s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.5s ease;
+}
+
+/* Project Information Screen */
+.project-info-overlay {
+    position: relative;
+    min-width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.9);
     background-image: radial-gradient(circle at center, rgba(15, 30, 45, 0.9) 0%, rgba(0, 0, 0, 0.97) 100%);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1001; /* Higher than instructions */
     color: white;
     overflow: auto;
     padding: 20px;
+    flex-shrink: 0;
 }
 
 .project-info-content {
@@ -440,39 +459,42 @@ body {
     }
 }
 
-/* Instructions Overlay */
+/* Instructions Overlay - Updated to match project info styling */
 .instructions-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+    position: relative;
+    min-width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.85);
+    background-color: rgba(0, 0, 0, 0.9);
+    background-image: radial-gradient(circle at center, rgba(15, 30, 45, 0.9) 0%, rgba(0, 0, 0, 0.97) 100%);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
     color: white;
     overflow: auto;
     padding: 20px;
+    flex-shrink: 0;
 }
 
 .instructions-content {
-    background-color: rgba(40, 40, 40, 0.95);
+    background-color: rgba(20, 25, 35, 0.95);
     padding: 3rem;
     border-radius: 20px;
-    max-width: 800px;
-    width: 90%;
-    max-height: 85vh;
+    max-width: 900px;
+    width: 92%;
+    max-height: 90vh;
     overflow-y: auto;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2rem;
+    gap: 2.5rem;
     margin: auto;
-    border: 1px solid rgba(0, 168, 107, 0.2);
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 168, 107, 0.2);
+    border: 1px solid rgba(0, 168, 107, 0.3);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), 0 0 25px rgba(0, 168, 107, 0.4);
+    animation: infoContentFadeIn 0.7s ease-out;
+    opacity: 0;
+    animation-delay: 0.3s;
+    animation-fill-mode: forwards;
 }
 
 /* Add custom scrollbar for better usability */
@@ -497,17 +519,30 @@ body {
 /* Improve layout on smaller screens */
 @media (max-width: 768px) {
     .instructions-content {
-        padding: 2rem;
+        padding: 2.5rem;
         max-height: 80vh;
-        gap: 1.5rem;
+        gap: 2rem;
     }
 }
 
 .instructions-content h2 {
     margin-bottom: 0.5rem;
-    color: var(--primary-color);
+    color: white;
     font-size: 2.2rem;
     text-shadow: 0 0 10px rgba(0, 168, 107, 0.3);
+    background: linear-gradient(to right, #ffffff, var(--primary-color) 70%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.welcome-title {
+    font-size: 2.2rem;
+    background: linear-gradient(to right, #ffffff, var(--primary-color) 70%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 5px 15px rgba(0, 168, 107, 0.5);
+    margin-bottom: 0.5rem;
 }
 
 .instructions-content h3 {
@@ -517,14 +552,20 @@ body {
 }
 
 .instructions-intro {
-    max-width: 600px;
-    margin-bottom: 0;
+    max-width: 750px;
+    margin: 0 auto;
+    position: relative;
+    padding: 1.5rem;
+    border-radius: 15px;
+    background: rgba(0, 168, 107, 0.05);
+    border: 1px solid rgba(0, 168, 107, 0.1);
 }
 
 .instructions-intro p {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     line-height: 1.6;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 0.95);
+    margin: 0;
 }
 
 .instruction-demo {
@@ -537,24 +578,14 @@ body {
     border-radius: 15px;
     width: 100%;
     max-width: 300px;
-    border: 1px solid rgba(0, 168, 107, 0.1);
+    border: 1px solid rgba(0, 168, 107, 0.15);
+    transition: all 0.3s ease;
 }
 
-.demo-shoe {
-    width: 120px;
-    height: auto;
-    margin-bottom: 1rem;
-    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
-}
-
-.demo-projection {
-    width: 160px;
-    height: 4px;
-    background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
-    border-radius: 50%;
-    box-shadow: 0 0 15px 5px var(--primary-color);
-    opacity: 0.7;
-    animation: demoGlow 2s infinite alternate;
+.instruction-demo:hover {
+    box-shadow: 0 0 20px rgba(0, 168, 107, 0.2);
+    border-color: rgba(0, 168, 107, 0.3);
+    background: rgba(0, 10, 20, 0.4);
 }
 
 .instructions-list-container {
@@ -566,22 +597,14 @@ body {
     background: rgba(0, 0, 0, 0.2);
     padding: 1.5rem 2rem;
     border-radius: 15px;
-    border: 1px solid rgba(0, 168, 107, 0.1);
+    border: 1px solid rgba(0, 168, 107, 0.15);
+    transition: all 0.3s ease;
 }
 
-.instructions-list-container h3 {
-    margin-bottom: 1rem;
-    color: var(--primary-color);
-    font-size: 1.4rem;
-}
-
-.instructions-list-container h4 {
-    margin-bottom: 0.8rem;
-    color: white;
-    font-size: 1.1rem;
-    opacity: 0.9;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 0.5rem;
+.instructions-list-container:hover {
+    box-shadow: 0 0 20px rgba(0, 168, 107, 0.2);
+    border-color: rgba(0, 168, 107, 0.3);
+    background: rgba(0, 10, 20, 0.4);
 }
 
 .primary-controls {
@@ -659,18 +682,20 @@ body {
 }
 
 .start-button {
-    background-color: var(--primary-color);
+    background: var(--primary-color);
     color: white;
     border: none;
-    padding: 0.9rem 2.5rem;
-    border-radius: 50px;
-    font-size: 1.3rem;
+    padding: 1rem 2.5rem;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
     cursor: pointer;
-    margin-top: 0;
     transition: all 0.3s ease;
-    width: auto;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 168, 107, 0.4);
-    display: inline-flex;
+    margin-top: 1rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 168, 107, 0.3);
+    display: flex;
     align-items: center;
     gap: 0.8rem;
 }
@@ -1185,9 +1210,16 @@ body {
 
 /* Start screen instruction demo */
 .demo-shoe {
-    width: 100px;
+    width: 120px;
     height: auto;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
+    animation: float 3s ease-in-out infinite alternate;
+}
+
+@keyframes float {
+    from { transform: translateY(0); }
+    to { transform: translateY(-10px); }
 }
 
 .demo-projection {
@@ -2565,16 +2597,27 @@ body {
 }
 
 .instructions-list-container h3 {
-    margin-bottom: 0.8rem;
+    margin-bottom: 1rem;
     color: var(--primary-color);
-    font-size: 1.3rem;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    border-bottom: 1px solid rgba(0, 168, 107, 0.15);
+    padding-bottom: 0.7rem;
+}
+
+.instructions-list-container h3 i {
+    font-size: 1.2rem;
 }
 
 .instructions-list-container h4 {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
     color: white;
-    font-size: 1rem;
+    font-size: 1.1rem;
     opacity: 0.9;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.5rem;
 }
 
 .primary-controls {
@@ -3258,5 +3301,22 @@ body {
     
     .github-item a, .github-item span {
         font-size: 0.75rem;
+    }
+}
+
+/* Transition delay for instructions content */
+.intro-screens-container[style*="translateX(-100%)"] .instructions-content {
+    animation: instructionsAppear 0.7s ease-out forwards;
+    animation-delay: 0.3s;
+}
+
+@keyframes instructionsAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

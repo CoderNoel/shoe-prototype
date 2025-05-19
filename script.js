@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const continueBtn = document.getElementById('continueBtn');
     const projectInfo = document.getElementById('project-info');
     const instructions = document.getElementById('instructions');
+    const introScreensContainer = document.querySelector('.intro-screens-container');
     const screens = document.querySelectorAll('.screen');
     const shoeImage = document.getElementById('shoeImage');
     const tiltIndicator = document.getElementById('tiltIndicator');
@@ -155,24 +156,66 @@ document.addEventListener('DOMContentLoaded', () => {
     // On load, set default goal value
     setDefaultGoalValue();
     
-    // Continue button click event
+    // Initialize intro screens container
+    function initIntroScreens() {
+        // Show only the project info screen initially
+        projectInfo.style.display = 'flex';
+        instructions.style.display = 'none'; // Hide instructions initially
+        
+        // Reset any transform
+        introScreensContainer.style.transform = '';
+        introScreensContainer.style.opacity = '1';
+        
+        // Reset container position
+        introScreensContainer.style.position = 'fixed';
+        introScreensContainer.style.top = '0';
+        introScreensContainer.style.left = '0';
+        introScreensContainer.style.width = '100%';
+        introScreensContainer.style.height = '100%';
+        
+        console.log("Initialized intro screens - project info visible, instructions hidden");
+    }
+    
+    // Call initialization
+    initIntroScreens();
+    
+    // Continue button click event - completely redesigned for reliability
     continueBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         e.preventDefault();
+        
+        // Create a ripple effect for feedback
+        createRippleEffect('forward', true);
+        
+        // Simply hide project info and show instructions
+        // Skip the sliding animation since it's causing issues
         projectInfo.style.display = 'none';
         instructions.style.display = 'flex';
+        
+        console.log("Continue button clicked - showing instructions screen");
+        
+        // Show voice feedback to confirm transition
+        showVoiceFeedback('Learn how to use the interface');
     });
     
-    // Start button click event
+    // Start button click event - updated to hide entire intro container
     startBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         e.preventDefault();
-        instructions.style.display = 'none';
-        showScreen(0); // Show workout type selection
-        showVoiceFeedback('Select a workout type');
-        preloadAssets();
-        uiActive = true; // Enable UI interactivity
-        updateBackButton();
+        
+        // Create ripple effect
+        createRippleEffect('forward', true);
+        
+        // Hide the entire intro screens container with a fade out
+        introScreensContainer.style.opacity = '0';
+        setTimeout(() => {
+            introScreensContainer.style.display = 'none';
+            showScreen(0); // Show workout type selection
+            showVoiceFeedback('Select a workout type');
+            preloadAssets();
+            uiActive = true; // Enable UI interactivity
+            updateBackButton();
+        }, 500);
     });
     
     // Keyboard controls
@@ -733,15 +776,22 @@ document.addEventListener('DOMContentLoaded', () => {
             // Welcome screen start button
             handleTilt('forward'); // Apply animation
             
-            // Small delay to allow animation to be visible
-            setTimeout(() => {
-                document.getElementById('instructions').style.display = 'none';
-                showScreen(0); // Show workout type selection screen
-                showVoiceFeedback('Select a workout type');
-                
-                // Preload assets for smooth UX
-                preloadAssets();
-            }, 100);
+                            // Small delay to allow animation to be visible
+                setTimeout(() => {
+                    // Hide the entire intro screens container properly
+                    introScreensContainer.style.opacity = '0';
+                    setTimeout(() => {
+                        introScreensContainer.style.display = 'none';
+                        showScreen(0); // Show workout type selection screen
+                        showVoiceFeedback('Select a workout type');
+                        
+                        // Preload assets for smooth UX
+                        preloadAssets();
+                        
+                        uiActive = true; // Enable UI interactivity
+                        updateBackButton();
+                    }, 500);
+                }, 100);
             // Prevent any other actions
             e.stopPropagation();
             return;
@@ -2102,7 +2152,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Show/hide back button based on current screen
     function updateBackButton() {
-        if (currentScreenIndex === 0 || currentScreenIndex === 4 || instructions.style.display !== 'none') {
+        // Get current state of the intro screens container
+        const introVisible = introScreensContainer.style.display !== 'none';
+        
+        if (currentScreenIndex === 0 || currentScreenIndex === 4 || introVisible) {
             backBtn.style.display = 'none';
         } else {
             backBtn.style.display = 'flex';

@@ -20,147 +20,153 @@
 </head>
 <body>
     <div class="container">
-        <!-- Project Information Screen -->
-        <div id="project-info" class="project-info-overlay">
-            <div class="project-info-content">
-                <div class="project-header">
-                    <div class="project-logo">
-                        <img src="assets/logo.png" alt="Smart Shoe Project Logo" class="project-logo-img">
+        <!-- Intro Screens Container for Sliding Effect -->
+        <div class="intro-screens-container">
+            <!-- Project Information Screen -->
+            <div id="project-info" class="project-info-overlay">
+                <div class="project-info-content">
+                    <div class="project-header">
+                        <div class="project-logo">
+                            <img src="assets/logo.png" alt="Smart Shoe Project Logo" class="project-logo-img">
+                        </div>
+                        <h1 class="project-title">Smart Shoe – Health & Fitness Prototype</h1>
+                        <div class="project-subtitle">A Hands-Free Workout Experience</div>
                     </div>
-                    <h1 class="project-title">Smart Shoe – Health & Fitness Prototype</h1>
-                    <div class="project-subtitle">A Hands-Free Workout Experience</div>
-                </div>
-                
-                <div class="project-description">
-                    <p>This interactive prototype simulates a smart shoe interface designed for hands-free workout tracking. The actual product projects a UI onto the ground and allows users to interact using subtle foot tilts instead of touch. This simulation uses keyboard input and cursor movements to represent those gestures.</p>
-                </div>
-                
-                <div class="project-sections">
-                    <div class="project-section details-section">
-                        <h3><i class="fas fa-info-circle"></i> Project Details</h3>
-                        <div class="detail-item">
-                            <span class="detail-label"><i class="fas fa-graduation-cap"></i> Course:</span>
-                            <span class="detail-value">DECO2500 – Human-Computer Interaction</span>
+                    
+                    <div class="project-description">
+                        <p>This interactive prototype simulates a smart shoe interface designed for hands-free workout tracking. The actual product projects a UI onto the ground and allows users to interact using subtle foot tilts instead of touch. This simulation uses keyboard input and cursor movements to represent those gestures.</p>
+                    </div>
+                    
+                    <div class="project-sections">
+                        <div class="project-section details-section">
+                            <h3><i class="fas fa-info-circle"></i> Project Details</h3>
+                            <div class="detail-item">
+                                <span class="detail-label"><i class="fas fa-graduation-cap"></i> Course:</span>
+                                <span class="detail-value">DECO2500 – Human-Computer Interaction</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label"><i class="fas fa-university"></i> University:</span>
+                                <span class="detail-value">The University of Queensland</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label"><i class="fas fa-calendar-alt"></i> Semester:</span>
+                                <span class="detail-value">Semester 1, 2025</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label"><i class="fas fa-user"></i> Designed by:</span>
+                                <span class="detail-value">Noel</span>
+                            </div>
                         </div>
-                        <div class="detail-item">
-                            <span class="detail-label"><i class="fas fa-university"></i> University:</span>
-                            <span class="detail-value">The University of Queensland</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label"><i class="fas fa-calendar-alt"></i> Semester:</span>
-                            <span class="detail-value">Semester 1, 2025</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label"><i class="fas fa-user"></i> Designed by:</span>
-                            <span class="detail-value">Noel</span>
+                        
+                        <div class="project-section purpose-section">
+                            <h3><i class="fas fa-bullseye"></i> Purpose</h3>
+                            <p>This is a proof-of-concept for usability testing and design evaluation. The prototype aims to:</p>
+                            <ul class="purpose-list">
+                                <li><i class="fas fa-check-circle"></i> Understand how users interact with a projected interface from a smart shoe</li>
+                                <li><i class="fas fa-check-circle"></i> Test navigation through health and fitness features using foot movements</li>
+                                <li><i class="fas fa-check-circle"></i> Gather user feedback on the hands-free workout experience</li>
+                                <li><i class="fas fa-check-circle"></i> Evaluate the effectiveness of the projected UI design</li>
+                            </ul>
                         </div>
                     </div>
                     
-                    <div class="project-section purpose-section">
-                        <h3><i class="fas fa-bullseye"></i> Purpose</h3>
-                        <p>This is a proof-of-concept for usability testing and design evaluation. The prototype aims to:</p>
-                        <ul class="purpose-list">
-                            <li><i class="fas fa-check-circle"></i> Understand how users interact with a projected interface from a smart shoe</li>
-                            <li><i class="fas fa-check-circle"></i> Test navigation through health and fitness features using foot movements</li>
-                            <li><i class="fas fa-check-circle"></i> Gather user feedback on the hands-free workout experience</li>
-                            <li><i class="fas fa-check-circle"></i> Evaluate the effectiveness of the projected UI design</li>
-                        </ul>
+                    <div class="project-features">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-running"></i>
+                            </div>
+                            <div class="feature-text">
+                                <h4>Workout Tracking</h4>
+                                <p>Track steps, heart rate, and calories in real-time</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-shoe-prints"></i>
+                            </div>
+                            <div class="feature-text">
+                                <h4>Foot Gestures</h4>
+                                <p>Navigate using intuitive left, right, and forward tilts</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="feature-text">
+                                <h4>Progress Visualization</h4>
+                                <p>Monitor your workout progress with animated visuals</p>
+                            </div>
+                        </div>
                     </div>
+                    
+                    <button id="continueBtn" class="continue-button">
+                        <span>Continue to Interface</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
                 </div>
-                
-                <div class="project-features">
-                    <div class="feature-item">
-                        <div class="feature-icon">
-                            <i class="fas fa-running"></i>
-                        </div>
-                        <div class="feature-text">
-                            <h4>Workout Tracking</h4>
-                            <p>Track steps, heart rate, and calories in real-time</p>
-                        </div>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-icon">
-                            <i class="fas fa-shoe-prints"></i>
-                        </div>
-                        <div class="feature-text">
-                            <h4>Foot Gestures</h4>
-                            <p>Navigate using intuitive left, right, and forward tilts</p>
-                        </div>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <div class="feature-text">
-                            <h4>Progress Visualization</h4>
-                            <p>Monitor your workout progress with animated visuals</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <button id="continueBtn" class="continue-button">
-                    <span>Continue to Interface</span>
-                    <i class="fas fa-arrow-right"></i>
-                </button>
             </div>
-        </div>
-        
-        <!-- Initial Instructions -->
-        <div id="instructions" class="instructions-overlay">
-            <div class="instructions-content">
-                <h2 class="welcome-title">Smart Shoe Interface</h2>
-                
-                <div class="instruction-demo">
-                    <img src="assets/Shoe.png" alt="Smart shoe demo" class="demo-shoe">
-                    <div class="demo-projection"></div>
-                </div>
-                
-                <div class="instructions-intro">
-                    <p>Experience your Smart Shoe's floor-projected fitness interface using cursor movements to control tilt.</p>
-                </div>
-                
-                <div class="instructions-list-container">
-                    <h3>How to Interact:</h3>
-                    <div class="primary-controls">
-                        <h4>Primary Controls:</h4>
-                        <ul>
-                            <li><strong>Move cursor to top of screen</strong> to tilt shoe</li>
-                            <li><strong>Click on interface elements</strong> to select them</li>
-                        </ul>
+            
+            <!-- Initial Instructions -->
+            <div id="instructions" class="instructions-overlay">
+                <div class="instructions-content">
+                    <h2 class="welcome-title">Smart Shoe Interface</h2>
+                    
+                    <div class="instruction-demo">
+                        <img src="assets/Shoe.png" alt="Smart shoe demo" class="demo-shoe">
+                        <div class="demo-projection"></div>
                     </div>
                     
-                    <div class="secondary-controls-container">
-                        <h4>Additional Controls:</h4>
-                        <ul class="compact-controls">
-                            <li><span class="key">T</span> Toggle cursor tracking (enabled by default)</li>
-                            <li><span class="key">V</span> Toggle voice commands</li>
-                            <li><span class="key">?</span> Show/hide keyboard shortcuts</li>
-                        </ul>
+                    <div class="instructions-intro">
+                        <p>Experience your Smart Shoe's floor-projected fitness interface using cursor movements to control tilt.</p>
                     </div>
                     
-                    <div class="backup-controls-container">
-                        <h4>Backup Keyboard Controls:</h4>
-                        <div class="control-columns">
-                            <ul class="compact-controls">
-                                <li><span class="key">←</span> Tilt left foot</li>
-                                <li><span class="key">→</span> Tilt right foot</li>
-                                <li><span class="key">Enter</span> Tilt forward</li>
-                                <li><span class="key">P</span> Pause workout</li>
-                            </ul>
-                            <ul class="compact-controls">
-                                <li><span class="key">R</span> Resume workout</li>
-                                <li><span class="key">E</span> End workout</li>
-                                <li><span class="key">S</span> Load sample data</li>
+                    <div class="instructions-list-container">
+                        <h3><i class="fas fa-hand-pointer"></i> How to Interact:</h3>
+                        <div class="primary-controls">
+                            <h4>Primary Controls:</h4>
+                            <ul>
+                                <li><strong>Move cursor to top of screen</strong> to tilt shoe</li>
+                                <li><strong>Click on interface elements</strong> to select them</li>
                             </ul>
                         </div>
+                        
+                        <div class="secondary-controls-container">
+                            <h4>Additional Controls:</h4>
+                            <ul class="compact-controls">
+                                <li><span class="key">T</span> Toggle cursor tracking (enabled by default)</li>
+                                <li><span class="key">V</span> Toggle voice commands</li>
+                                <li><span class="key">?</span> Show/hide keyboard shortcuts</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="backup-controls-container">
+                            <h4>Backup Keyboard Controls:</h4>
+                            <div class="control-columns">
+                                <ul class="compact-controls">
+                                    <li><span class="key">←</span> Tilt left foot</li>
+                                    <li><span class="key">→</span> Tilt right foot</li>
+                                    <li><span class="key">Enter</span> Tilt forward</li>
+                                    <li><span class="key">P</span> Pause workout</li>
+                                </ul>
+                                <ul class="compact-controls">
+                                    <li><span class="key">R</span> Resume workout</li>
+                                    <li><span class="key">E</span> End workout</li>
+                                    <li><span class="key">S</span> Load sample data</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
+                    
+                    <div class="final-instructions">
+                        <p><strong>The shoe will automatically tilt</strong> when hovering over interactive elements. Click to select.</p>
+                    </div>
+                    
+                    <button id="startBtn" class="start-button">
+                        <span>Begin Experience</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
                 </div>
-                
-                <div class="final-instructions">
-                    <p><strong>The shoe will automatically tilt</strong> when hovering over interactive elements. Click to select.</p>
-                </div>
-                
-                <button id="startBtn" class="start-button">Begin Experience</button>
             </div>
         </div>
 
