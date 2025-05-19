@@ -1417,14 +1417,21 @@ body {
     justify-content: center;
     gap: 1rem;
     margin: 1rem 0;
+    z-index: 1002 !important;
+    pointer-events: auto !important;
 }
 
 .goal-tab {
+    pointer-events: auto !important;
+    margin: 0 6px;
+    padding: 0.6rem 1.6rem;
+    min-width: 80px;
+    box-sizing: border-box;
+    z-index: 1003 !important;
     background-color: rgba(255, 255, 255, 0.1);
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 20px;
-    padding: 0.5rem 1.2rem;
     cursor: pointer;
     transition: all 0.3s ease;
 }
