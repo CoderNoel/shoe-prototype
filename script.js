@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    console.log("DOM fully loaded - initializing Smart Shoe application");
+    
     // DOM Elements
     const startBtn = document.getElementById('startBtn');
     const continueBtn = document.getElementById('continueBtn');
@@ -14,6 +16,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const floorProjection = document.querySelector('.floor-projection');
     const projectionArea = document.querySelector('.projection-area');
     const projectionBeam = document.getElementById('projectionBeam');
+    const tryAgainBtn = document.getElementById('tryAgainBtn');
+    
+    // Verify we can find the sync button
+    const syncButton = document.querySelector('.sync-button');
+    if (syncButton) {
+        console.log("Found sync button:", syncButton);
+    } else {
+        console.error("Could not find sync button in DOM");
+    }
+    
+    // Log all available screens for debugging
+    console.log("Available screens:", screens.length);
+    screens.forEach((screen, index) => {
+        console.log(`Screen ${index}: id=${screen.id}, classes=${screen.className}`);
+    });
+    
+    const endScreen = document.getElementById('end-screen');
+    if (endScreen) {
+        console.log("Found end-screen element:", endScreen);
+    } else {
+        console.error("Could not find end-screen element");
+    }
     
     // Add flag to track back button hover state
     let isBackButtonHovered = false;
@@ -575,10 +599,23 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Function to show a specific screen - with interactive elements refresh
     function showScreen(index) {
-        console.log("Showing screen:", index);
+        console.log(`showScreen called with index: ${index}`);
+        
+        // Verify the index is valid
+        if (index < 0 || index >= screens.length) {
+            console.error(`Invalid screen index: ${index}, max: ${screens.length - 1}`);
+            return;
+        }
+        
+        // Get the screen element for logging
+        const targetScreen = screens[index];
+        console.log(`Showing screen: ${targetScreen.id}`);
         
         screens.forEach((screen, i) => {
+            const wasActive = screen.classList.contains('active');
             screen.classList.toggle('active', i === index);
+            const isActive = screen.classList.contains('active');
+            console.log(`Screen ${i} (${screen.id}): was ${wasActive ? 'active' : 'inactive'}, now ${isActive ? 'active' : 'inactive'}`);
         });
         currentScreenIndex = index;
         
@@ -649,7 +686,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const valueBtn = target.closest('.' + VALUE_BTN);
         const sliderHandle = target.closest('.' + SLIDER_HANDLE);
         const moodOption = target.closest('.' + MOOD_OPTION);
-        const syncButton = target.closest('.' + SYNC_BUTTON);
+        const syncButtonEl = target.closest('.' + SYNC_BUTTON);
         const startWorkoutBtn = target.closest('.' + START_WORKOUT_BTN);
         const startButton = target.closest('.' + START_BUTTON);
         
@@ -724,25 +761,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         } 
         
-        else if (syncButton) {
-            console.log("Sync button clicked");
-            // Sync with Apple Health (simulated)
-            syncButton.style.backgroundColor = '#4fd1ff';
-            syncButton.style.color = '#0a0e1a';
-            syncButton.style.boxShadow = '0 0 18px 4px #4fd1ff88';
-            
-            showVoiceFeedback('Syncing with Apple Health...');
-            
-            setTimeout(() => {
-                showVoiceFeedback('Workout data synchronized successfully');
-                
-                // Reset to start
-                setTimeout(() => {
-                    resetWorkout();
-                    showScreen(0); // Back to workout type selection
-                }, 2000);
-            }, 1000);
-            // Prevent any other actions
+        else if (target.closest('.sync-button')) {
+            console.log("Sync button detected in click handler - handled by dedicated listener");
             e.stopPropagation();
             return;
         } 
@@ -1341,13 +1361,38 @@ document.addEventListener('DOMContentLoaded', () => {
                         showVoiceFeedback('Syncing with Apple Health...');
                         
                         setTimeout(() => {
+                            syncButton.innerHTML = '<i class="fas fa-check"></i><span>Synced!</span>';
                             showVoiceFeedback('Workout data synchronized successfully');
                             
-                            // Reset to start
-                            setTimeout(() => {
+                            // Find the end screen element directly
+                            const endScreen = document.getElementById('end-screen');
+                            if (endScreen) {
+                                console.log("Displaying end screen from forward tilt action");
+                                
+                                // Find end screen index
+                                let endScreenIndex = -1;
+                                screens.forEach((screen, i) => {
+                                    if (screen.id === 'end-screen') {
+                                        endScreenIndex = i;
+                                    }
+                                });
+                                
+                                if (endScreenIndex >= 0) {
+                                    // Show end screen (hide current screen, show end screen)
+                                    screens.forEach(s => s.classList.remove('active'));
+                                    endScreen.classList.add('active');
+                                    currentScreenIndex = endScreenIndex;
+                                    updateBackButton();
+                                } else {
+                                    console.error("End screen index not found - falling back to default behavior");
+                                    resetWorkout();
+                                    showScreen(0); // Fallback to workout selection
+                                }
+                            } else {
+                                console.error("End screen element not found - falling back to default behavior");
                                 resetWorkout();
-                                showScreen(0); // Back to workout type selection
-                            }, 3000);
+                                showScreen(0); // Fallback to workout selection
+                            }
                         }, 2000);
                     }
                 }
@@ -1633,27 +1678,68 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Reset workout
     function resetWorkout() {
+        // Reset all state variables
+        currentScreenIndex = 0;
+        selectedWorkoutOption = 1; // Default to "Walk"
+        selectedGoalTab = 0; // Default to "Distance"
+        sliderValue = 60; // Default slider position
         workoutActive = false;
         workoutPaused = false;
+        workoutStartTime = null;
         workoutElapsedTime = 0;
+        
+        // Clear any ongoing intervals
+        if (workoutInterval) {
+            clearInterval(workoutInterval);
+            workoutInterval = null;
+        }
+        
+        // Reset stats
         heartRate = 80;
         calories = 0;
         steps = 0;
         distance = 0;
         
         // Reset UI elements
+        document.getElementById('heartRate').textContent = '80 bpm';
+        document.getElementById('caloriesBurned').textContent = '0 kcal';
+        document.getElementById('stepCount').textContent = '0 steps';
+        document.getElementById('distance').textContent = '0.00 km';
+        document.getElementById('progressFill').style.width = '0%';
+        document.getElementById('progressStepCount').textContent = '0';
+        document.getElementById('currentProgress').style.left = '0%';
+        document.getElementById('completionPercent').textContent = '0%';
+        document.getElementById('calorieProgress').textContent = '0/0';
+        
+        // Update selected workout option and goal tabs
         updateSelectedWorkoutOption();
         updateSelectedGoalTab();
         
-        const moodOptions = document.querySelectorAll('.mood-option');
-        moodOptions.forEach(option => option.classList.remove('selected'));
-        
-        const syncButton = document.querySelector('.sync-button');
-        if (syncButton) {
-            syncButton.style.backgroundColor = '';
-            syncButton.style.color = '';
-            syncButton.style.boxShadow = '';
+        // Reset any visual elements that might be in active state
+        const pauseOverlay = document.getElementById('pauseOverlay');
+        if (pauseOverlay && pauseOverlay.classList.contains('active')) {
+            pauseOverlay.classList.remove('active');
         }
+        
+        const healthAlert = document.getElementById('healthAlert');
+        if (healthAlert && healthAlert.classList.contains('active')) {
+            healthAlert.classList.remove('active');
+        }
+        
+        // Reset mood selection
+        const selectedMood = document.querySelector('.mood-option.selected');
+        if (selectedMood) {
+            selectedMood.classList.remove('selected');
+        }
+        
+        // Reset sync button
+        if (syncButton) {
+            syncButton.innerHTML = '<i class="fas fa-sync-alt"></i><span>Sync with Apple Health</span>';
+        }
+        
+
+        
+        console.log('Workout simulation reset completely');
     }
     
     // Celebrate workout completion with visual effects
@@ -2154,8 +2240,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateBackButton() {
         // Get current state of the intro screens container
         const introVisible = introScreensContainer.style.display !== 'none';
+        const endScreen = document.getElementById('end-screen');
+        const isEndScreen = endScreen && endScreen.classList.contains('active');
         
-        if (currentScreenIndex === 0 || currentScreenIndex === 4 || introVisible) {
+        if (currentScreenIndex === 0 || currentScreenIndex === 4 || introVisible || isEndScreen) {
             backBtn.style.display = 'none';
         } else {
             backBtn.style.display = 'flex';
@@ -2267,5 +2355,85 @@ document.addEventListener('DOMContentLoaded', () => {
             projectionBeam.style.maxWidth = `${projAreaRect.width}px`;
         }
     }, 100);
+
+    // Create a dedicated sync button handler - completely rewritten
+    console.log("Setting up sync button handler");
+    
+    // Remove any existing listeners to avoid conflicts
+    if (syncButton) {
+        // Clone the button to remove all event listeners
+        const newSyncButton = syncButton.cloneNode(true);
+        syncButton.parentNode.replaceChild(newSyncButton, syncButton);
+        
+        // Add a fresh click event handler
+        newSyncButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log("*** SYNC BUTTON CLICKED ***");
+            
+            // Show syncing animation
+            this.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i><span>Syncing...</span>';
+            
+            // First timeout: show synced confirmation
+            setTimeout(() => {
+                this.innerHTML = '<i class="fas fa-check"></i><span>Synced!</span>';
+                console.log("Sync animation complete, preparing to show end screen");
+                
+                // Second timeout: navigate to end screen
+                setTimeout(() => {
+                    // Find the end screen element directly
+                    const endScreen = document.getElementById('end-screen');
+                    if (!endScreen) {
+                        console.error("End screen element not found in DOM");
+                        return;
+                    }
+                    
+                    // Get index directly from screens NodeList
+                    let endScreenIndex = -1;
+                    screens.forEach((screen, i) => {
+                        if (screen.id === 'end-screen') {
+                            endScreenIndex = i;
+                            console.log(`Found end-screen at index ${i}`);
+                        }
+                    });
+                    
+                    if (endScreenIndex >= 0) {
+                        console.log(`Navigating to end screen (index ${endScreenIndex})`);
+                        
+                        // Hide all screens first and manually show end screen
+                        screens.forEach(s => s.classList.remove('active'));
+                        endScreen.classList.add('active');
+                        currentScreenIndex = endScreenIndex;
+                        
+                        // Update interface and show feedback
+                        updateBackButton();
+                        showVoiceFeedback('Thank you for completing the workout');
+                        console.log("End screen should now be visible");
+                    } else {
+                        console.error("Could not determine end screen index");
+                    }
+                }, 1500);
+            }, 2000);
+        });
+        
+        console.log("New sync button handler installed");
+    }
+    
+    // Add event listener for Try Again button
+    if (tryAgainBtn) {
+        tryAgainBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Create ripple effect for feedback
+            createRippleEffect('forward', true);
+            
+            // Reset workout data
+            resetWorkout();
+            
+            // Go back to the workout selection screen (first screen)
+            showScreen(0);
+            showVoiceFeedback('Select a workout type');
+        });
+    }
 
 });

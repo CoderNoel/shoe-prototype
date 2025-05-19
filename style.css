@@ -3320,3 +3320,222 @@ body {
         transform: translateY(0);
     }
 }
+
+/* End Screen Styles */
+.end-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1rem; /* Reduced from 2rem */
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.end-icon {
+    width: 80px; /* Reduced from 90px */
+    height: 80px; /* Reduced from 90px */
+    background: radial-gradient(circle, var(--primary-color) 0%, #008c59 100%);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0.8rem 0; /* Reduced margins */
+    box-shadow: 0 0 30px rgba(0, 168, 107, 0.5);
+    animation: pulseGlow 2s infinite alternate;
+}
+
+.end-icon i {
+    font-size: 3rem;
+    color: white;
+}
+
+.end-container h3 {
+    font-size: 1.8rem; /* Reduced from 2rem */
+    color: white;
+    margin-top: 0.8rem; /* Reduced from 1rem */
+    margin-bottom: 0.3rem; /* Reduced from 0.5rem */
+    text-shadow: 0 0 10px rgba(0, 168, 107, 0.5);
+}
+
+.end-message {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem; /* Reduced from 1.1rem */
+    text-align: center;
+}
+
+.end-card {
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.2rem; /* Reduced padding */
+    margin: 0.8rem 0 1.5rem; /* Reduced margins */
+    width: 90%;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.8s ease-out forwards;
+    animation-delay: 0.2s;
+    opacity: 0;
+}
+
+.end-card:hover {
+    border-color: rgba(0, 168, 107, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 168, 107, 0.2);
+    transform: translateY(-5px);
+}
+
+.end-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.end-card-content i {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.end-card-content h4 {
+    font-size: 1.3rem; /* Reduced from 1.4rem */
+    color: white;
+    margin-bottom: 0.8rem; /* Reduced from 1rem */
+}
+
+.end-card-content p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem; /* Reduced from 1rem */
+    line-height: 1.5;
+}
+
+.end-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin: 0 0 1.5rem; /* Reduced from 2rem */
+    animation: fadeInUp 0.8s ease-out forwards;
+    animation-delay: 0.4s;
+    opacity: 0;
+}
+
+.end-button {
+    background-color: rgba(0, 0, 0, 0.3);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.8rem 1.5rem;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    /* Improve button hover/click area */
+    position: relative;
+    z-index: 1105;
+    min-width: 150px;
+    justify-content: center;
+}
+
+.feedback-btn {
+    background-color: rgba(0, 168, 107, 0.2);
+    border-color: rgba(0, 168, 107, 0.3);
+}
+
+.feedback-btn:hover {
+    background-color: var(--primary-color);
+    border-color: white;
+    box-shadow: 0 0 20px rgba(0, 168, 107, 0.5);
+    transform: translateY(-3px);
+}
+
+.try-again-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-3px);
+}
+
+/* Ensure the entire Try Again button area is clickable */
+.try-again-btn {
+    position: relative;
+    z-index: 1105; 
+    pointer-events: auto !important;
+    min-height: 50px; /* Ensure minimum height for better clickability */
+    padding: 0.8rem 2rem; /* Wider padding to increase click area */
+    overflow: visible; /* Ensure no clipping */
+}
+
+.try-again-btn i,
+.try-again-btn span {
+    pointer-events: none; /* Ensures clicks work even when hovering over the icon or text */
+}
+
+.try-again-btn::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    z-index: -1;
+    cursor: pointer;
+}
+
+.project-credit {
+    margin-top: 0.8rem; /* Reduced from 1rem */
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem; /* Reduced from 0.9rem */
+    text-align: center;
+    animation: fadeInUp 0.8s ease-out forwards;
+    animation-delay: 0.6s;
+    opacity: 0;
+}
+
+.project-credit p {
+    margin: 0.3rem 0;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulseGlow {
+    0% {
+        box-shadow: 0 0 20px rgba(0, 168, 107, 0.5);
+    }
+    100% {
+        box-shadow: 0 0 40px rgba(0, 168, 107, 0.8);
+    }
+}
+
+/* Ensure end screen is properly visible when active */
+#end-screen.active {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 100 !important;
+    animation: fadeInProjection 0.5s ease-out forwards;
+}
+
+/* Add more emphasis to end screen elements */
+#end-screen .end-icon {
+    animation: pulseGlow 2s infinite alternate;
+}
+
+#end-screen .circular-menu {
+    background: rgba(0, 0, 0, 0.75);
+    box-shadow: 0 0 30px rgba(0, 168, 107, 0.3);
+    max-width: 400px; /* Reduced from 450px */
+    transform: scale(0.9); /* Shrink entire container */
+    margin-bottom: 180px; /* Increased to prevent overlap with shoe */
+    padding: 1.2rem; /* Reduced padding */
+}
