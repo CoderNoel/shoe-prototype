@@ -1264,35 +1264,44 @@ body {
 .completion-stats {
     display: flex;
     justify-content: center;
-    gap: 1.2rem;
-    margin-bottom: 1.5rem;
+    gap: 1.5rem;
+    margin: 1rem 0 1.8rem;
+    width: 100%;
+    max-width: 450px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .completion-stat {
     display: flex;
     flex-direction: column;
     align-items: center;
+    flex: 1;
+    max-width: 110px;
 }
 
 .stat-circle {
-    width: 60px;
-    height: 60px;
+    width: 90px;
+    height: 90px;
     border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(30, 30, 40, 0.6);
     backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px); /* Safari support */
+    -webkit-backdrop-filter: blur(8px);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.6rem;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+    padding: 0.5rem;
 }
 
 .stat-circle i, .stat-circle .stat-icon {
     font-size: 1.2rem;
     color: white;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.4rem;
 }
 
 .stat-circle .stat-icon {
@@ -1302,37 +1311,76 @@ body {
 }
 
 .stat-circle .stat-value {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     color: white;
     font-weight: 500;
+    text-align: center;
+    line-height: 1.1;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Adaptive font size for different length numbers */
+.stat-value[data-length="4"] {
+    font-size: 1.4rem;
+}
+
+.stat-value[data-length="5"] {
+    font-size: 1.3rem;
+}
+
+.stat-value[data-length="6"] {
+    font-size: 1.1rem;
+}
+
+.stat-value[data-length="7"] {
+    font-size: 1rem;
+}
+
+/* Add specific styling for the steps value which can be longer */
+.stat-circle.steps .stat-value {
+    font-size: 1.3rem;
+    letter-spacing: -0.5px;
 }
 
 .stat-circle.heart {
-    border-color: var(--secondary-color);
-    box-shadow: 0 0 15px rgba(233, 93, 106, 0.3);
+    border: 2px solid var(--secondary-color);
+    box-shadow: 0 0 20px rgba(233, 93, 106, 0.4), inset 0 0 15px rgba(233, 93, 106, 0.15);
 }
 
 .stat-circle.heart i {
     color: var(--secondary-color);
+    text-shadow: 0 0 8px rgba(233, 93, 106, 0.6);
 }
 
 .stat-circle.steps {
-    border-color: var(--tertiary-color);
-    box-shadow: 0 0 15px rgba(74, 144, 226, 0.3);
+    border: 2px solid var(--tertiary-color);
+    box-shadow: 0 0 20px rgba(74, 144, 226, 0.4), inset 0 0 15px rgba(74, 144, 226, 0.15);
+}
+
+.stat-circle.steps .stat-icon {
+    filter: invert(0.5) sepia(1) saturate(5) hue-rotate(180deg);
+    opacity: 0.9;
 }
 
 .stat-circle.calories {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 15px rgba(0, 168, 107, 0.3);
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 20px rgba(0, 168, 107, 0.4), inset 0 0 15px rgba(0, 168, 107, 0.15);
 }
 
 .stat-circle.calories i {
     color: var(--primary-color);
+    text-shadow: 0 0 8px rgba(0, 168, 107, 0.6);
 }
 
 .stat-label {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-top: 0.2rem;
+    text-align: center;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* Mood selection */
@@ -1552,7 +1600,7 @@ body {
     width: 60%;
     background: linear-gradient(90deg, var(--primary-color), var(--tertiary-color));
     border-radius: 4px;
-    transition: width 0.3s ease;
+    transition: width 0.5s ease;
 }
 
 .slider-handle {
@@ -2188,4 +2236,16 @@ body {
 .shoe-image.tilt-back-btn {
     transform: rotate(-30deg) translateX(-40px) translateY(-20px);
     transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Adjust completion screen circular menu layout */
+#complete-screen .circular-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2rem 1.5rem;
+    width: 90%;
+    max-width: 500px;
+    margin: 0 auto;
 }

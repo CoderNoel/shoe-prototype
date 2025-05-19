@@ -1306,9 +1306,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const statSteps = document.querySelector('.stat-circle.steps .stat-value');
         const finalCalories = document.getElementById('finalCalories');
         
-        if (statHeartRate) statHeartRate.textContent = `${heartRate} bpm`;
-        if (statSteps) statSteps.textContent = steps;
-        if (finalCalories) finalCalories.textContent = calories;
+        if (statHeartRate) {
+            statHeartRate.textContent = `${heartRate} bpm`;
+            statHeartRate.setAttribute('data-length', statHeartRate.textContent.length);
+        }
+        
+        if (statSteps) {
+            statSteps.textContent = steps;
+            statSteps.setAttribute('data-length', steps.toString().length);
+        }
+        
+        if (finalCalories) {
+            finalCalories.textContent = calories;
+            finalCalories.setAttribute('data-length', calories.toString().length);
+        }
         
         showVoiceFeedback('Workout completed');
     }
