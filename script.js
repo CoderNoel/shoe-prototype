@@ -1278,7 +1278,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Get the target steps based on demo mode
             const targetSteps = demoTargetSteps;
             const progressPercent = Math.min((steps / targetSteps) * 100, 100);
-            pauseUserMarker.style.left = `${progressPercent}%`;
+            pauseUserMarker.style.left = `${5 + progressPercent * 0.9}%`;
             
             // Update pause screen metrics
             const pauseStepMetric = document.getElementById('pauseStepMetric');
