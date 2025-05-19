@@ -525,17 +525,33 @@ body {
 }
 
 @keyframes tapLeftAnimation {
-    0% { transform: rotate(-15deg) translateX(-20px) translateY(-15px); }
-    40% { transform: rotate(-15deg) translateX(-20px) translateY(-40px); }
-    70% { transform: rotate(-15deg) translateX(-20px) translateY(-25px); }
-    100% { transform: rotate(-15deg) translateX(-20px) translateY(-15px); }
+    0% {
+        transform: rotate(-15deg) translateX(-20px) translateY(-15px);
+    }
+    40% {
+        transform: rotate(-15deg) rotateX(20deg) translateX(-20px) translateY(-35px);
+    }
+    70% {
+        transform: rotate(-15deg) rotateX(10deg) translateX(-20px) translateY(-25px);
+    }
+    100% {
+        transform: rotate(-15deg) translateX(-20px) translateY(-15px);
+    }
 }
 
 @keyframes tapRightAnimation {
-    0% { transform: rotate(15deg) translateX(20px) translateY(-15px); }
-    40% { transform: rotate(15deg) translateX(20px) translateY(-40px); }
-    70% { transform: rotate(15deg) translateX(20px) translateY(-25px); }
-    100% { transform: rotate(15deg) translateX(20px) translateY(-15px); }
+    0% {
+        transform: rotate(15deg) translateX(20px) translateY(-15px);
+    }
+    40% {
+        transform: rotate(15deg) rotateX(20deg) translateX(20px) translateY(-35px);
+    }
+    70% {
+        transform: rotate(15deg) rotateX(10deg) translateX(20px) translateY(-25px);
+    }
+    100% {
+        transform: rotate(15deg) translateX(20px) translateY(-15px);
+    }
 }
 
 /* Tilt Indicator */
