@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
     const startBtn = document.getElementById('startBtn');
+    const continueBtn = document.getElementById('continueBtn');
+    const projectInfo = document.getElementById('project-info');
     const instructions = document.getElementById('instructions');
     const screens = document.querySelectorAll('.screen');
     const shoeImage = document.getElementById('shoeImage');
@@ -152,6 +154,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // On load, set default goal value
     setDefaultGoalValue();
+    
+    // Continue button click event
+    continueBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        projectInfo.style.display = 'none';
+        instructions.style.display = 'flex';
+    });
     
     // Start button click event
     startBtn.addEventListener('click', (e) => {
