@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/logo.png" alt="Smart Shoe Logo" width="250">
+</p>
+
 # Smart Shoe – Health & Fitness Interface Simulation
 
 ## 👟 Project Overview
